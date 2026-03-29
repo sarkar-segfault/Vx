@@ -30,3 +30,7 @@ target_compile_features(Vx PUBLIC c_std_99)
 if(WIN32)
   target_link_libraries(Vx PRIVATE user32)
 endif()
+
+add_executable(test test.c)
+
+target_link_libraries(test PRIVATE Vx)
