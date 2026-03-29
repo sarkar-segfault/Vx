@@ -6,6 +6,9 @@
   @brief Defines macros which allow for easy exposure of public functions on different platforms.
 */
 
+// IWYU pragma: private
+// IWYU pragma: no_include
+
 #ifndef Vx__ExposeH
 #define Vx__ExposeH
 

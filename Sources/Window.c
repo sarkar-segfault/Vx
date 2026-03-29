@@ -3,10 +3,10 @@
   @since 0.1.0
   @license MIT
   @author Adhrit Sarkar <adhritsarkar@proton.me>
-  @brief Defines semantics for the VxWindow struct. As of now, only supports windows.
+  @brief Defines functionality for VxWindow.h; as of now, only supports windows.
 */
 
-#include "Vx/Window.h"
+#include "Vx/Window.h" // IWYU pragma: associated
 #include <stdbool.h>
 #include <stdlib.h>
 #include "Vx/Lifecycle.h"
