@@ -1,5 +1,5 @@
 /**
-  @file Vx__Expose.h
+  @file _Expose.h
   @since 0.1.0
   @license MIT
   @author Adhrit Sarkar <adhritsarkar@proton.me>
@@ -21,6 +21,8 @@
   #else
     #define Vx__Export
   #endif
+#else
+  #define Vx__Export
 #endif
 
 #ifdef __cplusplus

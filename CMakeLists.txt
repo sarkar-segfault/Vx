@@ -7,7 +7,7 @@ project(
   DESCRIPTION "A pure C library for creating and controlling windows"
 )
 
-add_library(Vx)
+add_library(Vx Sources/Window.c)
 
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(Vx PRIVATE Vx__Shared)
