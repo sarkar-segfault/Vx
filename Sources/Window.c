@@ -42,6 +42,14 @@ bool VxWindow_Create(VxWindow **window) {
   return true;
 }
 
+void VxWindow_Update(VxWindow *window) {
+  MSG msg = {};
+  while (GetMessage(&msg, window->hwnd, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+}
+
 bool VxWindow_IsOpen(VxWindow *window) {
   if (!window) return false;
   if (!window->hwnd) return false;

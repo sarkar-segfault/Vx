@@ -24,6 +24,7 @@ Vx__Expose bool Vx_Initiate(void);
 Vx__Expose void Vx_Terminate(void);
 
 /**
+  @brief Get the window class initiated previously.
   @returns The window class initiated in `Vx_Initiate`.
 */
 Vx__Expose void *Vx_GetWindowClass(void);
