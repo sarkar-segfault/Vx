@@ -17,14 +17,15 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
-WNDCLASS Vx__WindowClass;
+WNDCLASSEX Vx__WindowClass;
 
 bool Vx_Initiate(void) {
   Vx__WindowClass.lpszClassName = "VxWindow";
   Vx__WindowClass.lpfnWndProc = DefWindowProc;
   Vx__WindowClass.hInstance = GetModuleHandle(NULL);
+  Vx__WindowClass.cbSize = sizeof(WNDCLASSEX);
 
-  if (!RegisterClass(&Vx__WindowClass)) return false;
+  if (!RegisterClassEx(&Vx__WindowClass)) return false;
   return true;
 }
 
