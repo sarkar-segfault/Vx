@@ -30,7 +30,7 @@ bool Vx_Initiate(void) {
 }
 
 void Vx_Terminate(void) {
-  return;
+  ZeroMemory(&Vx__WindowClass, sizeof(WNDCLASSEX));
 }
 
 void *Vx_GetWindowClass(void) {

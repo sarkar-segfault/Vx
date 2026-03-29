@@ -36,13 +36,13 @@ Vx__Expose bool VxWindow_Delete(VxWindow *window);
   @since 0.1.0
   @brief Updates the specified window.
 */
-Vx__Expose void VxWindow_Update(VxWindow *window);
+Vx__Expose void VxWindow_Update(const VxWindow *window);
 
 /**
   @since 0.1.0
   @brief Checks whether the window is still open.
   @returns Whether the specified window is still valid.
 */
-Vx__Expose bool VxWindow_IsOpen(VxWindow *window);
+Vx__Expose bool VxWindow_IsOpen(const VxWindow *window);
 
 #endif

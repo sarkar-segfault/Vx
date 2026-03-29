@@ -27,7 +27,7 @@ bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
   if (!window) return false;
 
-  WNDCLASS *wc = Vx_GetWindowClass();  
+  const WNDCLASS *wc = Vx_GetWindowClass();  
   (*window)->hwnd = CreateWindowEx(
     0, wc->lpszClassName, wc->lpszClassName,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
@@ -42,15 +42,15 @@ bool VxWindow_Create(VxWindow **window) {
   return true;
 }
 
-void VxWindow_Update(VxWindow *window) {
-  MSG msg = {};
+void VxWindow_Update(const VxWindow *window) {
+  MSG msg = {0};
   while (GetMessage(&msg, window->hwnd, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
 }
 
-bool VxWindow_IsOpen(VxWindow *window) {
+bool VxWindow_IsOpen(const VxWindow *window) {
   if (!window) return false;
   if (!window->hwnd) return false;
   if (!IsWindow(window->hwnd)) return false;
