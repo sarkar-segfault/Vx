@@ -1,9 +1,9 @@
-PROJECT_NAME           = "Vx"
-PROJECT_BRIEF          = "A pure C library for creating and controlling windows"
+PROJECT_NAME           = Vx
+PROJECT_BRIEF          = A pure C library for creating and controlling windows
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
-INPUT                  = Headers Sources
-FILE_PATTERNS          = *.c *.h
+INPUT                  = Headers/Vx
+FILE_PATTERNS          = *.h
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES

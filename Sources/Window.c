@@ -1,10 +1,3 @@
-/**
-  @file Window.c
-  @since 0.1.0
-  @author Adhrit Sarkar <adhritsarkar@proton.me>
-  @brief Defines functionality for VxWindow.h; as of now, only supports windows.
-*/
-
 #include "Vx/Window.h" // IWYU pragma: associated
 #include <stdbool.h>
 #include <stdlib.h>
@@ -18,9 +11,9 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
-typedef struct VxWindow {
+struct VxWindow {
   HWND hwnd;
-} VxWindow;
+};
 
 bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
