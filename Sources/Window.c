@@ -8,11 +8,51 @@
 
 #include "Vx/Window.h"
 #include <stdbool.h>
+#include <stdlib.h>
+#include "Vx/Lifecycle.h"
 
 #ifdef _WIN32
   #define NOMINMAX
   #define WIN32_LEAN_AND_MEAN
   #include <Windows.h>
 #else
-  #error "VxWindow only supports Win32"
+  #error "Vx only supports Win32 as of now..."
 #endif
+
+typedef struct VxWindow {
+  HWND hwnd;
+} VxWindow;
+
+bool VxWindow_Create(VxWindow **window) {
+  *window = calloc(1, sizeof(VxWindow));
+  if (!window) return false;
+
+  WNDCLASS *wc = Vx_GetWindowClass();  
+  (*window)->hwnd = CreateWindowEx(
+    0, wc->lpszClassName, wc->lpszClassName,
+    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+    CW_USEDEFAULT, 800, 600, NULL, NULL,
+    wc->hInstance, NULL
+  );
+
+  ShowWindow((*window)->hwnd, SW_SHOW);
+  UpdateWindow((*window)->hwnd);
+
+  if (!(*window)->hwnd) return false;
+  return true;
+}
+
+bool VxWindow_IsOpen(VxWindow *window) {
+  if (!window) return false;
+  if (!window->hwnd) return false;
+  if (!IsWindow(window->hwnd)) return false;
+  return true;
+}
+
+bool VxWindow_Delete(VxWindow *window) {
+  if (!window) return false;
+  if (!DestroyWindow(window->hwnd)) return false;
+
+  window->hwnd = NULL;
+  return true;
+}

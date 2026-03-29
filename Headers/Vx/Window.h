@@ -12,9 +12,30 @@
 #include "_Expose.h"
 #include <stdbool.h>
 
+/**
+  @since 0.1.0
+  @brief Represents a platform-specific window.
+*/
 typedef struct VxWindow VxWindow;
 
-Vx__Expose void VxWindow_Create(VxWindow *window);
-Vx__Expose void VxWindow_Delete(VxWindow *window);
+/**
+  @since 0.1.0
+  @brief Creates a native platform window.
+  @returns Whether creation was successful.
+*/
+Vx__Expose bool VxWindow_Create(VxWindow **window);
+
+/**
+  @since 0.1.0
+  @brief Deletes the specified window.
+  @returns Whether deletion was successful.
+*/
+Vx__Expose bool VxWindow_Delete(VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Whether the specified window is still valid.
+*/
+Vx__Expose bool VxWindow_IsOpen(VxWindow *window);
 
 #endif

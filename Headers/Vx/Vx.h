@@ -9,6 +9,7 @@
 #ifndef Vx__H
 #define Vx__H
 
+#include "Lifecycle.h"
 #include "Window.h"
 
 #endif
