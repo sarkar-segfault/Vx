@@ -1,7 +1,6 @@
 /**
   @file Window.c
   @since 0.1.0
-  @license MIT
   @author Adhrit Sarkar <adhritsarkar@proton.me>
   @brief Defines functionality for VxWindow.h; as of now, only supports windows.
 */

@@ -1,7 +1,6 @@
 /**
   @file Lifecycle.c
   @since 0.1.0
-  @license MIT
   @author Adhrit Sarkar <adhritsarkar@proton.me>
   @brief Defines functionality for Lifecycle.h; as of now, only works on windows.
 */
