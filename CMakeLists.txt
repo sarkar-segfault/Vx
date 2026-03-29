@@ -9,12 +9,18 @@ project(
 
 add_library(Vx)
 
+if(BUILD_SHARED_LIBS)
+  target_compile_definitions(Vx PRIVATE Vx__Shared)
+endif()
+
+target_compile_definitions(Vx PRIVATE Vx__Build)
+
 target_compile_definitions(
   Vx PUBLIC
-  VX_VERSION="${PROJECT_VERSION}"
-  VX_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
-  VX_VERSION_MINOR="${PROJECT_VERSION_MINOR}"
-  VX_VERSION_MICRO="${PROJECT_VERSION_PATCH}"
+  VxVersion="${PROJECT_VERSION}"
+  VxVersion_Major="${PROJECT_VERSION_MAJOR}"
+  VxVersion_Minor="${PROJECT_VERSION_MINOR}"
+  VxVersion_Micro="${PROJECT_VERSION_PATCH}"
 )
 
 target_include_directories(Vx PUBLIC Headers)
