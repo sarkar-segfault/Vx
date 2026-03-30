@@ -14,7 +14,7 @@ LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
   switch (umsg) {
     case WM_NCCREATE:
       SetWindowLongPtr(hwnd, GWLP_USERDATA, 1);
-      return DefWindowProc(hwnd, umsg, wparam, lparam);
+      return TRUE;
     
     case WM_DESTROY:
       SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
