@@ -1,5 +1,7 @@
 #include "Vx/Lifecycle.h" // IWYU pragma: associated
 #include <stdbool.h>
+#include <stdlib.h>
+#include "Internal.h"
 
 #ifdef _WIN32
   #define NOMINMAX
@@ -9,17 +11,34 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
+LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
+  switch (umsg) {
+    case WM_NCCREATE:
+      SetWindowLongPtr(hwnd, GWLP_USERDATA, 1);
+      return DefWindowProc(hwnd, umsg, wparam, lparam);
+    
+    case WM_DESTROY:
+      SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+      PostQuitMessage(0);
+      return 0;
+
+    default:
+      return DefWindowProc(hwnd, umsg, wparam, lparam);
+  }
+}
+
 bool Vx_Initiate(void) {
   WNDCLASSEX wc = {0};
   wc.lpszClassName = Vx__WindowClass;
-  wc.lpfnWndProc = DefWindowProc;
+  wc.lpfnWndProc = Vx__WindowProcess;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
 
-  if (!RegisterClassEx(&wc)) return false;
+  Vx__FalseCheck(RegisterClassEx(&wc), "Failed to register window class");
   return true;
 }
 
-void Vx_Terminate(void) {
-  UnregisterClass(Vx__WindowClass, GetModuleHandle(NULL));
+bool Vx_Terminate(void) {
+  Vx__FalseCheck(UnregisterClass(Vx__WindowClass, GetModuleHandle(NULL)), "Failed to unregister window class");
+  return true;
 }

@@ -36,7 +36,7 @@ Vx__Expose bool VxWindow_Delete(VxWindow *window);
   @brief Updates the specified window.
   @returns Whether the window successfully updated.
 */
-Vx__Expose bool VxWindow_Update(const VxWindow *window);
+Vx__Expose bool VxWindow_Update(VxWindow *window);
 
 /**
   @since 0.1.0

@@ -24,6 +24,6 @@ Vx__Expose bool Vx_Initiate(void);
 /**
   @brief Terminates the library so it can no longer create windows. `VxWindow_Create` cannot be called after this.
 */
-Vx__Expose void Vx_Terminate(void);
+Vx__Expose bool Vx_Terminate(void);
 
 #endif
