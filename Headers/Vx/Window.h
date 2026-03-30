@@ -34,8 +34,9 @@ Vx__Expose bool VxWindow_Delete(VxWindow *window);
 /**
   @since 0.1.0
   @brief Updates the specified window.
+  @returns Whether the window successfully updated.
 */
-Vx__Expose void VxWindow_Update(const VxWindow *window);
+Vx__Expose bool VxWindow_Update(const VxWindow *window);
 
 /**
   @since 0.1.0
@@ -43,5 +44,19 @@ Vx__Expose void VxWindow_Update(const VxWindow *window);
   @returns Whether the specified window is still valid.
 */
 Vx__Expose bool VxWindow_IsOpen(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Gets the dimensions of the window.
+  @returns The width and height of the specified window.
+*/
+Vx__Expose bool VxWindow_GetSize(const VxWindow *window, int *w, int *h);
+
+/**
+  @since 0.1.0
+  @brief Gets the position of the window.
+  @returns The x and y coordinates of the specified window.
+*/
+Vx__Expose bool VxWindow_GetPos(const VxWindow *Window, int *x, int *y);
 
 #endif

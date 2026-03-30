@@ -11,13 +11,16 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
+#define Vx_FalseCheck(VAL) if (!VAL) return false
+#define Vx_WindowRect(NAME, HWND) RECT NAME; Vx_FalseCheck(GetWindowRect(HWND, &NAME))
+
 struct VxWindow {
   HWND hwnd;
 };
 
 bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
-  if (!window) return false;
+  Vx_FalseCheck(window);
 
   (*window)->hwnd = CreateWindowEx(
     0, Vx__WindowClass, Vx__WindowClass,
@@ -29,29 +32,52 @@ bool VxWindow_Create(VxWindow **window) {
   ShowWindow((*window)->hwnd, SW_SHOW);
   UpdateWindow((*window)->hwnd);
 
-  if (!(*window)->hwnd) return false;
+  Vx_FalseCheck((*window)->hwnd);
   return true;
 }
 
-void VxWindow_Update(const VxWindow *window) {
+bool VxWindow_Update(const VxWindow *window) {
+  Vx_FalseCheck(window);
+  
   MSG msg = {0};
   while (GetMessage(&msg, window->hwnd, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
+
+  return true;
 }
 
 bool VxWindow_IsOpen(const VxWindow *window) {
-  if (!window) return false;
-  if (!window->hwnd) return false;
-  if (!IsWindow(window->hwnd)) return false;
+  Vx_FalseCheck(window);
+  Vx_FalseCheck(IsWindow(window->hwnd));
   return true;
 }
 
 bool VxWindow_Delete(VxWindow *window) {
-  if (!window) return false;
-  if (!DestroyWindow(window->hwnd)) return false;
+  Vx_FalseCheck(window);
+  Vx_FalseCheck(DestroyWindow(window->hwnd));
 
-  window->hwnd = NULL;
+  window = NULL;
+  return true;
+}
+
+bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
+  Vx_FalseCheck(window);
+  Vx_WindowRect(rect, window->hwnd);
+
+  *w = rect.right - rect.left;
+  *h = rect.bottom - rect.top;
+
+  return true;
+}
+
+bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
+  Vx_FalseCheck(window);
+  Vx_WindowRect(rect, window->hwnd);  
+
+  *x = rect.left;
+  *y = rect.top;
+
   return true;
 }
