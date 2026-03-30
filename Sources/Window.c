@@ -19,12 +19,11 @@ bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
   if (!window) return false;
 
-  const WNDCLASS *wc = Vx_GetWindowClass();  
   (*window)->hwnd = CreateWindowEx(
-    0, wc->lpszClassName, wc->lpszClassName,
+    0, Vx__WindowClass, Vx__WindowClass,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
     CW_USEDEFAULT, 800, 600, NULL, NULL,
-    wc->hInstance, NULL
+    GetModuleHandle(NULL), NULL
   );
 
   ShowWindow((*window)->hwnd, SW_SHOW);
