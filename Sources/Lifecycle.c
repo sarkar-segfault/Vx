@@ -25,6 +25,7 @@ bool Vx_Initiate(void) {
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wc.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
 
   Vx__AssertLog(RegisterClassEx(&wc), "Failed to register window class");
   return true;

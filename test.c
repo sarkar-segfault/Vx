@@ -6,9 +6,10 @@
 
 int main(void) {
   Vx_Initiate();
-  
   VxWindow *window = NULL;
+
   VxWindow_Create(&window);
+  VxWindow_SetTargetFps(window, 60);
 
   while (VxWindow_IsOpen(window)) {
     VxWindow_Update(window);
