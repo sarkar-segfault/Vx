@@ -9,6 +9,11 @@ project(
 
 add_library(Vx Sources/Window.c Sources/Lifecycle.c)
 
+if(WIN32)
+  set(Vx__WindowClass "VxWindow" CACHE STRING "Set the name of the window class (win32)")
+  target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+endif()
+
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(Vx PRIVATE Vx__Shared)
 endif()
@@ -17,10 +22,10 @@ target_compile_definitions(Vx PRIVATE Vx__Build)
 
 target_compile_definitions(
   Vx PUBLIC
-  VxVersion="${PROJECT_VERSION}"
-  VxVersion_Major="${PROJECT_VERSION_MAJOR}"
-  VxVersion_Minor="${PROJECT_VERSION_MINOR}"
-  VxVersion_Micro="${PROJECT_VERSION_PATCH}"
+  Vx_Version="${PROJECT_VERSION}"
+  Vx_VersionMajor="${PROJECT_VERSION_MAJOR}"
+  Vx_VersionMinor="${PROJECT_VERSION_MINOR}"
+  Vx_VersionMicro="${PROJECT_VERSION_PATCH}"
 )
 
 target_include_directories(Vx PUBLIC Headers)
