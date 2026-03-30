@@ -1,7 +1,8 @@
 #include "Vx/Lifecycle.h"
 #include "Vx/Window.h"
 #include <stddef.h>
-// #include <stdio.h>
+#include <stdio.h>
+#include <Windows.h>
 
 int main(void) {
   Vx_Initiate();
@@ -22,6 +23,26 @@ int main(void) {
   // printf("x: %d, y: %d\n", x, y);
 
   VxWindow_Delete(window);
+
+  DWORD err = GetLastError();
+  char *msg = NULL;
+
+  FormatMessage(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    NULL,
+    err,
+    0,
+    (LPSTR)&msg,
+    0,
+    NULL
+  );
+
+  if (msg) {
+    printf("Win32 API Error #%lu: %s", err, msg);
+    LocalFree(msg);
+  } else {
+    printf("Win32 API Error #%lu", err);
+  }
 
   Vx_Terminate();
   return 0;

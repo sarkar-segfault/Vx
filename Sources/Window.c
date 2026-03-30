@@ -38,7 +38,7 @@ bool VxWindow_Create(VxWindow **window) {
 bool VxWindow_Update(VxWindow *window) {
   Vx__FalseCheck(window, "Passed NULL to VxWindow_Update");
 
-  MSG msg = {0};  
+  MSG msg = {0};
   while (PeekMessage(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);

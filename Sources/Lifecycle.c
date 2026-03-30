@@ -1,6 +1,5 @@
 #include "Vx/Lifecycle.h" // IWYU pragma: associated
 #include <stdbool.h>
-#include <stdlib.h>
 #include "Internal.h"
 
 #ifdef _WIN32
