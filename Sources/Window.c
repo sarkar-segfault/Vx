@@ -39,7 +39,7 @@ bool VxWindow_Update(VxWindow *window) {
   Vx__FalseCheck(window, "Passed NULL to VxWindow_Update");
 
   MSG msg = {0};
-  while (PeekMessage(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
+  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
@@ -56,8 +56,10 @@ bool VxWindow_IsOpen(const VxWindow *window) {
 
 bool VxWindow_Delete(VxWindow *window) {
   Vx__FalseCheck(window, "Passed NULL to VxWindow_Delete");
-  Vx__FalseCheck(DestroyWindow(window->hwnd), "Failed to destroy window");
-
+  if (IsWindow(window->hwnd)) {
+    Vx__FalseCheck(DestroyWindow(window->hwnd), "Failed to destroy window");
+  }
+  
   free(window);
   window = NULL;
   return true;
