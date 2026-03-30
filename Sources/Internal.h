@@ -24,7 +24,6 @@
   #define Vx__Fatal(msg)
 #endif
 
-#define Vx__FalseCheck(val, msg) if (!val) { Vx__Fatal(msg); return false; }
-#define Vx__FalseCheckNoLog(val) if (!val) { return false; }
+#define Vx__AssertLog(exp, msg) if (!(exp)) { Vx__Fatal(msg); return false; }
 
 #endif
