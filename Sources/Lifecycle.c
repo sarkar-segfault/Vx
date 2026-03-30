@@ -17,7 +17,6 @@ LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       return TRUE;
     
     case WM_DESTROY:
-      puts("Processing WM_DESTROY...");
       SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
       PostQuitMessage(0);
       return 0;
