@@ -9,5 +9,6 @@
 #endif
 
 #define Vx__FalseCheck(VAL, MSG) if (!VAL) { Vx__Fatal(MSG); return false; }
+#define Vx__FalseCheckVoid(VAL) if (!VAL) { return false; }
 
 #endif

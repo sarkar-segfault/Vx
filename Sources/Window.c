@@ -25,7 +25,7 @@ bool VxWindow_Create(VxWindow **window) {
     0, Vx__WindowClass, Vx__WindowClass,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
     CW_USEDEFAULT, 800, 600, NULL, NULL,
-    GetModuleHandle(NULL), (void *)1
+    GetModuleHandle(NULL), 0
   );
   Vx__FalseCheck((*window)->hwnd, "Failed to create window");
 
@@ -49,8 +49,7 @@ bool VxWindow_Update(VxWindow *window) {
 
 bool VxWindow_IsOpen(const VxWindow *window) {
   Vx__FalseCheck(window, "Passed NULL to VxWindow_IsOpen");
-  Vx__FalseCheck(IsWindow(window->hwnd), "Window is no longer valid");
-  Vx__FalseCheck(GetWindowLongPtr(window->hwnd, GWLP_USERDATA), "Window is no longer open");
+  Vx__FalseCheckVoid(IsWindow(window->hwnd));
   return true;
 }
 
