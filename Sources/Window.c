@@ -3,15 +3,7 @@
 #include <stdlib.h>
 #include "Internal.h"
 
-#ifdef _WIN32
-  #define NOMINMAX
-  #define WIN32_LEAN_AND_MEAN
-  #include <Windows.h>
-#else
-  #error "Vx only supports Win32 as of now..."
-#endif
-
-#define Vx__WindowRect(NAME, HWND) RECT NAME; Vx__FalseCheck(GetWindowRect(HWND, &NAME), "Failed to obtain window rect")
+#define Vx__WindowRect(name, hwnd) RECT name; Vx__FalseCheck(GetWindowRect(hwnd, &name), "Failed to obtain window rect")
 
 struct VxWindow {
   HWND hwnd;
@@ -22,10 +14,9 @@ bool VxWindow_Create(VxWindow **window) {
   Vx__FalseCheck(window, "Failed to calloc window");
 
   (*window)->hwnd = CreateWindowEx(
-    0, Vx__WindowClass, Vx__WindowClass,
-    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-    CW_USEDEFAULT, 800, 600, NULL, NULL,
-    GetModuleHandle(NULL), 0
+    0, TEXT(Vx__WindowClass), TEXT(Vx__WindowClass),
+    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+    800, 600, NULL, NULL, GetModuleHandle(NULL), 0
   );
   Vx__FalseCheck((*window)->hwnd, "Failed to create window");
 
@@ -49,7 +40,7 @@ bool VxWindow_Update(VxWindow *window) {
 
 bool VxWindow_IsOpen(const VxWindow *window) {
   Vx__FalseCheck(window, "Passed NULL to VxWindow_IsOpen");
-  Vx__FalseCheckVoid(IsWindow(window->hwnd));
+  Vx__FalseCheckNoLog(IsWindow(window->hwnd));
   return true;
 }
 

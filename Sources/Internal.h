@@ -1,14 +1,30 @@
 #ifndef Vx__InternalH
 #define Vx__InternalH
 
-#ifdef _DEBUG
-  #include <stdio.h> // IWYU pragma: export
-  #define Vx__Fatal(MSG) puts(MSG)
+#ifdef _WIN32
+  #ifndef UNICODE
+    #define UNICODE
+  #endif
+
+  #ifndef _UNICODE
+    #define _UNICODE
+  #endif
+
+  #define NOMINMAX
+  #define WIN32_LEAN_AND_MEAN
+  #include <Windows.h>
 #else
-  #define Vx__Fatal(MSG)
+  #error "Vx only supports Win32 as of now..."
 #endif
 
-#define Vx__FalseCheck(VAL, MSG) if (!VAL) { Vx__Fatal(MSG); return false; }
-#define Vx__FalseCheckVoid(VAL) if (!VAL) { return false; }
+#ifdef _DEBUG
+  #include <stdio.h> // IWYU pragma: export
+  #define Vx__Fatal(msg) puts(msg)
+#else
+  #define Vx__Fatal(msg)
+#endif
+
+#define Vx__FalseCheck(val, msg) if (!val) { Vx__Fatal(msg); return false; }
+#define Vx__FalseCheckNoLog(val) if (!val) { return false; }
 
 #endif

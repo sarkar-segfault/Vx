@@ -16,7 +16,7 @@
 #endif
 
 /**
-  @brief Initates the library so it can create windows. Must be called before `VxWindow_Create`
+  @brief Initiates the library so it can create windows. Must be called before `VxWindow_Create`
   @returns Whether initiation was successful.
 */
 Vx__Expose bool Vx_Initiate(void);
