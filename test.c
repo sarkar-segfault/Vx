@@ -1,7 +1,7 @@
 #include "Vx/Lifecycle.h"
 #include "Vx/Window.h"
 #include <stddef.h>
-#include <stdio.h>
+// #include <stdio.h>
 #include <Windows.h>
 
 int main(void) {
