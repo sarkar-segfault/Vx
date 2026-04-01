@@ -27,7 +27,7 @@ bool VxWindow_Create(VxWindow **window) {
 }
 
 bool VxWindow_Update(VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_Update");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_Update");
 
   MSG msg = {0};
   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -39,12 +39,12 @@ bool VxWindow_Update(VxWindow *window) {
 }
 
 bool VxWindow_IsOpen(const VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_IsOpen");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_IsOpen");
   return IsWindow(window->hwnd);
 }
 
 bool VxWindow_Delete(VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_Delete");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_Delete");
   if (IsWindow(window->hwnd)) {
     Vx__AssertLog(DestroyWindow(window->hwnd), "Failed to destroy window");
   }
@@ -55,7 +55,9 @@ bool VxWindow_Delete(VxWindow *window) {
 }
 
 bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_GetSize");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_GetSize");
+  Vx__AssertLog(w, "Passed NULL as w to VxWindow_GetSize");
+  Vx__AssertLog(h, "Passed NULL as h to VxWindow_GetSize");
   Vx__WindowRect(rect, window->hwnd);
 
   *w = rect.right - rect.left;
@@ -64,8 +66,17 @@ bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
   return true;
 }
 
+bool VxWindow_SetSize(const VxWindow *window, int w, int h) {
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetSize");
+  int x, y;
+  VxWindow_GetPos(window, &x, &y);
+  return MoveWindow(window->hwnd, x, y, w, h, TRUE);
+}
+
 bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_GetPos");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_GetPos");
+  Vx__AssertLog(x, "Passed NULL as x to VxWindow_GetSize");
+  Vx__AssertLog(y, "Passed NULL as y to VxWindow_GetSize");
   Vx__WindowRect(rect, window->hwnd);
 
   *x = rect.left;
@@ -74,9 +85,16 @@ bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
   return true;
 }
 
+bool VxWindow_SetPos(const VxWindow *window, int x, int y) {
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetPos");
+  int w, h;
+  VxWindow_GetSize(window, &w, &h);
+  return MoveWindow(window->hwnd, x, y, w, h, TRUE);
+}
+
 bool VxWindow_SetTargetFps(const VxWindow *window, const int fps) {
-  Vx__AssertLog(window, "Passed NULL to VxWindow_SetTargetFps");
-  Vx__AssertLog(fps != 0, "Passed 0 FPS to VxWindow_SetTargetFps");
+  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetTargetFps");
+  Vx__AssertLog(fps != 0, "Passed 0 as fps to VxWindow_SetTargetFps");
 
   SetTimer(window->hwnd, 1, 1000 / fps, NULL);
 

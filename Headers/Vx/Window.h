@@ -54,10 +54,24 @@ Vx__Expose bool VxWindow_GetSize(const VxWindow *window, int *w, int *h);
 
 /**
   @since 0.1.0
+  @brief Sets the dimensions of the window.
+  @returns Whether resizing was successful.
+*/
+Vx__Expose bool VxWindow_SetSize(const VxWindow *window, int w, int h);
+
+/**
+  @since 0.1.0
   @brief Gets the position of the window.
   @returns The x and y coordinates of the specified window.
 */
 Vx__Expose bool VxWindow_GetPos(const VxWindow *window, int *x, int *y);
+
+/**
+  @since 0.1.0
+  @brief Sets the position of the window.
+  @returns Whether repositioning was successful.
+*/
+Vx__Expose bool VxWindow_SetPos(const VxWindow *window, int x, int y);
 
 /**
   @brief Sets the target FPS for the specified window.
