@@ -7,19 +7,22 @@ struct VxWindow {
   HWND hwnd;
 };
 
-bool VxWindow_Create(VxWindow **window) {
+bool VxWindow_Create(VxWindow **window, const int fps) {
   *window = calloc(1, sizeof(VxWindow));
-  if (!window) return false;
+  if (!window || fps <= 0) return false;
 
   (*window)->hwnd = CreateWindowEx(
     0, Vx__WindowClass, Vx__WindowClass,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
     800, 600, NULL, NULL, GetModuleHandle(NULL), 0
   );
-  if (!(*window)->hwnd) return false;
-
-  ShowWindow((*window)->hwnd, SW_SHOW);
-  UpdateWindow((*window)->hwnd);
+  
+  if (
+    !(*window)->hwnd ||
+    !ShowWindow((*window)->hwnd, SW_SHOW) ||
+    !UpdateWindow((*window)->hwnd) ||
+    !SetTimer((*window)->hwnd, 1, 1000 / fps, NULL)
+  ) return false;
 
   return true;
 }
@@ -41,8 +44,10 @@ bool VxWindow_IsOpen(const VxWindow *window) {
 }
 
 bool VxWindow_Delete(VxWindow *window) {
-  if (!window) return false;
-  if (IsWindow(window->hwnd) && !DestroyWindow(window->hwnd)) return false;
+  if (
+    !window ||
+    (IsWindow(window->hwnd) && !DestroyWindow(window->hwnd))
+  ) return false;
   
   free(window);
   window = NULL;
@@ -97,12 +102,4 @@ bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len) {
 bool VxWindow_SetTitle(const VxWindow *window, char *buf) {
   if (!window || !buf) return false;
   return SetWindowText(window->hwnd, buf);
-}
-
-bool VxWindow_SetTargetFps(const VxWindow *window, const int fps) {
-  if (!window || fps == 0) return false;
-
-  SetTimer(window->hwnd, 1, 1000 / fps, NULL);
-
-  return true;
 }

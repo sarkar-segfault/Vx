@@ -22,7 +22,7 @@ typedef struct VxWindow VxWindow;
   @brief Creates a native platform window.
   @returns Whether creation was successful.
 */
-Vx__Expose bool VxWindow_Create(VxWindow **window);
+Vx__Expose bool VxWindow_Create(VxWindow **window, const int fps);
 
 /**
   @since 0.1.0
@@ -86,11 +86,5 @@ Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len);
   @returns Whether setting the title was successful.
 */
 Vx__Expose bool VxWindow_SetTitle(const VxWindow *window, char *title);
-
-/**
-  @brief Sets the target FPS for the specified window.
-  @returns Whether the FPS was set successfully.
-*/
-Vx__Expose bool VxWindow_SetTargetFps(const VxWindow *window, const int fps);
 
 #endif
