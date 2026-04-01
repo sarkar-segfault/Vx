@@ -33,7 +33,6 @@ target_include_directories(Vx PUBLIC Headers)
 target_compile_features(Vx PUBLIC c_std_99)
 
 if(WIN32)
-  target_compile_definitions(Vx PRIVATE UNICODE _UNICODE)
   target_link_libraries(Vx PRIVATE user32 )
 endif()
 
