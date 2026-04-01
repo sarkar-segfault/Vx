@@ -3,22 +3,20 @@
 #include <stdlib.h>
 #include "Internal.h"
 
-#define Vx__WindowRect(name, hwnd) RECT name; Vx__AssertLog(GetWindowRect(hwnd, &name), "Failed to obtain window rect")
-
 struct VxWindow {
   HWND hwnd;
 };
 
 bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
-  Vx__AssertLog(window, "Failed to calloc window");
+  if (!window) return false;
 
   (*window)->hwnd = CreateWindowEx(
-    0, TEXT(Vx__WindowClass), TEXT(Vx__WindowClass),
+    0, Vx__WindowClass, Vx__WindowClass,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
     800, 600, NULL, NULL, GetModuleHandle(NULL), 0
   );
-  Vx__AssertLog((*window)->hwnd, "Failed to create window");
+  if (!(*window)->hwnd) return false;
 
   ShowWindow((*window)->hwnd, SW_SHOW);
   UpdateWindow((*window)->hwnd);
@@ -27,7 +25,7 @@ bool VxWindow_Create(VxWindow **window) {
 }
 
 bool VxWindow_Update(VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_Update");
+  if (!window) return false;
 
   MSG msg = {0};
   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -39,15 +37,12 @@ bool VxWindow_Update(VxWindow *window) {
 }
 
 bool VxWindow_IsOpen(const VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_IsOpen");
-  return IsWindow(window->hwnd);
+  return window && IsWindow(window->hwnd);
 }
 
 bool VxWindow_Delete(VxWindow *window) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_Delete");
-  if (IsWindow(window->hwnd)) {
-    Vx__AssertLog(DestroyWindow(window->hwnd), "Failed to destroy window");
-  }
+  if (!window) return false;
+  if (IsWindow(window->hwnd) && !DestroyWindow(window->hwnd)) return false;
   
   free(window);
   window = NULL;
@@ -55,10 +50,10 @@ bool VxWindow_Delete(VxWindow *window) {
 }
 
 bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_GetSize");
-  Vx__AssertLog(w, "Passed NULL as w to VxWindow_GetSize");
-  Vx__AssertLog(h, "Passed NULL as h to VxWindow_GetSize");
-  Vx__WindowRect(rect, window->hwnd);
+  if (!window || !w || !h) return false;
+
+  RECT rect;
+  if (!GetWindowRect(window->hwnd, &rect)) return false;
 
   *w = rect.right - rect.left;
   *h = rect.bottom - rect.top;
@@ -67,17 +62,18 @@ bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
 }
 
 bool VxWindow_SetSize(const VxWindow *window, int w, int h) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetSize");
+  if (!window) return false;
   int x, y;
+  
   VxWindow_GetPos(window, &x, &y);
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
 bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_GetPos");
-  Vx__AssertLog(x, "Passed NULL as x to VxWindow_GetSize");
-  Vx__AssertLog(y, "Passed NULL as y to VxWindow_GetSize");
-  Vx__WindowRect(rect, window->hwnd);
+  if (!window || !x || !y) return false;
+
+  RECT rect;
+  if (!GetWindowRect(window->hwnd, &rect)) return false;
 
   *x = rect.left;
   *y = rect.top;
@@ -86,15 +82,15 @@ bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
 }
 
 bool VxWindow_SetPos(const VxWindow *window, int x, int y) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetPos");
+  if (!window) return false;
   int w, h;
+  
   VxWindow_GetSize(window, &w, &h);
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
 bool VxWindow_SetTargetFps(const VxWindow *window, const int fps) {
-  Vx__AssertLog(window, "Passed NULL as window to VxWindow_SetTargetFps");
-  Vx__AssertLog(fps != 0, "Passed 0 as fps to VxWindow_SetTargetFps");
+  if (!window || fps == 0) return false;
 
   SetTimer(window->hwnd, 1, 1000 / fps, NULL);
 

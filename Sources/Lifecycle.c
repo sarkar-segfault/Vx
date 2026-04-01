@@ -20,18 +20,16 @@ LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
 bool Vx_Initiate(void) {
   WNDCLASSEX wc = {0};
-  wc.lpszClassName = TEXT(Vx__WindowClass);
+  wc.lpszClassName = Vx__WindowClass;
   wc.lpfnWndProc = Vx__WindowProcess;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
 
-  Vx__AssertLog(RegisterClassEx(&wc), "Failed to register window class");
-  return true;
+  return RegisterClassEx(&wc);
 }
 
 bool Vx_Terminate(void) {
-  Vx__AssertLog(UnregisterClass(TEXT(Vx__WindowClass), GetModuleHandle(NULL)), "Failed to unregister window class");
-  return true;
+  return UnregisterClass(Vx__WindowClass, GetModuleHandle(NULL));
 }
