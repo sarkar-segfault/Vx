@@ -1,5 +1,5 @@
 PROJECT_NAME           = Vx
-PROJECT_BRIEF          = A pure C library for creating and controlling windows
+PROJECT_BRIEF          = A windowing library for simpletons and wizards alike
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
 INPUT                  = Headers/Vx

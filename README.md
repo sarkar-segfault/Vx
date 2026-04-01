@@ -1,2 +1,2 @@
 # Vx
-A pure C library for creating and controlling windows
+A windowing library for simpletons and wizards alike

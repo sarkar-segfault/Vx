@@ -4,7 +4,7 @@ project(
   Vx
   LANGUAGES C
   VERSION 0.1.0
-  DESCRIPTION "A pure C library for creating and controlling windows"
+  DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
 add_library(Vx Sources/Window.c Sources/Lifecycle.c)
