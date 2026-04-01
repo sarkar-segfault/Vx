@@ -89,6 +89,16 @@ bool VxWindow_SetPos(const VxWindow *window, int x, int y) {
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
+bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len) {
+  if (!window || !buf || len <= 0) return false;
+  return GetWindowText(window->hwnd, buf, len) != 0;
+}
+
+bool VxWindow_SetTitle(const VxWindow *window, char *buf) {
+  if (!window || !buf) return false;
+  return SetWindowText(window->hwnd, buf);
+}
+
 bool VxWindow_SetTargetFps(const VxWindow *window, const int fps) {
   if (!window || fps == 0) return false;
 

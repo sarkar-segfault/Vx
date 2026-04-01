@@ -74,6 +74,20 @@ Vx__Expose bool VxWindow_GetPos(const VxWindow *window, int *x, int *y);
 Vx__Expose bool VxWindow_SetPos(const VxWindow *window, int x, int y);
 
 /**
+  @since 0.1.0
+  @brief Gets the current title of the window.
+  @returns Whether fetching the title was successful.
+*/
+Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len);
+
+/**
+  @since 0.1.0
+  @brief Sets the title of the specified window.
+  @returns Whether setting the title was successful.
+*/
+Vx__Expose bool VxWindow_SetTitle(const VxWindow *window, char *title);
+
+/**
   @brief Sets the target FPS for the specified window.
   @returns Whether the FPS was set successfully.
 */
