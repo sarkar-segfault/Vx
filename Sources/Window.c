@@ -9,7 +9,7 @@ struct VxWindow {
 
 bool VxWindow_Create(VxWindow **window, const int fps) {
   *window = calloc(1, sizeof(VxWindow));
-  if (!window || fps <= 0) return false;
+  if (!window) return false;
 
   (*window)->hwnd = CreateWindowEx(
     0, Vx__WindowClass, Vx__WindowClass,
@@ -20,7 +20,11 @@ bool VxWindow_Create(VxWindow **window, const int fps) {
   if (
     !(*window)->hwnd ||
     !ShowWindow((*window)->hwnd, SW_SHOW) ||
-    !UpdateWindow((*window)->hwnd) ||
+    !UpdateWindow((*window)->hwnd)
+  ) return false;
+
+  if (
+    fps > 0 &&
     !SetTimer((*window)->hwnd, 1, 1000 / fps, NULL)
   ) return false;
 
