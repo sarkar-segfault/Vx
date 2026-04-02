@@ -9,9 +9,20 @@ project(
 
 add_library(Vx Sources/Window.c Sources/Lifecycle.c)
 
-if(WIN32)
-  set(Vx__WindowClass "VxWindow" CACHE STRING "Set the name of the window class (win32)")
-  target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+set(VxWindow__DefaultWidth 800 CACHE STRING "The default width for all windows")
+set(VxWindow__DefaultHeight 600 CACHE STRING "The default height for all windows")
+set(VxWindow__DefaultTitle "VxWindow" CACHE STRING "The default title for all windows")
+
+if(DEFINED VxWindow__DefaultWidth)
+  target_compile_definitions(Vx PUBLIC VxWindow__DefaultWidth=${VxWindow__DefaultWidth})
+endif()
+
+if(DEFINED VxWindow__DefaultHeight)
+  target_compile_definitions(Vx PUBLIC VxWindow__DefaultHeight=${VxWindow__DefaultHeight})
+endif()
+
+if(DEFINED VxWindow__DefaultTitle)
+  target_compile_definitions(Vx PUBLIC VxWindow__DefaultTitle=${VxWindow_DefaultTitle})
 endif()
 
 if(BUILD_SHARED_LIBS)
@@ -33,7 +44,9 @@ target_include_directories(Vx PUBLIC Headers)
 target_compile_features(Vx PUBLIC c_std_99)
 
 if(WIN32)
-  target_link_libraries(Vx PRIVATE user32 )
+  set(Vx__WindowClass "VxWindow" CACHE STRING "The name of the Win32 window class")
+  target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+  target_link_libraries(Vx PRIVATE user32)
 endif()
 
 add_executable(test test.c)
