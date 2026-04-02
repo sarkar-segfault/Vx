@@ -35,7 +35,7 @@ bool VxWindow_Update(VxWindow *window) {
   if (!window) return false;
 
   MSG msg = {0};
-  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+  while (GetMessage(&msg, NULL, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
