@@ -24,6 +24,44 @@ typedef enum VxEventType {
 } VxEventType;
 
 typedef enum VxEventKey {
+  VxEventKey_0,
+  VxEventKey_1,
+  VxEventKey_2,
+  VxEventKey_3,
+  VxEventKey_4,
+  VxEventKey_5,
+  VxEventKey_6,
+  VxEventKey_7,
+  VxEventKey_8,
+  VxEventKey_9,
+
+  VxEventKey_A,
+  VxEventKey_B,
+  VxEventKey_C,
+  VxEventKey_D,
+  VxEventKey_E,
+  VxEventKey_F,
+  VxEventKey_G,
+  VxEventKey_H,
+  VxEventKey_I,
+  VxEventKey_J,
+  VxEventKey_K,
+  VxEventKey_L,
+  VxEventKey_M,
+  VxEventKey_N,
+  VxEventKey_O,
+  VxEventKey_P,
+  VxEventKey_Q,
+  VxEventKey_R,
+  VxEventKey_S,
+  VxEventKey_T,
+  VxEventKey_U,
+  VxEventKey_V,
+  VxEventKey_W,
+  VxEventKey_X,
+  VxEventKey_Y,
+  VxEventKey_Z,
+
   // TODO: add all keys
   VxEventKey_Space
 } VxEventKey;
