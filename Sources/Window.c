@@ -1,5 +1,6 @@
 #include "Vx/Window.h" // IWYU pragma: associated
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "Internal.h"
 
@@ -7,7 +8,7 @@ struct VxWindow {
   HWND hwnd;
 };
 
-bool VxWindow_Create(VxWindow **window, const int fps) {
+bool VxWindow_Create(VxWindow **window, const uint8_t fps) {
   *window = calloc(1, sizeof(VxWindow));
   if (!window) return false;
 
@@ -58,7 +59,7 @@ bool VxWindow_Delete(VxWindow *window) {
   return true;
 }
 
-bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
+bool VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32_t *h) {
   if (!window || !w || !h) return false;
 
   RECT rect;
@@ -70,7 +71,7 @@ bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
   return true;
 }
 
-bool VxWindow_SetSize(const VxWindow *window, const int w, const int h) {
+bool VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h) {
   if (!window) return false;
   int x, y;
   
@@ -78,7 +79,7 @@ bool VxWindow_SetSize(const VxWindow *window, const int w, const int h) {
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
-bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
+bool VxWindow_GetPos(const VxWindow *window, int32_t *x, int32_t *y) {
   if (!window || !x || !y) return false;
 
   RECT rect;
@@ -90,21 +91,39 @@ bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
   return true;
 }
 
-bool VxWindow_SetPos(const VxWindow *window, const int x, const int y) {
+bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y) {
   if (!window) return false;
-  int w, h;
+  uint32_t w, h;
   
   VxWindow_GetSize(window, &w, &h);
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
-bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len) {
+bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len) {
   if (!window || !buf || len < 0) return false;
   GetWindowText(window->hwnd, buf, len);
   return GetLastError() == 0;
 }
 
 bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
-  if (!window || !title) return false;
-  return SetWindowText(window->hwnd, title);
+  return window && title && SetWindowText(window->hwnd, title);
+}
+
+bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
+  if (!window) return false;
+
+  BYTE alpha = 0;
+  DWORD flags = 0;
+  
+  GetLayeredWindowAttributes(window->hwnd, NULL, &alpha, &flags);
+  if (flags & LWA_ALPHA) {
+    *o = alpha / 255.0f;
+    return false;
+  }
+
+  return false;
+}
+
+bool VxWindow_SetOpacity(const VxWindow *window, const float o) {
+  return window && SetLayeredWindowAttributes(window->hwnd, NULL, o, LWA_ALPHA);
 }

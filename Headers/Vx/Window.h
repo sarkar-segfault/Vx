@@ -10,6 +10,7 @@
 
 #include "_Expose.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
   @since 0.1.0
@@ -22,7 +23,7 @@ typedef struct VxWindow VxWindow;
   @brief Creates a native platform window.
   @returns Whether creation was successful.
 */
-Vx__Expose bool VxWindow_Create(VxWindow **window, const int fps);
+Vx__Expose bool VxWindow_Create(VxWindow **window, const uint8_t fps);
 
 /**
   @since 0.1.0
@@ -50,35 +51,35 @@ Vx__Expose bool VxWindow_IsOpen(const VxWindow *window);
   @brief Gets the dimensions of the window.
   @returns The width and height of the specified window.
 */
-Vx__Expose bool VxWindow_GetSize(const VxWindow *window, int *w, int *h);
+Vx__Expose bool VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32_t *h);
 
 /**
   @since 0.1.0
   @brief Sets the dimensions of the window.
   @returns Whether resizing was successful.
 */
-Vx__Expose bool VxWindow_SetSize(const VxWindow *window, const int w, const int h);
+Vx__Expose bool VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h);
 
 /**
   @since 0.1.0
   @brief Gets the position of the window.
   @returns The x and y coordinates of the specified window.
 */
-Vx__Expose bool VxWindow_GetPos(const VxWindow *window, int *x, int *y);
+Vx__Expose bool VxWindow_GetPos(const VxWindow *window, int32_t *x, int32_t *y);
 
 /**
   @since 0.1.0
   @brief Sets the position of the window.
   @returns Whether repositioning was successful.
 */
-Vx__Expose bool VxWindow_SetPos(const VxWindow *window, const int x, const int y);
+Vx__Expose bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y);
 
 /**
   @since 0.1.0
   @brief Gets the current title of the window.
   @returns Whether fetching the title was successful.
 */
-Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len);
+Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len);
 
 /**
   @since 0.1.0
@@ -92,13 +93,13 @@ Vx__Expose bool VxWindow_SetTitle(const VxWindow *window, const char *const titl
   @brief Gets the opacity of the specified window.
   @returns Whether retrieving the opacity was successful.
 */
-Vx__Expose bool VxWindow_GetOpacity(const VxWindow *window, int *o);
+Vx__Expose bool VxWindow_GetOpacity(const VxWindow *window, float *o);
 
 /**
   @since 0.1.0
   @brief Sets the opacity of the specified window.
   @returns Whether setting the opacity was successful.
 */
-Vx__Expose bool VxWindow_SetOpacity(const VxWindow *window, const int o);
+Vx__Expose bool VxWindow_SetOpacity(const VxWindow *window, const float o);
 
 #endif
