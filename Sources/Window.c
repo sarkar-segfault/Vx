@@ -12,7 +12,7 @@ bool VxWindow_Create(VxWindow **window, const int fps) {
   if (!window) return false;
 
   (*window)->hwnd = CreateWindowEx(
-    0, Vx__WindowClass, Vx__WindowClass,
+    WS_EX_LAYERED, Vx__WindowClass, Vx__WindowClass,
     WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
     800, 600, NULL, NULL, GetModuleHandle(NULL), 0
   );
@@ -70,7 +70,7 @@ bool VxWindow_GetSize(const VxWindow *window, int *w, int *h) {
   return true;
 }
 
-bool VxWindow_SetSize(const VxWindow *window, int w, int h) {
+bool VxWindow_SetSize(const VxWindow *window, const int w, const int h) {
   if (!window) return false;
   int x, y;
   
@@ -90,7 +90,7 @@ bool VxWindow_GetPos(const VxWindow *window, int *x, int *y) {
   return true;
 }
 
-bool VxWindow_SetPos(const VxWindow *window, int x, int y) {
+bool VxWindow_SetPos(const VxWindow *window, const int x, const int y) {
   if (!window) return false;
   int w, h;
   
@@ -104,7 +104,7 @@ bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len) {
   return GetLastError() == 0;
 }
 
-bool VxWindow_SetTitle(const VxWindow *window, char *buf) {
-  if (!window || !buf) return false;
-  return SetWindowText(window->hwnd, buf);
+bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
+  if (!window || !title) return false;
+  return SetWindowText(window->hwnd, title);
 }

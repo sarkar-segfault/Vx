@@ -57,7 +57,7 @@ Vx__Expose bool VxWindow_GetSize(const VxWindow *window, int *w, int *h);
   @brief Sets the dimensions of the window.
   @returns Whether resizing was successful.
 */
-Vx__Expose bool VxWindow_SetSize(const VxWindow *window, int w, int h);
+Vx__Expose bool VxWindow_SetSize(const VxWindow *window, const int w, const int h);
 
 /**
   @since 0.1.0
@@ -71,7 +71,7 @@ Vx__Expose bool VxWindow_GetPos(const VxWindow *window, int *x, int *y);
   @brief Sets the position of the window.
   @returns Whether repositioning was successful.
 */
-Vx__Expose bool VxWindow_SetPos(const VxWindow *window, int x, int y);
+Vx__Expose bool VxWindow_SetPos(const VxWindow *window, const int x, const int y);
 
 /**
   @since 0.1.0
@@ -85,6 +85,20 @@ Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len);
   @brief Sets the title of the specified window.
   @returns Whether setting the title was successful.
 */
-Vx__Expose bool VxWindow_SetTitle(const VxWindow *window, char *title);
+Vx__Expose bool VxWindow_SetTitle(const VxWindow *window, const char *const title);
+
+/**
+  @since 0.1.0
+  @brief Gets the opacity of the specified window.
+  @returns Whether retrieving the opacity was successful.
+*/
+Vx__Expose bool VxWindow_GetOpacity(const VxWindow *window, int *o);
+
+/**
+  @since 0.1.0
+  @brief Sets the opacity of the specified window.
+  @returns Whether setting the opacity was successful.
+*/
+Vx__Expose bool VxWindow_SetOpacity(const VxWindow *window, const int o);
 
 #endif
