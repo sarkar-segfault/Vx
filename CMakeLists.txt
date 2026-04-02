@@ -22,7 +22,7 @@ if(DEFINED VxWindow__DefaultHeight)
 endif()
 
 if(DEFINED VxWindow__DefaultTitle)
-  target_compile_definitions(Vx PUBLIC VxWindow__DefaultTitle=${VxWindow_DefaultTitle})
+  target_compile_definitions(Vx PUBLIC VxWindow__DefaultTitle="${VxWindow__DefaultTitle}")
 endif()
 
 if(BUILD_SHARED_LIBS)
@@ -45,7 +45,11 @@ target_compile_features(Vx PUBLIC c_std_99)
 
 if(WIN32)
   set(Vx__WindowClass "VxWindow" CACHE STRING "The name of the Win32 window class")
-  target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+
+  if(DEFINED Vx__WindowClass)
+    target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+  endif()
+
   target_link_libraries(Vx PRIVATE user32)
 endif()
 

@@ -12,6 +12,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifndef VxWindow__DefaultWidth
+  #define VxWindow__DefaultWidth 800
+#endif
+
+#ifndef VxWindow__DefaultHeight
+  #define VxWindow__DefaultHeight 600
+#endif
+
+#ifndef VxWindow__DefaultTitle
+  #define VxWindow__DefaultTitle "VxWindow"
+#endif
+
 /**
   @since 0.1.0
   @brief Represents a platform-specific window.
