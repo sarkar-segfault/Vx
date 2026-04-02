@@ -35,7 +35,7 @@ bool VxWindow_Update(VxWindow *window) {
   if (!window) return false;
 
   MSG msg = {0};
-  while (GetMessage(&msg, NULL, 0, 0)) {
+  while (GetMessage(&msg, NULL, 0, 0) > 0) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
@@ -99,8 +99,9 @@ bool VxWindow_SetPos(const VxWindow *window, int x, int y) {
 }
 
 bool VxWindow_GetTitle(const VxWindow *window, char *buf, int len) {
-  if (!window || !buf || len <= 0) return false;
-  return GetWindowText(window->hwnd, buf, len) != 0;
+  if (!window || !buf || len < 0) return false;
+  GetWindowText(window->hwnd, buf, len);
+  return GetLastError() == 0;
 }
 
 bool VxWindow_SetTitle(const VxWindow *window, char *buf) {
