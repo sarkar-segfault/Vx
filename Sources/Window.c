@@ -124,7 +124,7 @@ bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
 }
 
 bool VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  return window && SetLayeredWindowAttributes(window->hwnd, NULL, o, LWA_ALPHA);
+  return window && SetLayeredWindowAttributes(window->hwnd, NULL, o * 255.0f, LWA_ALPHA);
 }
 
 bool VxWindow_Minimize(const VxWindow *window) {
