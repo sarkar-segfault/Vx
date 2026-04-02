@@ -20,8 +20,7 @@ bool VxWindow_Create(VxWindow **window, const uint8_t fps) {
   
   if (
     !(*window)->hwnd ||
-    !ShowWindow((*window)->hwnd, SW_SHOW) ||
-    !UpdateWindow((*window)->hwnd)
+    !VxWindow_Show(*window)
   ) return false;
 
   if (
@@ -126,4 +125,38 @@ bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
 
 bool VxWindow_SetOpacity(const VxWindow *window, const float o) {
   return window && SetLayeredWindowAttributes(window->hwnd, NULL, o, LWA_ALPHA);
+}
+
+bool VxWindow_Minimize(const VxWindow *window) {
+  return window && ShowWindow(window->hwnd, SW_MINIMIZE);
+}
+
+bool VxWindow_Maximize(const VxWindow *window) {
+  return window && ShowWindow(window->hwnd, SW_MAXIMIZE);
+}
+
+bool VxWindow_Restore(const VxWindow *window) {
+  return window && ShowWindow(window->hwnd, SW_RESTORE);
+}
+
+bool VxWindow_Hide(const VxWindow *window) {
+  return window && ShowWindow(window->hwnd, SW_HIDE);
+}
+
+bool VxWindow_Show(const VxWindow *window) {
+  return window && ShowWindow(window->hwnd, SW_SHOW);
+}
+
+bool VxWindow_Focus(const VxWindow *window) {
+  return window && SetForegroundWindow(window->hwnd);
+}
+
+bool VxWindow_Flash(const VxWindow *window) {
+  if (!window) return false;
+
+  FLASHWINFO fwi = {0};
+  fwi.cbSize = sizeof(FLASHWINFO);
+  fwi.hwnd = window->hwnd;
+  fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
+  return FlashWindowEx(&fwi);
 }

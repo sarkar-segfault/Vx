@@ -102,4 +102,53 @@ Vx__Expose bool VxWindow_GetOpacity(const VxWindow *window, float *o);
 */
 Vx__Expose bool VxWindow_SetOpacity(const VxWindow *window, const float o);
 
+/**
+  @since 0.1.0
+  @brief Minimizes the specified window.
+  @returns Whether minimizing was successful.
+*/
+Vx__Expose bool VxWindow_Minimize(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Restores the previous state of the window.
+  @returns Whether restoration was successful.
+*/
+Vx__Expose bool VxWindow_Restore(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Maximizes the specified window.
+  @returns Whether maximizing was successful.
+*/
+Vx__Expose bool VxWindow_Maximize(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Makes the specified window visible.
+  @returns Whether showing was successful.
+*/
+Vx__Expose bool VxWindow_Show(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Makes the specified window visible.
+  @returns Whether hiding was successful.
+*/
+Vx__Expose bool VxWindow_Hide(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Focuses the specified window.
+  @returns Whether focusing was successful.
+*/
+Vx__Expose bool VxWindow_Focus(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Flash for the user's attention until the window is focused.
+  @returns Whether flashing was successful.
+*/
+Vx__Expose bool VxWindow_Flash(const VxWindow *window);
+
 #endif
