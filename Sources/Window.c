@@ -21,8 +21,8 @@ bool VxWindow_Create(VxWindow **window, const uint8_t fps) {
   
   if (
     !(*window)->hwnd ||
-    !VxWindow_Show(*window) ||
-    !VxWindow_SetOpacity(*window, 1.0f)
+    !VxWindow_SetOpacity(*window, 1.0f) ||
+    !VxWindow_Show(*window)
   ) return false;
 
   if (
