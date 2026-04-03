@@ -43,7 +43,7 @@ target_include_directories(Vx PUBLIC Headers)
 
 target_compile_features(Vx PUBLIC c_std_99)
 
-if(WIN32)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
   set(Vx__WindowClass "VxWindow" CACHE STRING "The name of the Win32 window class")
 
   if(DEFINED Vx__WindowClass)
