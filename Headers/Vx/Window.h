@@ -105,6 +105,11 @@ Vx__Expose bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const i
   @since 0.1.0
   @brief Gets the current title of the window.
   @returns Whether fetching the title was successful.
+
+  @details
+  Under the hood, this function uses GetWindowText on Win32. Since GetWindowText returns 0
+  both when it encounters an error and when the title length is 0, we cannot check for failures
+  beside `!window || !buf || len == 0`.
 */
 Vx__Expose bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len);
 
