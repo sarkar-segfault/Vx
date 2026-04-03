@@ -13,7 +13,7 @@ struct VxWindow {
 
 bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
-  if (!window) return false;
+  if (!*window) return false;
 
   (*window)->hwnd = CreateWindowEx(
     WS_EX_LAYERED, Vx__WindowClass, Vx__WindowClass,
@@ -25,7 +25,12 @@ bool VxWindow_Create(VxWindow **window) {
     !(*window)->hwnd ||
     !VxWindow_SetOpacity(*window, 1.0f) ||
     !VxWindow_Show(*window)
-  ) return false;
+  ) {
+    if ((*window)->hwnd) DestroyWindow((*window)->hwnd);
+    free(*window);
+    *window = NULL;
+    return false;
+  }
 
   return true;
 }
@@ -34,7 +39,7 @@ bool VxWindow_Update(VxWindow *window) {
   if (!window) return false;
 
   MSG msg = {0};
-  while (GetMessage(&msg, NULL, 0, 0) > 0) {
+  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
@@ -46,14 +51,12 @@ bool VxWindow_IsOpen(const VxWindow *window) {
   return window && IsWindow(window->hwnd);
 }
 
-bool VxWindow_Delete(VxWindow *window) {
-  if (
-    !window ||
-    (IsWindow(window->hwnd) && !DestroyWindow(window->hwnd))
-  ) return false;
+bool VxWindow_Delete(VxWindow **window) {
+  if (!window || !*window) return false;
+  if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) return false;
   
-  free(window);
-  window = NULL;
+  free(*window);
+  *window = NULL;
   return true;
 }
 
@@ -97,7 +100,7 @@ bool VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h
   if (!window) return false;
   int x, y;
   
-  VxWindow_GetPos(window, &x, &y);
+  if (!VxWindow_GetPos(window, &x, &y)) return false;
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
@@ -117,14 +120,14 @@ bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y) {
   if (!window) return false;
   uint32_t w, h;
   
-  VxWindow_GetSize(window, &w, &h);
+  if (!VxWindow_GetSize(window, &w, &h)) return false;
   return MoveWindow(window->hwnd, x, y, w, h, TRUE);
 }
 
 bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len) {
-  if (!window || !buf || len < 0) return false;
+  if (!window || !buf || len == 0) return false;
   GetWindowText(window->hwnd, buf, len);
-  return GetLastError() == 0;
+  return true;
 }
 
 bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
@@ -132,7 +135,7 @@ bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
 }
 
 bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
-  if (!window) return false;
+  if (!window || !o) return false;
 
   BYTE alpha = 0;
   DWORD flags = 0;
@@ -140,7 +143,7 @@ bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
   GetLayeredWindowAttributes(window->hwnd, NULL, &alpha, &flags);
   if (flags & LWA_ALPHA) {
     *o = alpha / 255.0f;
-    return false;
+    return true;
   }
 
   return false;

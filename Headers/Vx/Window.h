@@ -43,7 +43,7 @@ Vx__Expose bool VxWindow_Create(VxWindow **window);
   @brief Deletes the specified window.
   @returns Whether deletion was successful.
 */
-Vx__Expose bool VxWindow_Delete(VxWindow *window);
+Vx__Expose bool VxWindow_Delete(VxWindow **window);
 
 /**
   @since 0.1.0
