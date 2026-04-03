@@ -7,7 +7,8 @@ project(
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
-add_library(Vx Sources/Window.c Sources/Lifecycle.c)
+set(SOURCES ${CMAKE_SOURCE_DIR}/Sources)
+add_library(Vx ${SOURCES}/Window.c ${SOURCES}/Lifecycle.c)
 
 set(VxWindow__DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow__DefaultHeight 600 CACHE STRING "The default height for all windows")
@@ -39,7 +40,7 @@ target_compile_definitions(
   Vx_VersionMicro="${PROJECT_VERSION_PATCH}"
 )
 
-target_include_directories(Vx PUBLIC Headers)
+target_include_directories(Vx PUBLIC ${CMAKE_SOURCE_DIR}/Headers)
 
 target_compile_features(Vx PUBLIC c_std_99)
 
