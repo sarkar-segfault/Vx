@@ -11,6 +11,7 @@
 #include "_Expose.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #ifndef VxWindow__DefaultWidth
   #define VxWindow__DefaultWidth 800
@@ -35,7 +36,7 @@ typedef struct VxWindow VxWindow;
   @brief Creates a native platform window.
   @returns Whether creation was successful.
 */
-Vx__Expose bool VxWindow_Create(VxWindow **window, const uint8_t fps);
+Vx__Expose bool VxWindow_Create(VxWindow **window);
 
 /**
   @since 0.1.0
@@ -57,6 +58,20 @@ Vx__Expose bool VxWindow_Update(VxWindow *window);
   @returns Whether the specified window is still valid.
 */
 Vx__Expose bool VxWindow_IsOpen(const VxWindow *window);
+
+/**
+  @since 0.1.0
+  @brief Returns the current FPS for the window, 0 if unset.
+  @returns Whether retrieval of FPS was successful.
+*/
+Vx__Expose bool VxWindow_GetFps(const VxWindow *window, uint8_t *fps);
+
+/**
+  @since 0.1.0
+  @brief Sets the current FPS for the window.
+  @returns Whether setting the FPS was successful.
+*/
+Vx__Expose bool VxWindow_SetFps(VxWindow *window, const uint8_t fps);
 
 /**
   @since 0.1.0

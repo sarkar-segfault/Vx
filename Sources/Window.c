@@ -7,9 +7,11 @@
 
 struct VxWindow {
   HWND hwnd;
+  UINT_PTR timer;
+  uint8_t fps;
 };
 
-bool VxWindow_Create(VxWindow **window, const uint8_t fps) {
+bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
   if (!window) return false;
 
@@ -23,11 +25,6 @@ bool VxWindow_Create(VxWindow **window, const uint8_t fps) {
     !(*window)->hwnd ||
     !VxWindow_SetOpacity(*window, 1.0f) ||
     !VxWindow_Show(*window)
-  ) return false;
-
-  if (
-    fps > 0 &&
-    !SetTimer((*window)->hwnd, 1, 1000 / fps, NULL)
   ) return false;
 
   return true;
@@ -57,6 +54,30 @@ bool VxWindow_Delete(VxWindow *window) {
   
   free(window);
   window = NULL;
+  return true;
+}
+
+bool VxWindow_GetFps(const VxWindow *window, uint8_t *fps) {
+  if (!window || !fps) return false;
+  *fps = window->fps;
+  return true;
+}
+
+bool VxWindow_SetFps(VxWindow *window, const uint8_t fps) {
+  if (!window) return false;
+  window->fps = fps;
+
+  if (window->timer != 0) {
+    UINT_PTR timer = window->timer;
+    window->timer = 0;
+    if (!KillTimer(window->hwnd, timer)) return false;
+  }
+
+  if (fps != 0) {
+    window->timer = SetTimer(window->hwnd, 0, 1000 / fps, NULL);
+    if (!window->timer) return false;
+  }
+
   return true;
 }
 
