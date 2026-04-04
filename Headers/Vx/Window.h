@@ -13,16 +13,16 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#ifndef VxWindow__DefaultWidth
-  #define VxWindow__DefaultWidth 800
+#ifndef VxWindow_DefaultWidth
+  #define VxWindow_DefaultWidth 800
 #endif
 
-#ifndef VxWindow__DefaultHeight
-  #define VxWindow__DefaultHeight 600
+#ifndef VxWindow_DefaultHeight
+  #define VxWindow_DefaultHeight 600
 #endif
 
-#ifndef VxWindow__DefaultTitle
-  #define VxWindow__DefaultTitle "VxWindow"
+#ifndef VxWindow_DefaultTitle
+  #define VxWindow_DefaultTitle "VxWindow"
 #endif
 
 /**

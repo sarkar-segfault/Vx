@@ -16,9 +16,9 @@ bool VxWindow_Create(VxWindow **window) {
   if (!*window) return false;
 
   (*window)->hwnd = CreateWindowEx(
-    WS_EX_LAYERED, Vx__WindowClass, Vx__WindowClass,
-    WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-    800, 600, NULL, NULL, GetModuleHandle(NULL), 0
+    WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW,
+    CW_USEDEFAULT, CW_USEDEFAULT, VxWindow_DefaultWidth, VxWindow_DefaultHeight,
+    NULL, NULL, GetModuleHandle(NULL), 0
   );
   
   if (

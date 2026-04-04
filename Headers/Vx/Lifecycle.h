@@ -11,8 +11,8 @@
 #include "_Expose.h"
 #include <stdbool.h>
 
-#ifndef Vx__WindowClass
-  #define Vx__WindowClass "VxWindow"
+#ifndef VxWindow_Class
+  #define VxWindow_Class "VxWindow"
 #endif
 
 /**

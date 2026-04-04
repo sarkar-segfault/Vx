@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "Internal.h"
 
-LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
+LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
   switch (umsg) {
     case WM_DESTROY:
       PostQuitMessage(0);
@@ -20,8 +20,8 @@ LRESULT CALLBACK Vx__WindowProcess(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
 bool Vx_Initiate(void) {
   WNDCLASSEX wc = {0};
-  wc.lpszClassName = Vx__WindowClass;
-  wc.lpfnWndProc = Vx__WindowProcess;
+  wc.lpszClassName = VxWindow_Class;
+  wc.lpfnWndProc = VxWindow__Process;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);

@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifndef Vx__RingLength
-  #define Vx__RingLength 64
+#ifndef VxRing_Length
+  #define VxRing_Length 64
 #endif
 
 /**
