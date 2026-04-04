@@ -68,7 +68,10 @@ typedef enum VxEventKey {
   VxEventKey_Space,
   VxEventKey_Enter,
   VxEventKey_Backspace,
-  
+
+  VxEventKey_Shift,
+  VxEventKey_Control,
+  VxEventKey_Alt,
   VxEventKey_Insert,
   VxEventKey_Delete,
   VxEventKey_Home,
@@ -124,9 +127,10 @@ typedef enum VxEventKey {
 } VxEventKey;
 
 typedef enum VxEventMod {
-  VxEventMod_Shift,
-  VxEventMod_Control,
-  VxEventMod_Alt,
+  VxEventMod_None    = 0,
+  VxEventMod_Shift   = 1 << 0,
+  VxEventMod_Control = 1 << 1,
+  VxEventMod_Alt     = 1 << 2,
 } VxEventMod;
 
 typedef enum VxEventButton {
@@ -139,7 +143,8 @@ typedef union VxEventInfo {
   struct { uint32_t w, h; } size;
   struct { int32_t x, y; } pos;
   struct { int32_t delta; } wheel;
-  struct { VxEventKey key; VxEventMod mod; } press;
+  struct { VxEventKey key; uint16_t mod; } press;
+  VxEventKey release;
   VxEventButton button;
   char sent;
 } VxEventInfo;
