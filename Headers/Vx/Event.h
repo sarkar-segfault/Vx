@@ -143,7 +143,7 @@ typedef union VxEventInfo {
   struct { uint32_t w, h; } size;
   struct { int32_t x, y; } pos;
   struct { int32_t delta; } wheel;
-  struct { VxEventKey key; uint16_t mod; } press;
+  struct { VxEventKey key; uint8_t mod; } press;
   VxEventKey release;
   VxEventButton button;
   char sent;
