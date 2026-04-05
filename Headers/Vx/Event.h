@@ -1,8 +1,19 @@
+/**
+  @file Event.h
+  @since 0.1.0
+  @author Adhrit Sarkar <adhritsarkar@proton.me>
+  @brief Defines types for representing input events.
+*/
+
 #ifndef Vx__EventH
 #define Vx__EventH
 
 #include <stdint.h>
 
+/**
+  @since 0.1.0
+  @brief Represents all input events we can handle.
+*/
 typedef enum VxEventType {
   VxEventType_Close,
   VxEventType_Resize,
@@ -23,6 +34,10 @@ typedef enum VxEventType {
   VxEventType_MouseWheel
 } VxEventType;
 
+/**
+  @since 0.1.0
+  @brief Represents all input keys we can handle.
+*/
 typedef enum VxEventKey {
   VxEventKey_A,
   VxEventKey_B,
@@ -126,6 +141,10 @@ typedef enum VxEventKey {
   VxEventKey_Quote,
 } VxEventKey;
 
+/**
+  @since 0.1.0
+  @brief Represents all mod keys we can handle, including none, via bitflags.
+*/
 typedef enum VxEventMod {
   VxEventMod_None    = 0,
   VxEventMod_Shift   = 1 << 0,
@@ -133,12 +152,20 @@ typedef enum VxEventMod {
   VxEventMod_Alt     = 1 << 2,
 } VxEventMod;
 
+/**
+  @since 0.1.0
+  @brief Represents all mouse keys we can handle.
+*/
 typedef enum VxEventButton {
   VxEventButton_MouseRight,
   VxEventButton_MouseLeft,
   VxEventButton_MouseCenter,
 } VxEventButton;
 
+/**
+  @since 0.1.0
+  @brief A union for representing extra info about input events.
+*/
 typedef union VxEventInfo {
   struct { uint32_t w, h; } size;
   struct { int32_t x, y; } pos;
@@ -149,6 +176,10 @@ typedef union VxEventInfo {
   char sent;
 } VxEventInfo;
 
+/**
+  @since 0.1.0
+  @brief A tagged union representing an input event, comprised of a `VxEventType` tag and `VxEventInfo` union.
+*/
 typedef struct VxEvent {
   VxEventType type;
   VxEventInfo info;
