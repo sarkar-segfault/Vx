@@ -1,3 +1,10 @@
+/**
+  @file EventRing.h
+  @since 0.1.0
+  @author Adhrit Sarkar <adhritsarkar@proton.me>
+  @brief Defines `VxEventRing` and its methods.
+*/
+
 #ifndef Vx__EventRingH
 #define Vx__EventRingH
 
