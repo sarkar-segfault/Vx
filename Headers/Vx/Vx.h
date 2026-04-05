@@ -1,11 +1,10 @@
 /*
-  `Vx.h` is an umbrella header for all other public headers in the project.
+  `Vx.h` - umbrella header for all other public headers in the project.
   Introduced in version `0.1.0`.
   
   Instead of having to include all of the other headers individually, you can
   just include this one.
 
-  NOTE:
   You may accidentally include more stuff than you need which can make compilation
   slower, but that doesn't really matter anymore since modern compilers are jacked.
 */
