@@ -13,7 +13,7 @@
   This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
   @par GitHub
-  This project is maintained on [GitHub](https://github.com) at <https://github.com/sarkar-segfault/Vx> by [sarkar-segfault](https://github.com/sarkar-segfault).
+  This project is maintained on [GitHub](https://github.com) at [sarkar-segfault](https://github.com/sarkar-segfault)[/Vx](https://github.com/sarkar-segfault/Vx).
 */
 
 #ifndef Vx__H
