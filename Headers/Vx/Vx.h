@@ -1,7 +1,6 @@
 /*
   `Vx.h` - umbrella header for all other public headers in the project.
-  Introduced in version `0.1.0`.
-  
+    
   Instead of having to include all of the other headers individually, you can
   just include this one. IWYU pragmas also make an appearance here, so that
   the compiler doesn't yell that `yOu dIdN't UsE aLL oF THe sYMboLs`.
