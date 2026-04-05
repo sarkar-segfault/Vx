@@ -1,0 +1,5 @@
+-IHeaders
+-luser32
+-std=c99
+-Wextra
+-Wall
