@@ -1,8 +1,20 @@
+/*
+  `Event.h` - defines types for handling input events triggered by the user.
+
+  This file defines the tagged union `VxEvent` and other types to complement it.
+  Enum variants are not documented, and I don't plan to document them at all,
+  since there are simply too many of them.
+*/
+
 #ifndef Vx__EventH
 #define Vx__EventH
 
 #include <stdint.h>
 
+/*
+  `VxEventType` - enum for representing the types of events we can handle.
+  Only cross-platform events are to be added here.
+*/
 typedef enum VxEventType {
   VxEventType_Close,
   VxEventType_Resize,
@@ -23,6 +35,10 @@ typedef enum VxEventType {
   VxEventType_MouseWheel
 } VxEventType;
 
+/*
+  `VxEventKey` - represents all keys we can detect.
+  Only cross-platform keys are to be added here.
+*/
 typedef enum VxEventKey {
   VxEventKey_A,
   VxEventKey_B,
@@ -126,6 +142,11 @@ typedef enum VxEventKey {
   VxEventKey_Quote,
 } VxEventKey;
 
+/*
+  `VxEventMod` - represents all the bitflag modifiers we can have on our keys.
+  At most, we can have 8 variants, because we use `uint8_t` to store the flags.
+  Only cross-platform mods are to be added here.
+*/
 typedef enum VxEventMod {
   VxEventMod_None    = 0,
   VxEventMod_Shift   = 1 << 0,
@@ -133,12 +154,23 @@ typedef enum VxEventMod {
   VxEventMod_Alt     = 1 << 2,
 } VxEventMod;
 
+/*
+  `VxEventButton` - represents all the mouse buttons that we can handle.
+  Only cross-platform buttons are to be added here.
+*/
 typedef enum VxEventButton {
   VxEventButton_MouseRight,
   VxEventButton_MouseLeft,
   VxEventButton_MouseCenter,
 } VxEventButton;
 
+/*
+  `VxEventInfo` - union for representing extra data for some events.
+
+  This union contains extra data/structs for different events. All events do not
+  have/need an entry here. We try to reuse members as much as we can. For example,
+  `pos` is be reused for mouse movements too, besides window movements.
+*/
 typedef union VxEventInfo {
   struct { uint32_t w, h; } size;
   struct { int32_t x, y; } pos;
@@ -149,6 +181,12 @@ typedef union VxEventInfo {
   char sent;
 } VxEventInfo;
 
+/*
+  `VxEvent` - a tagged union containing all the data we need about an event.
+
+  This struct is comprised of a `VxEventType` tag, and a `VxEventInfo` union. Do
+  not try to access fields on the `VxEventInfo` unless assured by the `VxEventType`.
+*/
 typedef struct VxEvent {
   VxEventType type;
   VxEventInfo info;
