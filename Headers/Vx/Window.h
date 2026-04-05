@@ -6,6 +6,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef VxWindow_Class
+  #define VxWindow_Class "VxWindow"
+#endif
+
 #ifndef VxWindow_DefaultWidth
   #define VxWindow_DefaultWidth 800
 #endif

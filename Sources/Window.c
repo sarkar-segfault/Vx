@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "Vx/Lifecycle.h"
 #include "Internal.h"
 
 struct VxWindow {

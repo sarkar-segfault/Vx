@@ -1,6 +1,7 @@
 #include "Vx/Lifecycle.h" // IWYU pragma: associated
 #include <stdbool.h>
 #include "Internal.h"
+#include "Vx/Window.h"
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
   switch (umsg) {
@@ -31,5 +32,5 @@ bool Vx_Initiate(void) {
 }
 
 bool Vx_Terminate(void) {
-  return UnregisterClass(Vx__WindowClass, GetModuleHandle(NULL));
+  return UnregisterClass(VxWindow_Class, GetModuleHandle(NULL));
 }
