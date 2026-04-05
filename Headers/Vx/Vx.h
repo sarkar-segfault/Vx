@@ -1,21 +1,3 @@
-/**
-  @file Vx.h
-  @since 0.1.0
-  @author Adhrit Sarkar <adhritsarkar@proton.me>
-  @brief The umbrella header for all other public headers in the project.
-*/
-
-/**
-  @mainpage
-  Welcome to the documentation for the Vx library!
-
-  @par License
-  This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-  @par GitHub
-  This project is maintained on [GitHub](https://github.com) at [sarkar-segfault](https://github.com/sarkar-segfault)[/Vx](https://github.com/sarkar-segfault/Vx).
-*/
-
 #ifndef Vx__H
 #define Vx__H
 
