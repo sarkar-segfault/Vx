@@ -18,8 +18,8 @@
 
   When building a shared library with certain compilers or on certain platforms,
   we have to export our symbols explicitly. We use platform or compiler specific
-  macros like `__declspec` or `__attribute__` to reliably export our symbols. On
-  unknown systems, or if we are not building as shared, the macro is left blank.
+  macros to reliably export our symbols. On unknown systems, or if we are not
+  building as shared, the macro is left blank.
     
   On `__GNUC__`, it expands to `__attribute__(visibility("default"))`;
   on `_WIN32`, it expands to `__declspec(dllimport)` or `__declspec(dllexport)` depending on `Vx__Build`;

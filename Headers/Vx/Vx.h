@@ -11,7 +11,7 @@
 */
 
 /*
-  Vx - The windowing library for simpletons and wizards alike.
+  `Vx` - The windowing library for simpletons and wizards alike.
 
   Vx is a simple windowing library that I made because GLFW sucks and RGFW inspired me.
   As of now, it only works on Microslop Windows, and I think it'll remain that way until

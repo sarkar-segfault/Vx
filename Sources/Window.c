@@ -185,3 +185,9 @@ bool VxWindow_Flash(const VxWindow *window) {
   fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
   return FlashWindowEx(&fwi);
 }
+
+bool VxWindow_GetHandle(const VxWindow *window, void **ptr) {
+  if (!window || !ptr) return false;
+  *ptr = window->hwnd;
+  return true;
+}
