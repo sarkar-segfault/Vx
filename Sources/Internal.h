@@ -1,6 +1,8 @@
 #ifndef Vx__InternalH
 #define Vx__InternalH
 
+#include <stdio.h> // IWYU pragma: export
+
 #ifdef _WIN32
   #define NOMINMAX
   #define WIN32_LEAN_AND_MEAN
@@ -8,5 +10,7 @@
 #else
   #error "Vx only supports Win32 as of now..."
 #endif
+
+#define Vx__Error(msg) fprintf(stderr, "%s: %s\n", __func__, msg)
 
 #endif

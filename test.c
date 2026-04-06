@@ -14,6 +14,7 @@ int main(void) {
     VxWindow_Update(window);
   }
 
+  VxWindow_Delete(&window);
   Vx_Terminate();
   return 0;
 }
