@@ -93,6 +93,7 @@ Vx__Expose bool VxWindow_Create(VxWindow **window);
 */
 Vx__Expose bool VxWindow_Delete(VxWindow **window);
 
+// TODO: implement an event ring embedded inside `VxWindow`
 Vx__Expose bool VxWindow_Update(VxWindow *window);
 
 /*
