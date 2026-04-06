@@ -18,7 +18,7 @@ bool VxWindow_Create(VxWindow **window) {
   }
 
   (*window)->hwnd = CreateWindowEx(
-    WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW,
+    WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
     CW_USEDEFAULT, CW_USEDEFAULT, VxWindow_DefaultWidth, VxWindow_DefaultHeight,
     NULL, NULL, GetModuleHandle(NULL), 0
   );
@@ -30,7 +30,7 @@ bool VxWindow_Create(VxWindow **window) {
     return false;
   }
 
-  if (!VxWindow_SetOpacity(*window, 1.0f) || !VxWindow_Show(*window)) {
+  if (!VxWindow_SetOpacity(*window, 1.0f)) {
     DestroyWindow((*window)->hwnd);
     free(*window);
     *window = NULL;
