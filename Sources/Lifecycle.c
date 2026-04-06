@@ -28,9 +28,19 @@ bool Vx_Initiate(void) {
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
   wc.hbrBackground = (HBRUSH)COLOR_WINDOW+1;
 
-  return RegisterClassEx(&wc);
+  if (!RegisterClassEx(&wc)) {
+    Vx__Error("failed to register window class");
+    return false;
+  }
+
+  return true;
 }
 
 bool Vx_Terminate(void) {
-  return UnregisterClass(VxWindow_Class, GetModuleHandle(NULL));
+  if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {
+    Vx__Error("failed to unregister window class");
+    return false;
+  }
+
+  return true;
 }
