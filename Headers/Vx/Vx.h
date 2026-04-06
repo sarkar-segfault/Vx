@@ -24,7 +24,6 @@
 // IWYU pragma: begin_exports
 
 #include "Lifecycle.h"
-#include "EventRing.h"
 #include "Window.h"
 #include "Event.h"
 
