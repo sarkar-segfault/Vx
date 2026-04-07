@@ -23,7 +23,6 @@ typedef enum VxEventType {
   VxEventType_Blur,
   VxEventType_Minimize,
   VxEventType_Maximize,
-  VxEventType_Restore,
 
   VxEventType_KeyPress,
   VxEventType_KeyRelease,
@@ -40,6 +39,8 @@ typedef enum VxEventType {
   Only cross-platform keys are to be added here.
 */
 typedef enum VxEventKey {
+  VxEventKey_Unknown,
+
   VxEventKey_A,
   VxEventKey_B,
   VxEventKey_C,
@@ -85,9 +86,6 @@ typedef enum VxEventKey {
   VxEventKey_Enter,
   VxEventKey_Backspace,
 
-  VxEventKey_Shift,
-  VxEventKey_Control,
-  VxEventKey_Alt,
   VxEventKey_Insert,
   VxEventKey_Delete,
   VxEventKey_Home,
@@ -148,7 +146,6 @@ typedef enum VxEventKey {
   Only cross-platform mods are to be added here.
 */
 typedef enum VxEventMod {
-  VxEventMod_None    = 0,
   VxEventMod_Shift   = 1 << 0,
   VxEventMod_Control = 1 << 1,
   VxEventMod_Alt     = 1 << 2,
@@ -179,6 +176,7 @@ typedef union VxEventInfo {
   VxEventKey release;
   VxEventButton button;
   char sent;
+  int32_t delta;
 } VxEventInfo;
 
 /*

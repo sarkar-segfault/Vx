@@ -3,11 +3,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "Internal.h"
+#include <Vx/Event.h>
 
 struct VxWindow {
   HWND hwnd;
   UINT_PTR timer;
   uint8_t fps;
+  VxEventRing ring;
 };
 
 bool VxWindow_Create(VxWindow **window) {
@@ -44,8 +46,8 @@ bool VxWindow_IsOpen(const VxWindow *window) {
   return window && IsWindow(window->hwnd);
 }
 
-bool VxWindow_Update(VxWindow *window) {
-  if (!window) {
+bool VxWindow_GetEvent(VxWindow *window, VxEvent *event) {
+  if (!window || !event) {
     Vx__Error("called with invalid args");
     return false;
   }
@@ -53,6 +55,9 @@ bool VxWindow_Update(VxWindow *window) {
   MSG msg = {0};
   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&msg);
+
+    if (!Vx__TranslateEvent(&msg, event)) return false;
+    
     DispatchMessage(&msg);
   }
 
