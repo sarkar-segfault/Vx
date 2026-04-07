@@ -3,6 +3,7 @@
 
 #include "Vx/Event.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h> // IWYU pragma: export
 
 #ifdef _WIN32

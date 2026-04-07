@@ -1,5 +1,6 @@
 #include "Internal.h"
 #include "Vx/Event.h"
+#include <stdbool.h>
 #include <Windows.h>
 
 #define VxEventRing__Wrap(var) var = (var + 1) % VxEventRing_Length
