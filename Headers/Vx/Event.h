@@ -16,7 +16,6 @@
   Only cross-platform events are to be added here.
 */
 typedef enum VxEventType {
-  VxEventType_Close,
   VxEventType_Resize,
   VxEventType_Move,
   VxEventType_Focus,

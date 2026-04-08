@@ -7,10 +7,7 @@ bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
   if (!msg || !event) return false;
   *event = (VxEvent){0};
 
-  if (msg->message == WM_CLOSE)
-    event->type = VxEventType_Close;
-  
-  else if (msg->message == WM_SIZE) {  
+  if (msg->message == WM_SIZE) {  
     if (msg->wParam == SIZE_MAXIMIZED)
       event->type = VxEventType_Maximize;
 

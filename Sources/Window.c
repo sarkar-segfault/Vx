@@ -54,9 +54,9 @@ bool VxWindow_PollEvent(VxWindow *window, VxEvent *event) {
 
   if (PeekMessage(&window->msg, NULL, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&window->msg);
-    if (!Vx__TranslateEvent(&window->msg, event)) return false;
-    
     DispatchMessage(&window->msg);
+    
+    if (!Vx__TranslateEvent(&window->msg, event)) return false;
     return true;
   }
 
@@ -71,9 +71,9 @@ bool VxWindow_WaitEvent(VxWindow *window, VxEvent *event) {
 
   if (GetMessage(&window->msg, NULL, 0, 0) > 0) {
     TranslateMessage(&window->msg);
-    if (!Vx__TranslateEvent(&window->msg, event)) return false;
-    
     DispatchMessage(&window->msg);
+
+    if (!Vx__TranslateEvent(&window->msg, event)) return false;    
     return true;
   }
 
