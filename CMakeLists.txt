@@ -12,7 +12,6 @@ add_library(Vx Sources/Window.c Sources/Lifecycle.c Sources/Internal.c)
 set(VxWindow_DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow_DefaultHeight 600 CACHE STRING "The default height for all windows")
 set(VxWindow_DefaultTitle "VxWindow" CACHE STRING "The default title for all windows")
-set(VxEventRing_Length 64 CACHE STRING "The length of the event circular queue/ring buffer")
 
 if(DEFINED VxWindow_DefaultWidth)
   target_compile_definitions(Vx PUBLIC VxWindow_DefaultWidth=${VxWindow_DefaultWidth})
@@ -24,10 +23,6 @@ endif()
 
 if(DEFINED VxWindow_DefaultTitle)
   target_compile_definitions(Vx PUBLIC VxWindow_DefaultTitle="${VxWindow_DefaultTitle}")
-endif()
-
-if(DEFINED VxEventRing_Length)
-  target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
 endif()
 
 if(BUILD_SHARED_LIBS)
