@@ -9,7 +9,6 @@ struct VxWindow {
   HWND hwnd;
   UINT_PTR timer;
   uint8_t fps;
-  VxEventRing ring;
 };
 
 bool VxWindow_Create(VxWindow **window) {
@@ -53,15 +52,15 @@ bool VxWindow_GetEvent(VxWindow *window, VxEvent *event) {
   }
 
   MSG msg = {0};
-  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
+  if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&msg);
-
     if (!Vx__TranslateEvent(&msg, event)) return false;
     
     DispatchMessage(&msg);
+    return true;
   }
 
-  return true;
+  return false;
 }
 
 bool VxWindow_Delete(VxWindow **window) {
