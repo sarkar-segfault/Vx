@@ -9,6 +9,7 @@ struct VxWindow {
   HWND hwnd;
   UINT_PTR timer;
   uint8_t fps;
+  MSG msg;
 };
 
 bool VxWindow_Create(VxWindow **window) {
@@ -45,18 +46,34 @@ bool VxWindow_IsOpen(const VxWindow *window) {
   return window && IsWindow(window->hwnd);
 }
 
-bool VxWindow_GetEvent(VxWindow *window, VxEvent *event) {
+bool VxWindow_PollEvent(VxWindow *window, VxEvent *event) {
   if (!window || !event) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  MSG msg = {0};
-  if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
-    TranslateMessage(&msg);
-    if (!Vx__TranslateEvent(&msg, event)) return false;
+  if (PeekMessage(&window->msg, NULL, 0, 0, PM_REMOVE) > 0) {
+    TranslateMessage(&window->msg);
+    if (!Vx__TranslateEvent(&window->msg, event)) return false;
     
-    DispatchMessage(&msg);
+    DispatchMessage(&window->msg);
+    return true;
+  }
+
+  return false;
+}
+
+bool VxWindow_WaitEvent(VxWindow *window, VxEvent *event) {
+  if (!window || !event) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  if (GetMessage(&window->msg, NULL, 0, 0) > 0) {
+    TranslateMessage(&window->msg);
+    if (!Vx__TranslateEvent(&window->msg, event)) return false;
+    
+    DispatchMessage(&window->msg);
     return true;
   }
 
