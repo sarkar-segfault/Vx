@@ -4,8 +4,10 @@
 #include "Internal.h"
 #include "Vx/Window.h"
 
-#define Vx__PostSent(hwnd, smsg, pmsg, wparam, lparam) case smsg: \
-  PostMessage(hwnd, pmsg, wparam, lparam); \
+#define Vx__PostSent(hwnd, smsg, pmsg, wparam, lparam) \
+  case smsg: \
+  return PostMessage(hwnd, pmsg, wparam, lparam); \
+  case pmsg:\
   return DefWindowProc(hwnd, smsg, wparam, lparam);
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
@@ -21,16 +23,10 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
     Vx__PostSent(hwnd, WM_MOVE, WM_MOVEP, wparam, lparam);
     Vx__PostSent(hwnd, WM_SIZE, WM_SIZEP, wparam, lparam);
+    Vx__PostSent(hwnd, WM_CLOSE, WM_CLOSEP, wparam, lparam);
     Vx__PostSent(hwnd, WM_SETFOCUS, WM_SETFOCUSP, wparam, lparam);
-    Vx__PostSent(hwnd, WM_KILLFOCUSP, WM_KILLFOCUSP, wparam, lparam);
-
-    case WM_CLOSE:
-      PostMessage(hwnd, WM_CLOSEP, wparam, lparam);
-      return 0;
-
-    case WM_CLOSEP:
-      return DefWindowProc(hwnd, WM_CLOSE, wparam, lparam);
-    
+    Vx__PostSent(hwnd, WM_KILLFOCUS, WM_KILLFOCUSP, wparam, lparam);
+      
     default:
       return DefWindowProc(hwnd, umsg, wparam, lparam);
   }
