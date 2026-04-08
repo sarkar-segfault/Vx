@@ -1,9 +1,9 @@
 #include "Vx/Window.h" // IWYU pragma: associated
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include "Internal.h"
 #include <Vx/Event.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 struct VxWindow {
   HWND hwnd;
@@ -20,10 +20,10 @@ bool VxWindow_Create(VxWindow **window) {
   }
 
   (*window)->hwnd = CreateWindowEx(
-    WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-    CW_USEDEFAULT, CW_USEDEFAULT, VxWindow_DefaultWidth, VxWindow_DefaultHeight,
-    NULL, NULL, GetModuleHandle(NULL), 0
-  );
+      0, VxWindow_Class, VxWindow_DefaultTitle,
+      WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
+      VxWindow_DefaultWidth, VxWindow_DefaultHeight, NULL, NULL,
+      GetModuleHandle(NULL), 0);
 
   if (!(*window)->hwnd) {
     free(*window);
@@ -32,12 +32,12 @@ bool VxWindow_Create(VxWindow **window) {
     return false;
   }
 
-  if (!VxWindow_SetOpacity(*window, 1.0f)) {
-    DestroyWindow((*window)->hwnd);
-    free(*window);
-    *window = NULL;
-    return false;
-  }
+  // if (!VxWindow_SetOpacity(*window, 1.0f)) {
+  //   DestroyWindow((*window)->hwnd);
+  //   free(*window);
+  //   *window = NULL;
+  //   return false;
+  // }
 
   return true;
 }
@@ -52,11 +52,13 @@ bool VxWindow_PollEvent(VxWindow *window, VxEvent *event) {
     return false;
   }
 
-  if (PeekMessage(&window->msg, NULL, 0, 0, PM_REMOVE) > 0) {
+  if (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&window->msg);
     DispatchMessage(&window->msg);
+
+    if (!Vx__TranslateEvent(&window->msg, event))
+      return false;
     
-    if (!Vx__TranslateEvent(&window->msg, event)) return false;
     return true;
   }
 
@@ -69,11 +71,13 @@ bool VxWindow_WaitEvent(VxWindow *window, VxEvent *event) {
     return false;
   }
 
-  if (GetMessage(&window->msg, NULL, 0, 0) > 0) {
+  if (GetMessage(&window->msg, window->hwnd, 0, 0) > 0) {
     TranslateMessage(&window->msg);
     DispatchMessage(&window->msg);
 
-    if (!Vx__TranslateEvent(&window->msg, event)) return false;    
+    if (!Vx__TranslateEvent(&window->msg, event))
+      return false;
+
     return true;
   }
 
@@ -85,7 +89,7 @@ bool VxWindow_Delete(VxWindow **window) {
     Vx__Error("called with invalid args");
     return false;
   }
-  
+
   if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) {
     Vx__Error("failed to destroy window");
     return false;
@@ -150,12 +154,13 @@ bool VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32_t *h) {
   return true;
 }
 
-bool VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h) {
+bool VxWindow_SetSize(const VxWindow *window, const uint32_t w,
+                      const uint32_t h) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
   }
-  
+
   int x, y;
   if (!VxWindow_GetPos(window, &x, &y)) {
     Vx__Error("failed to get window pos");
@@ -191,7 +196,7 @@ bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y) {
     Vx__Error("called with invalid args");
     return false;
   }
-  
+
   uint32_t w, h;
   if (!VxWindow_GetSize(window, &w, &h)) {
     Vx__Error("failed to get window size");
@@ -211,7 +216,7 @@ bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len) {
     Vx__Error("called with invalid args");
     return false;
   }
-  
+
   GetWindowText(window->hwnd, buf, len);
   return true;
 }
@@ -221,7 +226,7 @@ bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
     Vx__Error("called with invalid args");
     return false;
   }
-  
+
   if (!SetWindowText(window->hwnd, title)) {
     Vx__Error("gailed to set window title");
     return false;
@@ -250,11 +255,12 @@ bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
 }
 
 bool VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0, o * 255.0f, LWA_ALPHA)) {
+  if (!window ||
+      !SetLayeredWindowAttributes(window->hwnd, 0, o * 255.0f, LWA_ALPHA)) {
     Vx__Error("failed to set window opacity");
     return false;
   }
-  
+
   return true;
 }
 
@@ -272,7 +278,7 @@ bool VxWindow_Maximize(const VxWindow *window) {
     Vx__Error("failed to maximize window");
     return false;
   }
-  
+
   return true;
 }
 
@@ -290,7 +296,7 @@ bool VxWindow_Hide(const VxWindow *window) {
     Vx__Error("failed to hide window");
     return false;
   }
-  
+
   return true;
 }
 
@@ -299,7 +305,7 @@ bool VxWindow_Show(const VxWindow *window) {
     Vx__Error("failed to show window");
     return false;
   }
-  
+
   return true;
 }
 
@@ -308,7 +314,7 @@ bool VxWindow_Focus(const VxWindow *window) {
     Vx__Error("failed to focus window");
     return false;
   }
-  
+
   return true;
 }
 

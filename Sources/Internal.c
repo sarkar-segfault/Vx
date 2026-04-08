@@ -1,13 +1,18 @@
 #include "Internal.h"
 #include "Vx/Event.h"
-#include <stdbool.h>
 #include <Windows.h>
+#include <stdbool.h>
 
 bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
-  if (!msg || !event) return false;
+  if (!msg || !event)
+    return false;
+
   *event = (VxEvent){0};
 
-  if (msg->message == WM_SIZE) {  
+  if (msg->message == WM_CLOSEP)
+    event->type = VxEventType_Close;
+
+  else if (msg->message == WM_SIZEP) {
     if (msg->wParam == SIZE_MAXIMIZED)
       event->type = VxEventType_Maximize;
 
@@ -21,16 +26,16 @@ bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
     }
   }
 
-  else if (msg->message == WM_MOVE) {
+  else if (msg->message == WM_MOVEP) {
     event->type = VxEventType_Move;
     event->info.pos.x = LOWORD(msg->lParam);
     event->info.pos.y = HIWORD(msg->lParam);
   }
 
-  else if (msg->message == WM_SETFOCUS)
+  else if (msg->message == WM_SETFOCUSP)
     event->type = VxEventType_Focus;
 
-  else if (msg->message == WM_KILLFOCUS)
+  else if (msg->message == WM_KILLFOCUSP)
     event->type = VxEventType_Blur;
 
   else if (msg->message == WM_CHAR) {
@@ -96,7 +101,8 @@ bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
     event->info.delta = HIWORD(msg->wParam);
   }
 
-  else return false;
+  else
+    return false;
 
   return true;
 }

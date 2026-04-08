@@ -15,17 +15,20 @@ int main(void) {
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
-    while (VxWindow_WaitEvent(window, &event)) {
+    while (VxWindow_PollEvent(window, &event)) {
 
       switch (event.type) {
+      case VxEventType_Close:
+        printf("Close\n");
+        break;
+
       case VxEventType_Resize:
         printf("Resize - Width: %u, Height: %u\n", event.info.size.w,
                event.info.size.h);
         break;
 
       case VxEventType_Move:
-        printf("Move - X: %d, Y: %d\n", event.info.pos.x,
-               event.info.pos.y);
+        printf("Move - X: %d, Y: %d\n", event.info.pos.x, event.info.pos.y);
         break;
 
       case VxEventType_Focus:
@@ -45,8 +48,8 @@ int main(void) {
         break;
 
       case VxEventType_KeyPress:
-        printf("KeyPress - Key: %d, Modifiers: 0x%02X\n",
-               event.info.press.key, event.info.press.mod);
+        printf("KeyPress - Key: %d, Modifiers: 0x%02X\n", event.info.press.key,
+               event.info.press.mod);
         break;
 
       case VxEventType_KeyRelease:
