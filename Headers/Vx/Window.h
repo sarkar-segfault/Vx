@@ -13,7 +13,6 @@
 #define Vx__WindowH
 
 #include "_Expose.h"
-#include "Event.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -94,21 +93,8 @@ Vx__Expose bool VxWindow_Create(VxWindow **window);
 */
 Vx__Expose bool VxWindow_Delete(VxWindow **window);
 
-/*
-  `VxWindow_PollEvent` - get the next event from the window without blocking.
-
-  This function writes the next event in the queue into the passed output parameter. This function
-  does not block at all; use sleep to avoid 100% CPU.
-*/
-Vx__Expose bool VxWindow_PollEvent(VxWindow *window, VxEvent *event);
-
-/*
-  `VxWindow_WaitEvent` - get the next event from the window with blocking.
-
-  This function writes the next event into the queue into the passed output parameter. This function
-  blocks; use `VxWindow_PollEvent` for non-blocking polls.
-*/
-Vx__Expose bool VxWindow_WaitEvent(VxWindow *window, VxEvent *event);
+// TODO: implement an event ring embedded inside `VxWindow`
+Vx__Expose bool VxWindow_Update(VxWindow *window);
 
 /*
   `VxWindow_IsOpen` - check whether the window is still open.

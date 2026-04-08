@@ -3,6 +3,7 @@
 
 #include "Vx/Event.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h> // IWYU pragma: export
 
 #ifdef _WIN32
@@ -15,11 +16,19 @@
 
 #define Vx__Error(msg) fprintf(stderr, "%s: %s\n", __func__, msg)
 
-#define WM_MOVEP      (WM_APP+1)
-#define WM_SIZEP      (WM_APP+2)
-#define WM_CLOSEP     (WM_APP+3)
-#define WM_SETFOCUSP  (WM_APP+4)
-#define WM_KILLFOCUSP (WM_APP+5)
+#ifndef VxEventRing_Length
+  #define VxEventRing_Length 64
+#endif
+
+typedef struct VxEventRing {
+  VxEvent events[VxEventRing_Length];
+  size_t head, tail;
+  bool full;
+} VxEventRing;
+
+bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
+
+bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
 
 bool Vx__TranslateEvent(const MSG *msg, VxEvent *event);
 

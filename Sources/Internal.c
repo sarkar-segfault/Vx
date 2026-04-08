@@ -1,18 +1,46 @@
 #include "Internal.h"
 #include "Vx/Event.h"
-#include <Windows.h>
 #include <stdbool.h>
+#include <Windows.h>
+
+#define VxEventRing__Wrap(var) var = (var + 1) % VxEventRing_Length
+
+bool VxEventRing_Put(VxEventRing *ring, VxEvent event) {
+  if (!ring) return false;
+
+  ring->events[ring->head] = event;
+  VxEventRing__Wrap(ring->head);
+
+  if (ring->full) {
+    VxEventRing__Wrap(ring->tail);
+  }
+
+  ring->full = ring->head == ring->tail;
+  return true;
+}
+
+bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event) {
+  if (
+    !ring ||
+    !event ||
+    (!ring->full && ring->head == ring->tail)
+  ) return false;
+
+  *event = ring->events[ring->tail];
+  VxEventRing__Wrap(ring->tail);
+
+  ring->full = false;
+  return true;
+}
 
 bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
-  if (!msg || !event)
-    return false;
-
+  if (!msg || !event) return false;
   *event = (VxEvent){0};
 
-  if (msg->message == WM_CLOSEP)
+  if (msg->message == WM_CLOSE)
     event->type = VxEventType_Close;
-
-  else if (msg->message == WM_SIZEP) {
+  
+  else if (msg->message == WM_SIZE) {  
     if (msg->wParam == SIZE_MAXIMIZED)
       event->type = VxEventType_Maximize;
 
@@ -26,16 +54,16 @@ bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
     }
   }
 
-  else if (msg->message == WM_MOVEP) {
+  else if (msg->message == WM_MOVE) {
     event->type = VxEventType_Move;
     event->info.pos.x = LOWORD(msg->lParam);
     event->info.pos.y = HIWORD(msg->lParam);
   }
 
-  else if (msg->message == WM_SETFOCUSP)
+  else if (msg->message == WM_SETFOCUS)
     event->type = VxEventType_Focus;
 
-  else if (msg->message == WM_KILLFOCUSP)
+  else if (msg->message == WM_KILLFOCUS)
     event->type = VxEventType_Blur;
 
   else if (msg->message == WM_CHAR) {
@@ -101,8 +129,7 @@ bool Vx__TranslateEvent(const MSG *msg, VxEvent *event) {
     event->info.delta = HIWORD(msg->wParam);
   }
 
-  else
-    return false;
+  else return false;
 
   return true;
 }

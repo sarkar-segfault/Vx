@@ -1,14 +1,7 @@
 #include "Vx/Lifecycle.h" // IWYU pragma: associated
-#include <Windows.h>
 #include <stdbool.h>
 #include "Internal.h"
 #include "Vx/Window.h"
-
-#define Vx__PostSent(hwnd, smsg, pmsg, wparam, lparam) \
-  case smsg: \
-  return PostMessage(hwnd, pmsg, wparam, lparam); \
-  case pmsg:\
-  return DefWindowProc(hwnd, smsg, wparam, lparam);
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
   switch (umsg) {
@@ -21,12 +14,6 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       UpdateWindow(hwnd);
       return 0;
 
-    Vx__PostSent(hwnd, WM_MOVE, WM_MOVEP, wparam, lparam);
-    Vx__PostSent(hwnd, WM_SIZE, WM_SIZEP, wparam, lparam);
-    Vx__PostSent(hwnd, WM_CLOSE, WM_CLOSEP, wparam, lparam);
-    Vx__PostSent(hwnd, WM_SETFOCUS, WM_SETFOCUSP, wparam, lparam);
-    Vx__PostSent(hwnd, WM_KILLFOCUS, WM_KILLFOCUSP, wparam, lparam);
-      
     default:
       return DefWindowProc(hwnd, umsg, wparam, lparam);
   }
