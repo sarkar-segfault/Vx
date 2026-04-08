@@ -1,6 +1,5 @@
 #include "Vx/Lifecycle.h"  // IWYU pragma: associated
 
-#include <Windows.h>
 #include <stdbool.h>
 
 #include "Internal.h"
@@ -13,19 +12,17 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
   switch (umsg) {
     case WM_DESTROY:
       free(ring);
-      SetWindowLongPtr(hwnd, GWLP_USERDATA, NULL);
+      SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)NULL);
       PostQuitMessage(0);
       return 0;
 
     case WM_TIMER:
-      Vx__Error("WM_TIMER");
       InvalidateRect(hwnd, NULL, TRUE);
       UpdateWindow(hwnd);
       return 0;
 
     case WM_CLOSE:
-      VxEventRing_Put(ring, (VxEvent){.type = VxEventType_Close});
-      return DefWindowProc(hwnd, umsg, wparam, lparam);
+      return !VxEventRing_Put(ring, (VxEvent){.type = VxEventType_Close});
 
     case WM_SETFOCUS:
       VxEventRing_Put(ring, (VxEvent){.type = VxEventType_Focus});
@@ -52,7 +49,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MOVE:
-      VxEventRing_Put(ring, (VxEvent){.type = VxEventType_Move, .info.size = {LOWORD(lparam), HIWORD(lparam)}});
+      VxEventRing_Put(ring, (VxEvent){.type = VxEventType_Move, .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_KEYDOWN:
@@ -98,7 +95,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
     case WM_MOUSEWHEEL:
       VxEventRing_Put(ring, (VxEvent){.type = VxEventType_MouseWheel, .info.delta = HIWORD(wparam)});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
-      
+
     default:
       return DefWindowProc(hwnd, umsg, wparam, lparam);
   }

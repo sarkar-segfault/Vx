@@ -1,23 +1,24 @@
 #ifndef Vx__InternalH
 #define Vx__InternalH
 
-#include "Vx/Event.h"
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h> // IWYU pragma: export
+#include <stdio.h>  // IWYU pragma: export
+
+#include "Vx/Event.h"
 
 #ifdef _WIN32
-  #define NOMINMAX
-  #define WIN32_LEAN_AND_MEAN
-  #include <Windows.h> // IWYU pragma: export
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>  // IWYU pragma: export
 #else
-  #error "Vx only supports Win32 as of now..."
+#error "Vx only supports Win32 as of now..."
 #endif
 
 #define Vx__Error(msg) fprintf(stderr, "%s: %s\n", __func__, msg)
 
 #ifndef VxEventRing_Length
-  #define VxEventRing_Length 64
+#define VxEventRing_Length 64
 #endif
 
 typedef struct VxEventRing {
@@ -26,8 +27,8 @@ typedef struct VxEventRing {
   bool full;
 } VxEventRing;
 
-bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
+bool VxEventRing_Put(VxEventRing* ring, VxEvent event);
 
-bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
+bool VxEventRing_Pop(VxEventRing* ring, VxEvent* event);
 
 #endif

@@ -174,7 +174,7 @@ typedef union VxEventInfo {
   struct {
     uint32_t w, h;
   } size;
-  
+
   struct {
     int32_t x, y;
   } pos;
