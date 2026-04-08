@@ -6,7 +6,7 @@
 
 int main(void) {
   Vx_Initiate();
-  VxWindow* window = NULL;
+  VxWindow *window = NULL;
 
   VxWindow_Create(&window);
   VxWindow_SetFps(window, 60);

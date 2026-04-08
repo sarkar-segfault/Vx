@@ -7,7 +7,7 @@
 #include "Vx/Window.h"
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
-  VxEventRing* ring = (VxEventRing*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
   switch (umsg) {
     case WM_DESTROY:
