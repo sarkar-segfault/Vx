@@ -1,4 +1,5 @@
 #include "Vx/Window.h" // IWYU pragma: associated
+#include <Windows.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -9,7 +10,6 @@ struct VxWindow {
   HWND hwnd;
   UINT_PTR timer;
   uint8_t fps;
-  VxEventRing ring;
 };
 
 bool VxWindow_Create(VxWindow **window) {
@@ -18,6 +18,15 @@ bool VxWindow_Create(VxWindow **window) {
     Vx__Error("failed to allocate window");
     return false;
   }
+
+  VxEventRing *ring = calloc(1, sizeof(VxEventRing));
+  if (!ring) {
+    Vx__Error("failed to allocate event ring");
+    free(window);
+    return false;
+  }
+
+  SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
 
   (*window)->hwnd = CreateWindowEx(
     WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,

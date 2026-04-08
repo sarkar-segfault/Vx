@@ -21,6 +21,8 @@ typedef enum VxEventType {
   VxEventType_Move,
   VxEventType_Focus,
   VxEventType_Blur,
+  VxEventType_Show,
+  VxEventType_Hide,
   VxEventType_Minimize,
   VxEventType_Maximize,
 
@@ -78,7 +80,7 @@ typedef enum VxEventKey {
   VxEventKey_7,
   VxEventKey_8,
   VxEventKey_9,
-  
+
   VxEventKey_Escape,
   VxEventKey_Tab,
   VxEventKey_CapsLock,
@@ -96,7 +98,7 @@ typedef enum VxEventKey {
   VxEventKey_Right,
   VxEventKey_Up,
   VxEventKey_Down,
- 
+
   VxEventKey_F1,
   VxEventKey_F2,
   VxEventKey_F3,
@@ -109,7 +111,7 @@ typedef enum VxEventKey {
   VxEventKey_F10,
   VxEventKey_F11,
   VxEventKey_F12,
-  
+
   VxEventKey_NumLock,
   VxEventKey_Numpad0,
   VxEventKey_Numpad1,
@@ -126,17 +128,17 @@ typedef enum VxEventKey {
   VxEventKey_NumpadSubtract,
   VxEventKey_NumpadDecimal,
   VxEventKey_NumpadDivide,
-  
-  VxEventKey_Semicolon, 
-  VxEventKey_Equals, 
-  VxEventKey_Comma, 
-  VxEventKey_Minus, 
-  VxEventKey_Period, 
-  VxEventKey_Slash, 
-  VxEventKey_Backtick, 
-  VxEventKey_LeftBracket, 
-  VxEventKey_Backslash, 
-  VxEventKey_RightBracket, 
+
+  VxEventKey_Semicolon,
+  VxEventKey_Equals,
+  VxEventKey_Comma,
+  VxEventKey_Minus,
+  VxEventKey_Period,
+  VxEventKey_Slash,
+  VxEventKey_Backtick,
+  VxEventKey_LeftBracket,
+  VxEventKey_Backslash,
+  VxEventKey_RightBracket,
   VxEventKey_Quote,
 } VxEventKey;
 
@@ -146,9 +148,9 @@ typedef enum VxEventKey {
   Only cross-platform mods are to be added here.
 */
 typedef enum VxEventMod {
-  VxEventMod_Shift   = 1 << 0,
+  VxEventMod_Shift = 1 << 0,
   VxEventMod_Control = 1 << 1,
-  VxEventMod_Alt     = 1 << 2,
+  VxEventMod_Alt = 1 << 2,
 } VxEventMod;
 
 /*
@@ -169,10 +171,23 @@ typedef enum VxEventButton {
   `pos` is be reused for mouse movements too, besides window movements.
 */
 typedef union VxEventInfo {
-  struct { uint32_t w, h; } size;
-  struct { int32_t x, y; } pos;
-  struct { int32_t delta; } wheel;
-  struct { VxEventKey key; uint8_t mod; } press;
+  struct {
+    uint32_t w, h;
+  } size;
+  
+  struct {
+    int32_t x, y;
+  } pos;
+
+  struct {
+    int32_t delta;
+  } wheel;
+
+  struct {
+    VxEventKey key;
+    uint8_t mod;
+  } press;
+
   VxEventKey release;
   VxEventButton button;
   char sent;
