@@ -10,6 +10,7 @@ struct VxWindow {
   HWND hwnd;
   UINT_PTR timer;
   uint8_t fps;
+  MSG msg;
 };
 
 bool VxWindow_Create(VxWindow **window) {
@@ -22,11 +23,10 @@ bool VxWindow_Create(VxWindow **window) {
   VxEventRing *ring = calloc(1, sizeof(VxEventRing));
   if (!ring) {
     Vx__Error("failed to allocate event ring");
-    free(window);
+    free(*window);
+    *window = NULL;
     return false;
   }
-
-  SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
 
   (*window)->hwnd = CreateWindowEx(
     WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
@@ -48,6 +48,7 @@ bool VxWindow_Create(VxWindow **window) {
     return false;
   }
 
+  SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
   return true;
 }
 
@@ -55,19 +56,61 @@ bool VxWindow_IsOpen(const VxWindow *window) {
   return window && IsWindow(window->hwnd);
 }
 
-bool VxWindow_GetEvent(VxWindow *window, VxEvent *event) {
+bool VxWindow_PollEvents(VxWindow *window) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  while (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE) > 0) {
+    TranslateMessage(&window->msg);
+    DispatchMessage(&window->msg);
+  }
+
+  return true;
+}
+
+bool VxWindow_WaitEvents(VxWindow *window) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  while (GetMessage(&window->msg, window->hwnd, 0, 0) > 0) {
+    TranslateMessage(&window->msg);
+    DispatchMessage(&window->msg);
+  }
+
+  return true;
+}
+
+bool VxWindow_PopEvent(VxWindow *window, VxEvent *event) {
   if (!window || !event) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  MSG msg = {0};
-  while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
-    TranslateMessage(&msg);
+  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
 
-    if (!Vx__TranslateEvent(&msg, event)) return false;
-    
-    DispatchMessage(&msg);
+  if (!VxEventRing_Pop(ring, event)) {
+    Vx__Error("failed to retrieve event from ring");
+    return false;
+  }
+  
+  return true;
+}
+
+bool VxWindow_PutEvent(VxWindow *window, VxEvent event) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+  
+  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+
+  if (!VxEventRing_Put(ring, event)) {
+    Vx__Error("failed to push value onto ring");
+    return false;
   }
 
   return true;

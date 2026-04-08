@@ -30,6 +30,4 @@ bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
 
 bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
 
-bool Vx__TranslateEvent(const MSG *msg, VxEvent *event);
-
 #endif

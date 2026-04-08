@@ -18,6 +18,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       return 0;
 
     case WM_TIMER:
+      Vx__Error("WM_TIMER");
       InvalidateRect(hwnd, NULL, TRUE);
       UpdateWindow(hwnd);
       return 0;
