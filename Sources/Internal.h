@@ -27,8 +27,8 @@ typedef struct VxEventRing {
   bool full;
 } VxEventRing;
 
-bool VxEventRing_Put(VxEventRing* ring, VxEvent event);
+bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
 
-bool VxEventRing_Pop(VxEventRing* ring, VxEvent* event);
+bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
 
 #endif
