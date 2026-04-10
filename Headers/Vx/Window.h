@@ -80,10 +80,25 @@ typedef struct VxWindow VxWindow;
   This function allocates the passed `VxWindow **`. Make sure that it is not already
   allocated, because this function will overwrite it and then inevitably leak memory.
   Internally, we call platform specific functions to create the window, write to the
-  output parameter, and perform some extra work like setting opacity. Returns `false`
-  on failure.
+  output parameter, and perform some extra work like setting opacity.
 */
 Vx__Expose bool VxWindow_Create(VxWindow **window);
+
+/*
+  `VxWindow_Close` - close a `VxWindow` object.
+
+  This function sets a flag which causes `VxWindow_IsOpen` to return false. Call this
+  if you get `VxEventType_Close` and `VxWindow_Delete` later.
+*/
+Vx__Expose bool VxWindow_Close(VxWindow *window);
+
+/*
+  `VxWindow_Close` - open a `VxWindow` object.
+
+  This function sets a flag which influences `VxWindow_IsOpen` to return true. Call this
+  if you want to revive a window affected by `VxWindow_Close`.
+*/
+Vx__Expose bool VxWindow_Close(VxWindow *window);
 
 /*
   `VxWindow_Delete` - delete a `VxWindow` object.
@@ -91,12 +106,32 @@ Vx__Expose bool VxWindow_Create(VxWindow **window);
   This function deallocates the passed `VxWindow **` and sets it to `NULL`. If the inner
   platform context is valid, then a platform specific destructor is also called to destroy
   the window; though this is usually not needed unless called while the window is alive.
-  Returns `false` on failure.
 */
 Vx__Expose bool VxWindow_Delete(VxWindow **window);
 
+/*
+  `VxWindow_PollEvents` - poll input events from the window.
+
+  This function processes all platform-specific messages/input and pushes them onto the
+  window's internal event ring, which is a circular queue. This function does not block at
+  all, and may be insufficient for certain applications.
+*/
 Vx__Expose bool VxWindow_PollEvents(VxWindow *window);
+
+/*
+  `VxWindow_PopEvent` - pop an event from the window's event ring.
+
+  This function pops the oldest relevant event from the window's event ring into the provided
+  output parameter. In a loop, you can use this to sequentially process all window events.
+*/
 Vx__Expose bool VxWindow_PopEvent(VxWindow *window, VxEvent *event);
+
+/*
+  `VxWindow_PutEvent` - put an event onto the window's event ring.
+
+  This function puts the provided event onto the window event ring's last available spot,
+  removing the oldest event if it has to. You can use this to simulate events or interactions.
+*/
 Vx__Expose bool VxWindow_PutEvent(VxWindow *window, VxEvent event);
 
 /*

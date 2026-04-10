@@ -13,6 +13,7 @@ struct VxWindow {
   UINT_PTR timer;
   uint8_t fps;
   MSG msg;
+  bool open;
 };
 
 bool VxWindow_Create(VxWindow** window) {
@@ -21,6 +22,8 @@ bool VxWindow_Create(VxWindow** window) {
     Vx__Error("failed to allocate window");
     return false;
   }
+
+  (*window)->open = true;
 
   VxEventRing* ring = calloc(1, sizeof(VxEventRing));
   if (!ring) {
@@ -54,7 +57,27 @@ bool VxWindow_Create(VxWindow** window) {
   return true;
 }
 
-bool VxWindow_IsOpen(const VxWindow* window) { return window && IsWindow(window->hwnd); }
+bool VxWindow_Close(VxWindow *window) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  window->open = false;
+  return true;
+}
+
+bool VxWindow_Open(VxWindow *window) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  window->open = true;
+  return true;
+}
+
+bool VxWindow_IsOpen(const VxWindow* window) { return window && IsWindow(window->hwnd) && window->open; }
 
 bool VxWindow_PollEvents(VxWindow* window) {
   if (!window) {

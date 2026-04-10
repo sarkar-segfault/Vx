@@ -20,7 +20,7 @@ int main(void) {
       switch (event.type) {
         case VxEventType_Close:
           printf("Close\n");
-          VxWindow_Delete(&window);
+          VxWindow_Close(window);
           goto terminate;
 
         case VxEventType_Resize:
@@ -91,6 +91,7 @@ int main(void) {
   }
 
 terminate:
+  VxWindow_Delete(&window);
   Vx_Terminate();
   return 0;
 }
