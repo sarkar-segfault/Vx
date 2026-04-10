@@ -20,19 +20,19 @@
   building as shared, the macro is left blank.
 */
 #ifdef Vx__Shared
-#ifdef _WIN32
-#ifdef Vx__Build
-#define Vx__Export __declspec(dllimport)
+  #ifdef _WIN32
+    #ifdef Vx__Build
+      #define Vx__Export __declspec(dllimport)
+    #else
+      #define Vx__Export __declspec(dllexport)
+    #endif
+  #elif defined(__GNUC__)
+    #define Vx__Export __attribute__((visibility("default")))
+  #else
+    #define Vx__Export
+  #endif
 #else
-#define Vx__Export __declspec(dllexport)
-#endif
-#elif defined(__GNUC__)
-#define Vx__Export __attribute__((visibility("default")))
-#else
-#define Vx__Export
-#endif
-#else
-#define Vx__Export
+  #define Vx__Export
 #endif
 
 /*
@@ -49,9 +49,9 @@
   Case in point, I have IWYU pragmas sprinkled all over instead of letting it infer them.
 */
 #ifdef __cplusplus
-#define Vx__Extern extern "C"
+  #define Vx__Extern extern "C"
 #else
-#define Vx__Extern extern
+  #define Vx__Extern extern
 #endif
 
 /*

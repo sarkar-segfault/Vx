@@ -26,7 +26,7 @@
   default window class name is "VxWindow". Do not override this unless you have to.
 */
 #if defined(_WIN32) && !defined(VxWindow_Class)
-#define VxWindow_Class "VxWindow"
+  #define VxWindow_Class "VxWindow"
 #endif
 
 /*
@@ -38,7 +38,7 @@
   takes effect if defined at compile time, you may have to rebuild over and over.
 */
 #ifndef VxWindow_DefaultWidth
-#define VxWindow_DefaultWidth 800
+  #define VxWindow_DefaultWidth 800
 #endif
 
 /*
@@ -50,7 +50,7 @@
   takes effect if defined at compile time, you may have to rebuild over and over.
 */
 #ifndef VxWindow_DefaultHeight
-#define VxWindow_DefaultHeight 600
+  #define VxWindow_DefaultHeight 600
 #endif
 
 /*
@@ -62,7 +62,7 @@
   effect if defined at compile time, you may have to rebuild over and over again.
 */
 #ifndef VxWindow_DefaultTitle
-#define VxWindow_DefaultTitle "VxWindow"
+  #define VxWindow_DefaultTitle "VxWindow"
 #endif
 
 /*
