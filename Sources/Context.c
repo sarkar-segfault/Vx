@@ -9,11 +9,6 @@
 #include "Vx/Event.h"
 #include "Vx/Window.h"
 
-struct VxContext {
-  EGLDisplay display;
-  EGLConfig config;
-};
-
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
   VxEventRing ring = (VxEventRing)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
@@ -110,19 +105,8 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 }
 
 bool VxContext_Initiate(VxContext *context) {
-  if (!context) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
-
-  *context = calloc(1, sizeof(struct VxContext));
-  if (!*context) {
-    Vx__Error("failed to allocate context");
-    return false;
-  }
-
   WNDCLASSEX wc = {0};
-  wc.lpszClassName = "VxWindow_Class";
+  wc.lpszClassName = VxWindow_Class;
   wc.lpfnWndProc = VxWindow__Process;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
@@ -131,6 +115,16 @@ bool VxContext_Initiate(VxContext *context) {
 
   if (!RegisterClassEx(&wc)) {
     Vx__Error("failed to register window class");
+    return false;
+  }
+
+  if (!context) {
+    return true;
+  }
+
+  *context = calloc(1, sizeof(struct VxContext));
+  if (!*context) {
+    Vx__Error("failed to allocate context");
     return false;
   }
 
@@ -161,12 +155,16 @@ bool VxContext_Initiate(VxContext *context) {
                           8,
                           EGL_ALPHA_SIZE,
                           8,
-                          EGL_DEPTH_SIZE,
-                          24,
                           EGL_NONE};
 
-  if (!eglChooseConfig((*context)->display, config_spec, &(*context)->config, 1, NULL)) {
-    Vx__Error("failed to setup OpenGL ES config");
+  EGLint num;
+  
+  if (!eglChooseConfig((*context)->display, config_spec, &(*context)->config, 1, &num)) {
+    if (num == 0)
+      Vx__Error("could not find matching config");
+    else
+      Vx__Error("failed to setup OpenGL ES config");
+
     return false;
   }
 

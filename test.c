@@ -1,16 +1,19 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include "Vx/Lifecycle.h"
+#include "Vx/Context.h"
 #include "Vx/Window.h"
 
 int main(void) {
-  Vx_Initiate();
-  VxWindow *window = NULL;
+  VxContext context;
+  VxContext_Initiate(&context);
+
+  VxWindow window = NULL;
 
   VxWindow_Create(&window);
   VxWindow_SetFps(window, 60);
 
+  VxWindow_MountGraphics(window, context);
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
@@ -91,7 +94,7 @@ int main(void) {
   }
 
 terminate:
-  VxWindow_Delete(&window);
-  Vx_Terminate();
+  VxWindow_Delete(&window, context);
+  VxContext_Terminate(context);
   return 0;
 }

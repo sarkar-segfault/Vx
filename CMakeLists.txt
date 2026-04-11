@@ -7,7 +7,7 @@ project(
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
-add_library(Vx Sources/Window.c Sources/Lifecycle.c Sources/Internal.c)
+add_library(Vx Sources/Window.c Sources/Context.c Sources/Internal.c)
 
 set(VxWindow_DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow_DefaultHeight 600 CACHE STRING "The default height for all windows")
@@ -34,6 +34,7 @@ if(BUILD_SHARED_LIBS)
   target_compile_definitions(Vx PRIVATE Vx__Shared)
 endif()
 
+target_link_libraries(Vx PRIVATE EGL GLESv2)
 target_compile_definitions(Vx PRIVATE Vx__Build)
 
 target_compile_definitions(

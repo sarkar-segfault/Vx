@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include "Internal.h"
+#include "Vx/Context.h"
 
 struct VxWindow {
   HWND hwnd;
@@ -16,6 +17,8 @@ struct VxWindow {
   uint8_t fps;
   MSG msg;
   bool open;
+  EGLSurface surface;
+  EGLContext context;
   PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
 };
 
@@ -60,8 +63,36 @@ bool VxWindow_Create(VxWindow *window) {
   return true;
 }
 
-bool VxWindow_MountGraphics(VxWindow window) {
-  if (!window) {
+bool VxWindow_MountGraphics(VxWindow window, VxContext context) {
+  if (!context) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  if (!window && !eglMakeCurrent(context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+    Vx__Error("failed to clear display context");
+    return false;
+  }
+
+  if (!window->surface) {
+    window->surface = eglCreateWindowSurface(context->display, context->config, window->hwnd, NULL);
+    if (window->surface == EGL_NO_SURFACE) {
+      Vx__Error("failed to create window surface");
+      return false;
+    }
+  }
+
+  if (!window->context) {
+    window->context = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
+    if (window->surface == EGL_NO_CONTEXT) {
+      Vx__Error("failed to create window context");
+      return false;
+    }
+  }
+
+  if (!eglMakeCurrent(context->display, window->surface, window->surface, window->context)) {
+    Vx__Error("failed to mount window context");
+    return false;
   }
 
   return true;
@@ -123,12 +154,22 @@ bool VxWindow_PutEvent(VxWindow window, VxEvent event) {
   return VxEventRing_Put(ring, event);
 }
 
-bool VxWindow_Delete(VxWindow *window) {
+bool VxWindow_Delete(VxWindow *window, VxContext context) {
   if (!window || !*window) {
     Vx__Error("called with invalid args");
     return false;
   }
 
+  if ((*window)->surface && !eglDestroySurface(context->display, (*window)->surface)) {
+    Vx__Error("failed to deallocate window surface");
+    return false;
+  }
+  
+  if ((*window)->surface && !eglDestroyContext(context->display, (*window)->context)) {
+    Vx__Error("failed to deallocate window context");
+    return false;
+  }
+  
   if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) {
     Vx__Error("failed to destroy window");
     return false;

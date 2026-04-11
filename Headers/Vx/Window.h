@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 #include "Event.h"
+#include "Vx/Context.h"
 #include "_Expose.h"
 
 /*
@@ -85,13 +86,12 @@ typedef struct VxWindow *VxWindow;
 Vx__Expose bool VxWindow_Create(VxWindow *window);
 
 /*
-  `VxWindow_StartGraphics` - initialise the window's graphics context and make it current.
+  `VxWindow_MountGraphics` - initialise the window's graphics context and make it current.
 
-  This function initialises ANGLE's OpenGL ES, and enables graphics work on the selected
-  window. On Windows, we prefer to use D3D11. No graphics work can run before this. Call
-  this with NULL in order to reset the context.
+  This function enables graphics work on the selected window. On Windows, we prefer to use D3D11.
+  No graphics work can run before this. Call this with NULL in order to reset the context.
 */
-Vx__Expose bool VxWindow_MountGraphics(VxWindow window);
+Vx__Expose bool VxWindow_MountGraphics(VxWindow window, VxContext context);
 
 /*
   `VxWindow_Close` - close a `VxWindow` object.
@@ -114,9 +114,9 @@ Vx__Expose bool VxWindow_Close(VxWindow window);
 
   This function deallocates the passed `VxWindow *` and sets it to `NULL`. If the inner
   platform context is valid, then a platform specific destructor is also called to destroy
-  the window; though this is usually not needed unless called while the window is alive.
+  the window. It also destroys any associated graphics surfaces or contexts of the window.
 */
-Vx__Expose bool VxWindow_Delete(VxWindow *window);
+Vx__Expose bool VxWindow_Delete(VxWindow *window, VxContext context);
 
 /*
   `VxWindow_PollEvents` - poll input events from the window.

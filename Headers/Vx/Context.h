@@ -5,8 +5,8 @@
   the `VxContext` wrapper.
 */
 
-#ifndef Vx__LifecycleH
-#define Vx__LifecycleH
+#ifndef Vx__ContextH
+#define Vx__ContextH
 
 #include <stdbool.h>
 
