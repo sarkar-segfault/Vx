@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "Internal.h"
+#include "Internal.h"
 
 struct VxWindow {
   HWND hwnd;
@@ -16,7 +16,7 @@ struct VxWindow {
   bool open;
 };
 
-bool VxWindow_Create(VxWindow** window) {
+bool VxWindow_Create(VxWindow **window) {
   *window = calloc(1, sizeof(VxWindow));
   if (!*window) {
     Vx__Error("failed to allocate window");
@@ -25,7 +25,7 @@ bool VxWindow_Create(VxWindow** window) {
 
   (*window)->open = true;
 
-  VxEventRing* ring = calloc(1, sizeof(VxEventRing));
+  VxEventRing *ring = calloc(1, sizeof(VxEventRing));
   if (!ring) {
     Vx__Error("failed to allocate event ring");
     free(*window);
@@ -77,9 +77,9 @@ bool VxWindow_Open(VxWindow *window) {
   return true;
 }
 
-bool VxWindow_IsOpen(const VxWindow* window) { return window && IsWindow(window->hwnd) && window->open; }
+bool VxWindow_IsOpen(const VxWindow *window) { return window && IsWindow(window->hwnd) && window->open; }
 
-bool VxWindow_PollEvents(VxWindow* window) {
+bool VxWindow_PollEvents(VxWindow *window) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -93,27 +93,27 @@ bool VxWindow_PollEvents(VxWindow* window) {
   return true;
 }
 
-bool VxWindow_PopEvent(VxWindow* window, VxEvent* event) {
+bool VxWindow_PopEvent(VxWindow *window, VxEvent *event) {
   if (!window || !event) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  VxEventRing* ring = (VxEventRing*)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Pop(ring, event);
 }
 
-bool VxWindow_PutEvent(VxWindow* window, VxEvent event) {
+bool VxWindow_PutEvent(VxWindow *window, VxEvent event) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  VxEventRing* ring = (VxEventRing*)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Put(ring, event);
 }
 
-bool VxWindow_Delete(VxWindow** window) {
+bool VxWindow_Delete(VxWindow **window) {
   if (!window || !*window) {
     Vx__Error("called with invalid args");
     return false;
@@ -129,7 +129,7 @@ bool VxWindow_Delete(VxWindow** window) {
   return true;
 }
 
-bool VxWindow_GetFps(const VxWindow* window, uint8_t* fps) {
+bool VxWindow_GetFps(const VxWindow *window, uint8_t *fps) {
   if (!window || !fps) {
     Vx__Error("called with invalid args");
     return false;
@@ -138,7 +138,7 @@ bool VxWindow_GetFps(const VxWindow* window, uint8_t* fps) {
   return true;
 }
 
-bool VxWindow_SetFps(VxWindow* window, const uint8_t fps) {
+bool VxWindow_SetFps(VxWindow *window, const uint8_t fps) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -166,7 +166,7 @@ bool VxWindow_SetFps(VxWindow* window, const uint8_t fps) {
   return true;
 }
 
-bool VxWindow_GetSize(const VxWindow* window, uint32_t* w, uint32_t* h) {
+bool VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32_t *h) {
   if (!window || !w || !h) {
     Vx__Error("called with invalid args");
     return false;
@@ -183,7 +183,7 @@ bool VxWindow_GetSize(const VxWindow* window, uint32_t* w, uint32_t* h) {
   return true;
 }
 
-bool VxWindow_SetSize(const VxWindow* window, const uint32_t w, const uint32_t h) {
+bool VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -202,7 +202,7 @@ bool VxWindow_SetSize(const VxWindow* window, const uint32_t w, const uint32_t h
   return true;
 }
 
-bool VxWindow_GetPos(const VxWindow* window, int32_t* x, int32_t* y) {
+bool VxWindow_GetPos(const VxWindow *window, int32_t *x, int32_t *y) {
   if (!window || !x || !y) {
     Vx__Error("called with invalid args");
     return false;
@@ -219,7 +219,7 @@ bool VxWindow_GetPos(const VxWindow* window, int32_t* x, int32_t* y) {
   return true;
 }
 
-bool VxWindow_SetPos(const VxWindow* window, const int32_t x, const int32_t y) {
+bool VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -239,7 +239,7 @@ bool VxWindow_SetPos(const VxWindow* window, const int32_t x, const int32_t y) {
   return true;
 }
 
-bool VxWindow_GetTitle(const VxWindow* window, char* buf, const size_t len) {
+bool VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len) {
   if (!window || !buf || len == 0) {
     Vx__Error("called with invalid args");
     return false;
@@ -249,7 +249,7 @@ bool VxWindow_GetTitle(const VxWindow* window, char* buf, const size_t len) {
   return true;
 }
 
-bool VxWindow_SetTitle(const VxWindow* window, const char* const title) {
+bool VxWindow_SetTitle(const VxWindow *window, const char *const title) {
   if (!window || !title) {
     Vx__Error("called with invalid args");
     return false;
@@ -263,7 +263,7 @@ bool VxWindow_SetTitle(const VxWindow* window, const char* const title) {
   return true;
 }
 
-bool VxWindow_GetOpacity(const VxWindow* window, float* o) {
+bool VxWindow_GetOpacity(const VxWindow *window, float *o) {
   if (!window || !o) {
     Vx__Error("called with invalid args");
     return false;
@@ -282,8 +282,13 @@ bool VxWindow_GetOpacity(const VxWindow* window, float* o) {
   return false;
 }
 
-bool VxWindow_SetOpacity(const VxWindow* window, const float o) {
-  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0, ((o < 0.0f) ? 0.0f : (o > 1.0f) ? 1.0f : o) * 255.0f, LWA_ALPHA)) {
+bool VxWindow_SetOpacity(const VxWindow *window, const float o) {
+  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0,
+                                             ((o < 0.0f)   ? 0.0f
+                                              : (o > 1.0f) ? 1.0f
+                                                           : o) *
+                                                 255.0f,
+                                             LWA_ALPHA)) {
     Vx__Error("failed to set window opacity");
     return false;
   }
@@ -291,7 +296,7 @@ bool VxWindow_SetOpacity(const VxWindow* window, const float o) {
   return true;
 }
 
-bool VxWindow_Minimize(const VxWindow* window) {
+bool VxWindow_Minimize(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_MINIMIZE)) {
     Vx__Error("failed to minimize window");
     return false;
@@ -300,7 +305,7 @@ bool VxWindow_Minimize(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Maximize(const VxWindow* window) {
+bool VxWindow_Maximize(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_MAXIMIZE)) {
     Vx__Error("failed to maximize window");
     return false;
@@ -309,7 +314,7 @@ bool VxWindow_Maximize(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Restore(const VxWindow* window) {
+bool VxWindow_Restore(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_RESTORE)) {
     Vx__Error("failed to restore window");
     return false;
@@ -318,7 +323,7 @@ bool VxWindow_Restore(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Hide(const VxWindow* window) {
+bool VxWindow_Hide(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_HIDE)) {
     Vx__Error("failed to hide window");
     return false;
@@ -327,7 +332,7 @@ bool VxWindow_Hide(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Show(const VxWindow* window) {
+bool VxWindow_Show(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_SHOW)) {
     Vx__Error("failed to show window");
     return false;
@@ -336,7 +341,7 @@ bool VxWindow_Show(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Focus(const VxWindow* window) {
+bool VxWindow_Focus(const VxWindow *window) {
   if (!window || !SetForegroundWindow(window->hwnd)) {
     Vx__Error("failed to focus window");
     return false;
@@ -345,7 +350,7 @@ bool VxWindow_Focus(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_Flash(const VxWindow* window) {
+bool VxWindow_Flash(const VxWindow *window) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -364,7 +369,7 @@ bool VxWindow_Flash(const VxWindow* window) {
   return true;
 }
 
-bool VxWindow_GetHandle(const VxWindow* window, void** ptr) {
+bool VxWindow_GetHandle(const VxWindow *window, void **ptr) {
   if (!window || !ptr) {
     Vx__Error("called with invalid args");
     return false;
