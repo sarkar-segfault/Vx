@@ -6,24 +6,24 @@
 
 int main(void) {
   VxContext context;
-  VxContext_Initiate(&context);
+  if (!VxContext_Initiate(&context)) return 1;
 
   VxWindow window;
 
-  VxWindow_Create(&window, context);
-  VxWindow_SetFps(window, 60);
+  if (!VxWindow_Create(&window, context)) return 1;
+  if (!VxWindow_SetFps(window, 60)) return 1;
 
-  VxWindow_MountGraphics(window);
+  if (!VxWindow_MountGraphics(window)) return 1;
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
-    VxWindow_PollEvents(window);
+    if (!VxWindow_PollEvents(window)) return 1;
 
     while (VxWindow_PopEvent(window, &event)) {
       switch (event.type) {
         case VxEventType_Close:
           printf("Close\n");
-          VxWindow_Close(window);
+          if (!VxWindow_Close(window)) return 1;
           goto terminate;
 
         case VxEventType_Resize:
@@ -94,7 +94,7 @@ int main(void) {
   }
 
 terminate:
-  VxWindow_Delete(&window);
-  VxContext_Terminate(context);
+  if (!VxWindow_Delete(&window)) return 1;
+  if (!VxContext_Terminate(context)) return 1;
   return 0;
 }

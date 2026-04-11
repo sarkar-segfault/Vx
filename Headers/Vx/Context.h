@@ -31,15 +31,15 @@ Vx__Expose bool VxContext_Initiate(VxContext *context);
 /*
   `VxContext_ClearGraphics` - clear the graphics context.
 
-  This function clears the current graphics context. If you are manually dealing with
-  OpenGL, you should to call this before commencing teardown.
+  This function clears the current graphics context. Use this to remove the window
+  whose graphics context is current right now. This is usually called before cleanup.
 */
 Vx__Expose bool VxContext_ClearGraphics(VxContext context);
 
 /*
   `VxContext_Terminate` - terminate windowing and graphics.
 
-  This function uses platform APIs to deallocate the resources we `VxContext_Initiate`
+  This function uses platform APIs to deallocate the resources `VxContext_Initiate`
   allocated for windowing and graphics. It frees all EGL and windowing contexts.
 */
 Vx__Expose bool VxContext_Terminate(VxContext context);

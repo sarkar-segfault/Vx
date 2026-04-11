@@ -12,7 +12,7 @@ add_library(Vx Sources/Window.c Sources/Context.c Sources/Internal.c)
 set(VxWindow_DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow_DefaultHeight 600 CACHE STRING "The default height for all windows")
 set(VxWindow_DefaultTitle "VxWindow" CACHE STRING "The default title for all windows")
-set(VxEventRing_Length 64 CACHE STRING "The length of the event circular queue/ring buffer")
+set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/ring buffer")
 option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
 
 if(DEFINED VxWindow_DefaultWidth)

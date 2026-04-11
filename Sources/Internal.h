@@ -29,10 +29,10 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
-#define Vx__Error(msg) fprintf(stderr, "%s: %s\n", __func__, msg)
+#define Vx__Error(msg) fprintf(stderr, "(%s)                         %s\n", __func__, msg)
 
 #ifndef VxEventRing_Length
-  #define VxEventRing_Length 64
+  #define VxEventRing_Length 128
 #endif
 
 #ifdef VxContext_UseAngle
@@ -41,7 +41,9 @@ struct VxContext {
   EGLConfig config;
 };
 #else
-struct VxContext {};
+struct VxContext {
+  char _;
+};
 #endif
 
 typedef struct VxEventRing {
