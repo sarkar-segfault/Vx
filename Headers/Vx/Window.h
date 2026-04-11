@@ -81,17 +81,17 @@ typedef struct VxWindow *VxWindow;
   This function allocates the passed `VxWindow *`. Make sure that it is not already
   allocated, because this function will overwrite it and then inevitably leak memory.
   Internally, we call platform specific functions to create the window, write to the
-  output parameter, and perform some extra work like setting opacity.
+  output parameter, and create the window's graphics context and surface.
 */
-Vx__Expose bool VxWindow_Create(VxWindow *window);
+Vx__Expose bool VxWindow_Create(VxWindow *window, VxContext context);
 
 /*
   `VxWindow_MountGraphics` - initialise the window's graphics context and make it current.
 
-  This function enables graphics work on the selected window. On Windows, we prefer to use D3D11.
-  No graphics work can run before this. Call this with NULL in order to reset the context.
+  This function enables graphics work on the selected window. No graphics work can run before
+  this. Call this with NULL in order to reset or clear the context.
 */
-Vx__Expose bool VxWindow_MountGraphics(VxWindow window, VxContext context);
+Vx__Expose bool VxWindow_MountGraphics(VxWindow window);
 
 /*
   `VxWindow_Close` - close a `VxWindow` object.
@@ -116,7 +116,7 @@ Vx__Expose bool VxWindow_Close(VxWindow window);
   platform context is valid, then a platform specific destructor is also called to destroy
   the window. It also destroys any associated graphics surfaces or contexts of the window.
 */
-Vx__Expose bool VxWindow_Delete(VxWindow *window, VxContext context);
+Vx__Expose bool VxWindow_Delete(VxWindow *window);
 
 /*
   `VxWindow_PollEvents` - poll input events from the window.

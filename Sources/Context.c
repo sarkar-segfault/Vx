@@ -118,9 +118,7 @@ bool VxContext_Initiate(VxContext *context) {
     return false;
   }
 
-  if (!context) {
-    return true;
-  }
+  if (!context) return true;
 
   *context = calloc(1, sizeof(struct VxContext));
   if (!*context) {
@@ -172,22 +170,18 @@ bool VxContext_Initiate(VxContext *context) {
 }
 
 bool VxContext_Terminate(VxContext context) {
-  if (!context) {
-    Vx__Error("called with invalid args");
+  if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {
+    Vx__Error("failed to unregister window class");
     return false;
   }
 
+  if (!context) return true;
+  
   if (!eglTerminate(context->display)) {
     Vx__Error("failed to delete OpenGL ES display");
     return false;
   }
 
   free(context);
-
-  if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {
-    Vx__Error("failed to unregister window class");
-    return false;
-  }
-
   return true;
 }

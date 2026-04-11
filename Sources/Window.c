@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "Internal.h"
-#include "Vx/Context.h"
+#include "Vx/Context.h"
 
 struct VxWindow {
   HWND hwnd;
@@ -18,11 +18,17 @@ struct VxWindow {
   MSG msg;
   bool open;
   EGLSurface surface;
-  EGLContext context;
+  EGLContext econtext;
+  VxContext context;
   PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
 };
 
-bool VxWindow_Create(VxWindow *window) {
+bool VxWindow_Create(VxWindow *window, VxContext context) {
+  if (!window) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
   *window = calloc(1, sizeof(struct VxWindow));
   if (!*window) {
     Vx__Error("failed to allocate window");
@@ -34,9 +40,7 @@ bool VxWindow_Create(VxWindow *window) {
   VxEventRing ring = calloc(1, sizeof(struct VxEventRing));
   if (!ring) {
     Vx__Error("failed to allocate event ring");
-    free(*window);
-    *window = NULL;
-    return false;
+    goto terminate;
   }
 
   (*window)->hwnd =
@@ -44,53 +48,52 @@ bool VxWindow_Create(VxWindow *window) {
                      CW_USEDEFAULT, VxWindow_DefaultWidth, VxWindow_DefaultHeight, NULL, NULL, GetModuleHandle(NULL), 0);
 
   if (!(*window)->hwnd) {
-    free(*window);
-    *window = NULL;
-    free(ring);
     Vx__Error("failed to create window");
-    return false;
+    goto terminate;
   }
 
   if (!VxWindow_SetOpacity(*window, 1.0f)) {
-    DestroyWindow((*window)->hwnd);
-    free(*window);
-    *window = NULL;
-    free(ring);
-    return false;
+    Vx__Error("failed to set opacity");
+    goto terminate;
+  }
+
+  if (context) {
+    (*window)->context = context;
+
+    (*window)->surface = eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
+    if (!(*window)->surface) {
+      Vx__Error("failed to create window surface");
+      goto terminate;
+    }
+
+    (*window)->econtext = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
+    if (!(*window)->econtext) {
+      Vx__Error("failed to create window context");
+      goto terminate;
+    }
   }
 
   SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
   return true;
+
+terminate:
+  free(ring);
+  VxWindow_Delete(window);
+  return false;
 }
 
-bool VxWindow_MountGraphics(VxWindow window, VxContext context) {
-  if (!context) {
+bool VxWindow_MountGraphics(VxWindow window) {
+  if (!window->context) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  if (!window && !eglMakeCurrent(context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+  if (!window && !eglMakeCurrent(window->context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
     Vx__Error("failed to clear display context");
     return false;
   }
 
-  if (!window->surface) {
-    window->surface = eglCreateWindowSurface(context->display, context->config, window->hwnd, NULL);
-    if (window->surface == EGL_NO_SURFACE) {
-      Vx__Error("failed to create window surface");
-      return false;
-    }
-  }
-
-  if (!window->context) {
-    window->context = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
-    if (window->surface == EGL_NO_CONTEXT) {
-      Vx__Error("failed to create window context");
-      return false;
-    }
-  }
-
-  if (!eglMakeCurrent(context->display, window->surface, window->surface, window->context)) {
+  if (!eglMakeCurrent(window->context->display, window->surface, window->surface, window->econtext)) {
     Vx__Error("failed to mount window context");
     return false;
   }
@@ -154,22 +157,26 @@ bool VxWindow_PutEvent(VxWindow window, VxEvent event) {
   return VxEventRing_Put(ring, event);
 }
 
-bool VxWindow_Delete(VxWindow *window, VxContext context) {
+bool VxWindow_Delete(VxWindow *window) {
   if (!window || !*window) {
     Vx__Error("called with invalid args");
     return false;
   }
 
-  if ((*window)->surface && !eglDestroySurface(context->display, (*window)->surface)) {
-    Vx__Error("failed to deallocate window surface");
-    return false;
+  if ((*window)->context) {
+    if (!VxWindow_MountGraphics(NULL)) return false;
+
+    if (!eglDestroySurface((*window)->context->display, (*window)->surface)) {
+      Vx__Error("failed to deallocate window surface");
+      return false;
+    }
+
+    if (!eglDestroyContext((*window)->context->display, (*window)->context)) {
+      Vx__Error("failed to deallocate window context");
+      return false;
+    }
   }
-  
-  if ((*window)->surface && !eglDestroyContext(context->display, (*window)->context)) {
-    Vx__Error("failed to deallocate window context");
-    return false;
-  }
-  
+
   if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) {
     Vx__Error("failed to destroy window");
     return false;

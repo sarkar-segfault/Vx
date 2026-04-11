@@ -5,15 +5,15 @@
 #include "Vx/Window.h"
 
 int main(void) {
-  VxContext context;
-  VxContext_Initiate(&context);
+  // VxContext context;
+  VxContext_Initiate(NULL);
 
-  VxWindow window = NULL;
+  VxWindow window;
 
-  VxWindow_Create(&window);
+  VxWindow_Create(&window, NULL);
   VxWindow_SetFps(window, 60);
 
-  VxWindow_MountGraphics(window, context);
+  // VxWindow_MountGraphics(window);
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
@@ -94,7 +94,7 @@ int main(void) {
   }
 
 terminate:
-  VxWindow_Delete(&window, context);
-  VxContext_Terminate(context);
+  VxWindow_Delete(&window);
+  VxContext_Terminate(NULL);
   return 0;
 }
