@@ -16,11 +16,16 @@ bool VxEventRing_Put(VxEventRing ring, VxEvent event) {
 
   VxEvent *latest = &ring->events[ring->head - 1];
 
-  if (latest->type == event.type && (((latest->type == VxEventType_Move || latest->type == VxEventType_MouseMove) &&
-                                      Vx__INear(latest, event, pos.x, pos.y)) ||
-
-                                     (latest->type == VxEventType_Resize && Vx__UNear(latest, event, size.w, size.h)))) {
-    return true;
+  if (latest->type == event.type) {
+    if ((latest->type == VxEventType_Move || latest->type == VxEventType_MouseMove) && Vx__INear(latest, event, pos.x, pos.y)) {
+      latest->info.pos.x = event.info.pos.x;
+      latest->info.pos.y = event.info.pos.y;
+      return true;
+    } else if (latest->type == VxEventType_Resize && latest->type == event.type && Vx__UNear(latest, event, size.w, size.h)) {
+      latest->info.size.w = event.info.size.w;
+      latest->info.size.h = event.info.size.h;
+      return true;
+    }
   }
 
   ring->events[ring->head] = event;
