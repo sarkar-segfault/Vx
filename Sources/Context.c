@@ -1,4 +1,4 @@
-#include "Vx/Lifecycle.h"  // IWYU pragma: associated
+#include "Vx/Context.h"  // IWYU pragma: associated
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -12,7 +12,6 @@
 struct VxContext {
   EGLDisplay display;
   EGLConfig config;
-  const char *windowClass;
 };
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
@@ -135,8 +134,6 @@ bool VxContext_Initiate(VxContext *context) {
     return false;
   }
 
-  (*context)->windowClass = wc.lpszClassName;
-
   EGLint display_spec[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, EGL_NONE};
 
   PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
@@ -176,7 +173,7 @@ bool VxContext_Initiate(VxContext *context) {
   return true;
 }
 
-bool Vx_Terminate(VxContext context) {
+bool VxContext_Terminate(VxContext context) {
   if (!context) {
     Vx__Error("called with invalid args");
     return false;
@@ -186,7 +183,7 @@ bool Vx_Terminate(VxContext context) {
     Vx__Error("failed to delete OpenGL ES display");
     return false;
   }
-  
+
   free(context);
 
   if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {

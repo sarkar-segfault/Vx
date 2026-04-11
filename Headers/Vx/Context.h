@@ -1,7 +1,8 @@
 /*
-  `Lifecycle.h` - functions for managing the lifecycle of the library.
+  `Context.h` - functions for managing the lifecycle of the library.
 
-  Defines `Vx_Initiate` and `Vx_Terminate` specifically.
+  This header defines functions for managing the lifecycle of the library via
+  the `VxContext` wrapper.
 */
 
 #ifndef Vx__LifecycleH

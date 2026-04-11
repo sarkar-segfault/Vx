@@ -23,8 +23,8 @@
 
 // IWYU pragma: begin_exports
 
+#include "Context.h"
 #include "Event.h"
-#include "Lifecycle.h"
 #include "Window.h"
 
 // IWYU pragma: end_exports
