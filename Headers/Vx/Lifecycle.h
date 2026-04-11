@@ -11,22 +11,10 @@
 
 #include "_Expose.h"
 
-/*
-  `Vx_Initiate` - initiate the library for usage.
+typedef struct VxContext *VxContext;
 
-  This function must be called before any `VxWindow_Create` calls. It sets up
-  platform specific contexts so that we can create windows without duplicating
-  data like window class on windows.
-*/
-Vx__Expose bool Vx_Initiate(void);
+Vx__Expose bool VxContext_Initiate(VxContext *device);
 
-/*
-  `Vx_Terminate` - terminate the library for usage.
-
-  Once this function is called, no more windows can be created, unless you initiate
-  the library once again. This function releases platform specific contexts like
-  window class on windows as they are no longer needed.
-*/
-Vx__Expose bool Vx_Terminate(void);
+Vx__Expose bool VxContext_Terminate(VxContext device);
 
 #endif

@@ -25,10 +25,10 @@ typedef struct VxEventRing {
   VxEvent events[VxEventRing_Length];
   size_t head, tail;
   bool full;
-} VxEventRing;
+} *VxEventRing;
 
-bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
+bool VxEventRing_Put(VxEventRing ring, VxEvent event);
 
-bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
+bool VxEventRing_Pop(VxEventRing ring, VxEvent *event);
 
 #endif

@@ -1,6 +1,5 @@
 #include "Internal.h"
 
-#include <Windows.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -12,7 +11,7 @@
 
 #define Vx__UNear(latest, event, a, b) latest->info.a - event.info.a <= 16 && latest->info.b - event.info.b <= 16
 
-bool VxEventRing_Put(VxEventRing *ring, VxEvent event) {
+bool VxEventRing_Put(VxEventRing ring, VxEvent event) {
   if (!ring) return false;
 
   VxEvent *latest = &ring->events[ring->head - 1];
@@ -35,7 +34,7 @@ bool VxEventRing_Put(VxEventRing *ring, VxEvent event) {
   return true;
 }
 
-bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event) {
+bool VxEventRing_Pop(VxEventRing ring, VxEvent *event) {
   if (!ring || !event || (!ring->full && ring->head == ring->tail)) return false;
 
   *event = ring->events[ring->tail];

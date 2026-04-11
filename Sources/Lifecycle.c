@@ -1,13 +1,22 @@
 #include "Vx/Lifecycle.h"  // IWYU pragma: associated
 
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <EGL/eglext_angle.h>
 #include <stdbool.h>
 
 #include "Internal.h"
 #include "Vx/Event.h"
 #include "Vx/Window.h"
 
+struct VxContext {
+  EGLDisplay display;
+  EGLConfig config;
+  const char *windowClass;
+};
+
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
-  VxEventRing *ring = (VxEventRing *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  VxEventRing ring = (VxEventRing)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
   switch (umsg) {
     case WM_DESTROY:
@@ -101,9 +110,20 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
   }
 }
 
-bool Vx_Initiate(void) {
+bool VxContext_Initiate(VxContext *context) {
+  if (!context) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  *context = calloc(1, sizeof(struct VxContext));
+  if (!*context) {
+    Vx__Error("failed to allocate context");
+    return false;
+  }
+
   WNDCLASSEX wc = {0};
-  wc.lpszClassName = VxWindow_Class;
+  wc.lpszClassName = "VxWindow_Class";
   wc.lpfnWndProc = VxWindow__Process;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
@@ -115,10 +135,60 @@ bool Vx_Initiate(void) {
     return false;
   }
 
+  (*context)->windowClass = wc.lpszClassName;
+
+  EGLint display_spec[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, EGL_NONE};
+
+  PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
+      (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+  (*context)->display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, display_spec);
+  if ((*context)->display == EGL_NO_DISPLAY) {
+    Vx__Error("failed to setup OpenGL ES display");
+  }
+
+  if (!eglInitialize((*context)->display, NULL, NULL)) {
+    Vx__Error("failed to setup OpenGL ES");
+    return false;
+  }
+
+  EGLint config_spec[] = {EGL_RENDERABLE_TYPE,
+                          EGL_OPENGL_ES2_BIT,
+                          EGL_SURFACE_TYPE,
+                          EGL_WINDOW_BIT,
+                          EGL_RED_SIZE,
+                          8,
+                          EGL_GREEN_SIZE,
+                          8,
+                          EGL_BLUE_SIZE,
+                          8,
+                          EGL_ALPHA_SIZE,
+                          8,
+                          EGL_DEPTH_SIZE,
+                          24,
+                          EGL_NONE};
+
+  if (!eglChooseConfig((*context)->display, config_spec, &(*context)->config, 1, NULL)) {
+    Vx__Error("failed to setup OpenGL ES config");
+    return false;
+  }
+
   return true;
 }
 
-bool Vx_Terminate(void) {
+bool Vx_Terminate(VxContext context) {
+  if (!context) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+  if (!eglTerminate(context->display)) {
+    Vx__Error("failed to delete OpenGL ES display");
+    return false;
+  }
+  
+  free(context);
+
   if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {
     Vx__Error("failed to unregister window class");
     return false;
