@@ -1,8 +1,5 @@
 #include "Vx/Window.h"  // IWYU pragma: associated
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
 #include <Vx/Event.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -17,10 +14,11 @@ struct VxWindow {
   uint8_t fps;
   MSG msg;
   bool open;
+#ifdef VxContext_UseAngle
   EGLSurface surface;
   EGLContext econtext;
   VxContext context;
-  PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
+#endif
 };
 
 bool VxWindow_Create(VxWindow *window, VxContext context) {
@@ -57,6 +55,7 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
     goto terminate;
   }
 
+#ifdef VxContext_UseAngle
   if (context) {
     (*window)->context = context;
 
@@ -72,6 +71,7 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
       goto terminate;
     }
   }
+#endif
 
   SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
   return true;
@@ -83,13 +83,9 @@ terminate:
 }
 
 bool VxWindow_MountGraphics(VxWindow window) {
-  if (!window->context) {
+#ifdef VxContext_UseAngle
+  if (!window || !window->context) {
     Vx__Error("called with invalid args");
-    return false;
-  }
-
-  if (!window && !eglMakeCurrent(window->context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
-    Vx__Error("failed to clear display context");
     return false;
   }
 
@@ -97,6 +93,7 @@ bool VxWindow_MountGraphics(VxWindow window) {
     Vx__Error("failed to mount window context");
     return false;
   }
+#endif
 
   return true;
 }
@@ -163,19 +160,21 @@ bool VxWindow_Delete(VxWindow *window) {
     return false;
   }
 
+#ifdef VxContext_UseAngle
   if ((*window)->context) {
-    if (!VxWindow_MountGraphics(NULL)) return false;
+    if (!VxContext_ClearGraphics((*window)->context)) return false;
 
     if (!eglDestroySurface((*window)->context->display, (*window)->surface)) {
       Vx__Error("failed to deallocate window surface");
       return false;
     }
 
-    if (!eglDestroyContext((*window)->context->display, (*window)->context)) {
+    if (!eglDestroyContext((*window)->context->display, (*window)->econtext)) {
       Vx__Error("failed to deallocate window context");
       return false;
     }
   }
+#endif
 
   if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) {
     Vx__Error("failed to destroy window");

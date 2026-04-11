@@ -1,14 +1,19 @@
 #ifndef Vx__InternalH
 #define Vx__InternalH
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>  // IWYU pragma: export
 
 #include "Vx/Event.h"
+
+#ifdef VxContext_UseAngle
+  // IWYU pragma: begin_exports
+  #include <EGL/egl.h>
+  #include <EGL/eglext.h>
+  #include <EGL/eglext_angle.h>
+  // IWYU pragma: end_exports
+#endif
 
 #ifdef _WIN32
   #ifndef NOMINMAX
@@ -30,10 +35,14 @@
   #define VxEventRing_Length 64
 #endif
 
+#ifdef VxContext_UseAngle
 struct VxContext {
   EGLDisplay display;
   EGLConfig config;
 };
+#else
+struct VxContext {};
+#endif
 
 typedef struct VxEventRing {
   VxEvent events[VxEventRing_Length];

@@ -1,8 +1,5 @@
 #include "Vx/Context.h"  // IWYU pragma: associated
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
 #include <stdbool.h>
 
 #include "Internal.h"
@@ -126,6 +123,7 @@ bool VxContext_Initiate(VxContext *context) {
     return false;
   }
 
+#ifdef VxContext_UseAngle
   EGLint display_spec[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE, EGL_NONE};
 
   PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
@@ -156,7 +154,7 @@ bool VxContext_Initiate(VxContext *context) {
                           EGL_NONE};
 
   EGLint num;
-  
+
   if (!eglChooseConfig((*context)->display, config_spec, &(*context)->config, 1, &num)) {
     if (num == 0)
       Vx__Error("could not find matching config");
@@ -165,6 +163,23 @@ bool VxContext_Initiate(VxContext *context) {
 
     return false;
   }
+#endif
+
+  return true;
+}
+
+bool VxContext_ClearGraphics(VxContext context) {
+  if (!context) {
+    Vx__Error("called with invalid args");
+    return false;
+  }
+
+#ifdef VxContext_UseAngle
+  if (!eglMakeCurrent(context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+    Vx__Error("failed to clear context");
+    return false;
+  }
+#endif
 
   return true;
 }
@@ -176,11 +191,13 @@ bool VxContext_Terminate(VxContext context) {
   }
 
   if (!context) return true;
-  
+
+#ifdef VxContext_UseAngle
   if (!eglTerminate(context->display)) {
     Vx__Error("failed to delete OpenGL ES display");
     return false;
   }
+#endif
 
   free(context);
   return true;

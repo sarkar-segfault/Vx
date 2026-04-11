@@ -1,3 +1,4 @@
+-DVxContext_UseAngle
 -IHeaders
 -luser32
 -std=c99

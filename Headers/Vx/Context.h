@@ -29,6 +29,14 @@ typedef struct VxContext *VxContext;
 Vx__Expose bool VxContext_Initiate(VxContext *context);
 
 /*
+  `VxContext_ClearGraphics` - clear the graphics context.
+
+  This function clears the current graphics context. If you are manually dealing with
+  OpenGL, you should to call this before commencing teardown.
+*/
+Vx__Expose bool VxContext_ClearGraphics(VxContext context);
+
+/*
   `VxContext_Terminate` - terminate windowing and graphics.
 
   This function uses platform APIs to deallocate the resources we `VxContext_Initiate`

@@ -13,6 +13,7 @@ set(VxWindow_DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow_DefaultHeight 600 CACHE STRING "The default height for all windows")
 set(VxWindow_DefaultTitle "VxWindow" CACHE STRING "The default title for all windows")
 set(VxEventRing_Length 64 CACHE STRING "The length of the event circular queue/ring buffer")
+option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
 
 if(DEFINED VxWindow_DefaultWidth)
   target_compile_definitions(Vx PUBLIC VxWindow_DefaultWidth=${VxWindow_DefaultWidth})
@@ -30,11 +31,15 @@ if(DEFINED VxEventRing_Length)
   target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
 endif()
 
+if(VxContext_UseAngle)
+  target_compile_definitions(Vx PUBLIC VxContext_UseAngle)
+  target_link_libraries(Vx PRIVATE EGL GLESv2)
+endif()
+
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(Vx PRIVATE Vx__Shared)
 endif()
 
-target_link_libraries(Vx PRIVATE EGL GLESv2)
 target_compile_definitions(Vx PRIVATE Vx__Build)
 
 target_compile_definitions(
@@ -50,10 +55,10 @@ target_include_directories(Vx PUBLIC Headers)
 target_compile_features(Vx PUBLIC c_std_99)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
-  set(Vx__WindowClass "VxWindow" CACHE STRING "The name of the Win32 window class")
+  set(VxWindow_Class "VxWindow" CACHE STRING "The name of the Win32 window class")
 
-  if(DEFINED Vx__WindowClass)
-    target_compile_definitions(Vx PUBLIC Vx__WindowClass="${Vx__WindowClass}")
+  if(DEFINED VxWindow_Class)
+    target_compile_definitions(Vx PUBLIC VxWindow_Class="${VxWindow_Class}")
   endif()
 
   target_link_libraries(Vx PRIVATE user32)
