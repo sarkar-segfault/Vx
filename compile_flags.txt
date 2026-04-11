@@ -1,5 +1,7 @@
 -IHeaders
 -luser32
 -std=c99
+-lGLESv2
 -Wextra
+-lEGL
 -Wall
