@@ -18,7 +18,10 @@
   This struct is a wrapper for storing extra information we need to make windowing
   and graphics work. Internally, this stores a `EGLDisplay` and a `EGLConfig`.
 */
-typedef struct VxContext *VxContext;
+typedef struct VxContext {
+  void *display;
+  void *config;
+} VxContext;
 
 /*
   `VxContext_Initiate` - initiate windowing and graphics.
@@ -26,7 +29,7 @@ typedef struct VxContext *VxContext;
   This function uses platform APIs to allocate the required resources for windowing
   and graphics. It creates a EGL display and a config, writing it into the context.
 */
-Vx__Expose bool VxContext_Initiate(VxContext *context);
+Vx__Expose bool VxContext_Initiate(VxContext **context);
 
 /*
   `VxContext_ClearGraphics` - clear the graphics context.
@@ -34,7 +37,7 @@ Vx__Expose bool VxContext_Initiate(VxContext *context);
   This function clears the current graphics context. Use this to remove the window
   whose graphics context is current right now. This is usually called before cleanup.
 */
-Vx__Expose bool VxContext_ClearGraphics(VxContext context);
+Vx__Expose bool VxContext_ClearGraphics(VxContext *context);
 
 /*
   `VxContext_Terminate` - terminate windowing and graphics.
@@ -42,6 +45,6 @@ Vx__Expose bool VxContext_ClearGraphics(VxContext context);
   This function uses platform APIs to deallocate the resources `VxContext_Initiate`
   allocated for windowing and graphics. It frees all EGL and windowing contexts.
 */
-Vx__Expose bool VxContext_Terminate(VxContext context);
+Vx__Expose bool VxContext_Terminate(VxContext *context);
 
 #endif

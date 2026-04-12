@@ -3,21 +3,24 @@
 
 #include "Vx/Context.h"
 #include "Vx/Window.h"
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
 
 int main(void) {
-  VxContext context;
+  VxContext *context;
   if (!VxContext_Initiate(&context)) return 1;
 
   VxWindow window;
 
   if (!VxWindow_Create(&window, context)) return 1;
-  if (!VxWindow_SetFps(window, 60)) return 1;
 
   if (!VxWindow_MountGraphics(window)) return 1;
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
     if (!VxWindow_PollEvents(window)) return 1;
+    glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     while (VxWindow_PopEvent(window, &event)) {
       switch (event.type) {
@@ -95,6 +98,8 @@ int main(void) {
           break;
       }
     }
+
+    eglSwapBuffers(context->display, VxWindow_GetSurface(window));
   }
 
 terminate:

@@ -7,14 +7,13 @@
 
 Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
-bool VxContext_Initiate(VxContext *context) {
+bool VxContext_Initiate(VxContext **context) {
   WNDCLASSEX wc = {0};
   wc.lpszClassName = VxWindow_Class;
   wc.lpfnWndProc = VxWindow__Process;
   wc.hInstance = GetModuleHandle(NULL);
   wc.cbSize = sizeof(WNDCLASSEX);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wc.hbrBackground = (HBRUSH)COLOR_WINDOW + 1;
 
   if (!RegisterClassEx(&wc)) {
     Vx__Error("failed to register window class");
@@ -74,7 +73,7 @@ bool VxContext_Initiate(VxContext *context) {
   return true;
 }
 
-bool VxContext_ClearGraphics(VxContext context) {
+bool VxContext_ClearGraphics(VxContext *context) {
   if (!context) {
     Vx__Error("called with invalid args");
     return false;
@@ -90,7 +89,7 @@ bool VxContext_ClearGraphics(VxContext context) {
   return true;
 }
 
-bool VxContext_Terminate(VxContext context) {
+bool VxContext_Terminate(VxContext *context) {
   if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) {
     Vx__Error("failed to unregister window class");
     return false;

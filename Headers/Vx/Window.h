@@ -47,7 +47,7 @@ typedef struct VxWindow *VxWindow;
   Internally, we call platform specific functions to create the window, write to the
   output parameter, and create the window's graphics context and surface.
 */
-Vx__Expose bool VxWindow_Create(VxWindow *window, VxContext context);
+Vx__Expose bool VxWindow_Create(VxWindow *window, VxContext *context);
 
 /*
   `VxWindow_MountGraphics` - initialise the window's graphics context and make it current.
@@ -56,6 +56,13 @@ Vx__Expose bool VxWindow_Create(VxWindow *window, VxContext context);
   this. Call this with NULL in order to reset or clear the context.
 */
 Vx__Expose bool VxWindow_MountGraphics(VxWindow window);
+
+/*
+  `VxWindow_GetSurface` - return the `EGLSurface` of the window.
+
+  This function returns the `EGLSurface` handle of the window.
+*/
+Vx__Expose void *VxWindow_GetSurface(VxWindow window);
 
 /*
   `VxWindow_Close` - close a `VxWindow` object.
@@ -114,22 +121,6 @@ Vx__Expose bool VxWindow_PutEvent(VxWindow window, VxEvent event);
   the validity of the window.
 */
 Vx__Expose bool VxWindow_IsOpen(const VxWindow window);
-
-/*
-  `VxWindow_GetFps` - get the current FPS of the window.
-
-  This function writes the current FPS of the window into an output parameter.
-  If the FPS is unset or reset, it returns 0. Returns `false` on failure.
-*/
-Vx__Expose bool VxWindow_GetFps(const VxWindow window, uint8_t *fps);
-
-/*
-  `VxWindow_SetFps` - set the current FPS of the window.
-
-  This function sets the FPS of the window to the specified value. If 0, it removes the timer.
-  Returns `false` on failure.
-*/
-Vx__Expose bool VxWindow_SetFps(VxWindow window, const uint8_t fps);
 
 /*
   `VxWindow_GetSize` - get the current size of the window.
@@ -249,10 +240,10 @@ Vx__Expose bool VxWindow_Flash(const VxWindow window);
 /*
   `VxWindow_GetHandle` - retrieve the underlying platform handle.
 
-  Writes the platform-specific window object (e.g., `HWND` on `_WIN32`) into `ptr`.
-  Returns `true` if successful. This can be used for low-level platform operations
-  not exposed through the `VxWindow` API.
+  Returns the platform-specific window object (e.g., `HWND` on `_WIN32`) to the user.
+  Returns `NULL` on failure. This can be used for low-level platform operations not
+  exposed through the `VxWindow` API.
 */
-Vx__Expose bool VxWindow_GetHandle(const VxWindow window, void **ptr);
+Vx__Expose void *VxWindow_GetHandle(const VxWindow window);
 
 #endif

@@ -40,17 +40,6 @@
   #define VxEventRing_Length 128
 #endif
 
-#ifdef VxContext_UseAngle
-struct VxContext {
-  EGLDisplay display;
-  EGLConfig config;
-};
-#else
-struct VxContext {
-  char _;
-};
-#endif
-
 typedef struct VxEventRing {
   VxEvent events[VxEventRing_Length];
   size_t head, tail;

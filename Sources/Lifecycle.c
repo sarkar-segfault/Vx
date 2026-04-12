@@ -26,11 +26,6 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       PostQuitMessage(0);
       return 0;
 
-    case WM_TIMER:
-      InvalidateRect(hwnd, NULL, TRUE);
-      UpdateWindow(hwnd);
-      return 0;
-
     case WM_CLOSE:
       return VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Close});
 

@@ -8,18 +8,16 @@
 
 struct VxWindow {
   HWND hwnd;
-  UINT_PTR timer;
-  uint8_t fps;
   MSG msg;
   bool open;
 #ifdef VxContext_UseAngle
   EGLSurface surface;
   EGLContext econtext;
-  VxContext context;
+  VxContext *context;
 #endif
 };
 
-bool VxWindow_Create(VxWindow *window, VxContext context) {
+bool VxWindow_Create(VxWindow *window, VxContext *context) {
   if (!window) {
     Vx__Error("called with invalid args");
     return false;
@@ -69,6 +67,15 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
 terminate:
   VxWindow_Delete(window);
   return false;
+}
+
+Vx__Expose void *VxWindow_GetSurface(VxWindow window) {
+  if (window)
+    return window->surface;
+  else {
+    Vx__Error("called with invalid args");
+    return NULL;
+  }
 }
 
 bool VxWindow_MountGraphics(VxWindow window) {
@@ -172,43 +179,6 @@ bool VxWindow_Delete(VxWindow *window) {
 
   free(*window);
   *window = NULL;
-  return true;
-}
-
-bool VxWindow_GetFps(const VxWindow window, uint8_t *fps) {
-  if (!window || !fps) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
-  *fps = window->fps;
-  return true;
-}
-
-bool VxWindow_SetFps(VxWindow window, const uint8_t fps) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
-
-  window->fps = fps;
-
-  if (window->timer != 0) {
-    UINT_PTR timer = window->timer;
-    window->timer = 0;
-    if (!KillTimer(window->hwnd, timer)) {
-      Vx__Error("failed to kill timer");
-      return false;
-    }
-  }
-
-  if (fps != 0) {
-    window->timer = SetTimer(window->hwnd, 0, 1000 / fps, NULL);
-    if (!window->timer) {
-      Vx__Error("failed to set timer");
-      return false;
-    }
-  }
-
   return true;
 }
 
@@ -415,11 +385,11 @@ bool VxWindow_Flash(const VxWindow window) {
   return true;
 }
 
-bool VxWindow_GetHandle(const VxWindow window, void **ptr) {
-  if (!window || !ptr) {
+void *VxWindow_GetHandle(const VxWindow window) {
+  if (window) {
+    return window->hwnd;
+  } else {
     Vx__Error("called with invalid args");
-    return false;
+    return NULL;
   }
-  *ptr = window->hwnd;
-  return true;
 }

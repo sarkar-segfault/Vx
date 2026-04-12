@@ -1,6 +1,9 @@
 -DVxEvent_SendUnknown
 -DVxContext_UseAngle
--pedantic
+-Werror=c++11-compat
+-Werror=pedantic
+-Wc++11-compat
+-Wpedantic
 -IHeaders
 -luser32
 -std=c99
