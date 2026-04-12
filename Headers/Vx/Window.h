@@ -1,13 +1,14 @@
-/*
-  `Window.h` - defines structs and methods for window creation and control.
+/**
+  # Header `Window.h`
+  Defines structs and methods for window creation and control.
 
   This file defines the `VxWindow` struct and its many, many methods. Before
-  you try to use any of these functions, please consult `Lifecycle.h` and its
+  you try to use any of these functions, please consult `Context.h` and its
   functions as they need to be called before and after any windowing logic.
 
   Most things defined in this file only work under `_WIN32`. Unsupported
   platforms will not be mentioned. Also, all functions here are thread safe.
-*/
+**/
 
 #ifndef Vx__WindowH
 #define Vx__WindowH
@@ -20,230 +21,245 @@
 #include "Vx/Context.h"
 #include "_Expose.h"
 
-/*
-  `VxWindow_Class` - the name of the window class (on `_WIN32`).
+/**
+  ## Macro `VxWindow_Class`
+  String representing the name of the window class (on `_WIN32`).
 
   This macro contains the `char[]` that names the window class on `_WIN32`. The
   default window class name is "VxWindow". Do not override this unless you have to.
-*/
+**/
 #if defined(_WIN32) && !defined(VxWindow_Class)
   #define VxWindow_Class "VxWindow"
 #endif
 
-/*
-  `VxWindow` - represents a platform specific window with an opaque pointer.
+/**
+  ## Struct `VxWindow`
+  Represents a platform specific window with an opaque pointer.
 
   This struct represents a underlying native window via an opaque pointer. The exact
   inner fields differ based on the environment, but a rough overview is given below.
   You can use `VxWindow_GetHandle` to get access to the inner platform context.
-*/
+**/
 typedef struct VxWindow *VxWindow;
 
-/*
-  `VxWindow_Create` - create a `VxWindow` object.
+/**
+  ## Method `VxWindow_Create`
+  Create a `VxWindow` object.
 
   This function allocates the passed `VxWindow *`. Make sure that it is not already
   allocated, because this function will overwrite it and then inevitably leak memory.
   Internally, we call platform specific functions to create the window, write to the
   output parameter, and create the window's graphics context and surface.
-*/
+**/
 Vx__Expose bool VxWindow_Create(VxWindow *window, VxContext *context);
 
-/*
-  `VxWindow_MountGraphics` - initialise the window's graphics context and make it current.
+/**
+  ## Method `VxWindow_MountGraphics`
+  Initialise the window's graphics context and make it current.
 
-  This function enables graphics work on the selected window. No graphics work can run before
-  this. Call this with NULL in order to reset or clear the context.
-*/
+  This function enables graphics work on the selected window. No graphics work can run
+  before this. Call this with NULL in order to reset or clear the context.
+**/
 Vx__Expose bool VxWindow_MountGraphics(VxWindow window);
 
-/*
-  `VxWindow_GetSurface` - return the `EGLSurface` of the window.
+/**
+  ## Method `VxWindow_GetSurface`
+  Return the `EGLSurface` of the window.
 
   This function returns the `EGLSurface` handle of the window.
-*/
+**/
 Vx__Expose void *VxWindow_GetSurface(VxWindow window);
 
-/*
-  `VxWindow_Close` - close a `VxWindow` object.
+/**
+  ## Method `VxWindow_Close`
+  Close a `VxWindow` object.
 
-  This function sets a flag which causes `VxWindow_IsOpen` to return false. Call this
-  if you get `VxEventType_Close` and `VxWindow_Delete` later.
-*/
+  This function sets a flag which causes `VxWindow_IsOpen` to return false.
+  Call this when handling `VxEventType_Close`, and destroy later with `VxWindow_Delete`.
+**/
 Vx__Expose bool VxWindow_Close(VxWindow window);
 
-/*
-  `VxWindow_Close` - open a `VxWindow` object.
+/**
+  ## Method `VxWindow_Open`
+  Re-open a `VxWindow` object.
 
-  This function sets a flag which influences `VxWindow_IsOpen` to return true. Call this
-  if you want to revive a window affected by `VxWindow_Close`.
-*/
-Vx__Expose bool VxWindow_Close(VxWindow window);
+  This function resets the internal open-state flag, causing `VxWindow_IsOpen`
+  to return true again.
+**/
+Vx__Expose bool VxWindow_Open(VxWindow window);
 
-/*
-  `VxWindow_Delete` - delete a `VxWindow` object.
+/**
+  ## Method `VxWindow_Delete`
+  Delete a `VxWindow` object.
 
-  This function deallocates the passed `VxWindow *` and sets it to `NULL`. If the inner
-  platform context is valid, then a platform specific destructor is also called to destroy
-  the window. It also destroys any associated graphics surfaces or contexts of the window.
-*/
+  This function deallocates the passed `VxWindow *` and sets it to `NULL`.
+  If the inner platform context is valid, it is destroyed as well, including
+  any associated graphics surfaces or contexts.
+**/
 Vx__Expose bool VxWindow_Delete(VxWindow *window);
 
-/*
-  `VxWindow_PollEvents` - poll input events from the window.
+/**
+  ## Method `VxWindow_PollEvents`
+  Poll input events from the window.
 
-  This function processes all platform-specific messages/input and pushes them onto the
-  window's internal event ring, which is a circular queue. This function does not block at
-  all, and may be insufficient for certain applications.
-*/
+  Processes all platform-specific messages and pushes them into the window's
+  internal event ring buffer. This function does not block.
+**/
 Vx__Expose bool VxWindow_PollEvents(VxWindow window);
 
-/*
-  `VxWindow_PopEvent` - pop an event from the window's event ring.
+/**
+  ## Method `VxWindow_PopEvent`
+  Pop an event from the window's event ring.
 
-  This function pops the oldest relevant event from the window's event ring into the provided
-  output parameter. In a loop, you can use this to sequentially process all window events.
-*/
+  Removes the oldest event from the internal event queue and writes it to `event`.
+**/
 Vx__Expose bool VxWindow_PopEvent(VxWindow window, VxEvent *event);
 
-/*
-  `VxWindow_PutEvent` - put an event onto the window's event ring.
+/**
+  ## Method `VxWindow_PutEvent`
+  Put an event into the window's event ring.
 
-  This function puts the provided event onto the window event ring's last available spot,
-  removing the oldest event if it has to. You can use this to simulate events or interactions.
-*/
+  Inserts an event into the queue, overwriting the oldest if the buffer is full.
+**/
 Vx__Expose bool VxWindow_PutEvent(VxWindow window, VxEvent event);
 
-/*
-  `VxWindow_IsOpen` - check whether the window is still open.
+/**
+  ## Method `VxWindow_IsOpen`
+  Check whether the window is still open.
 
-  This function checks whether the window is still open. In a loop, you can use this to check
-  the validity of the window.
-*/
+  Returns true if the window is currently marked as open.
+**/
 Vx__Expose bool VxWindow_IsOpen(const VxWindow window);
 
-/*
-  `VxWindow_GetSize` - get the current size of the window.
+/**
+  ## Method `VxWindow_GetSize`
+  Get the current size of the window.
 
-  Writes the width and height of the window in pixels to the output parameters `w`
-  and `h`. Returns `false` on failure.
-*/
+  Writes width and height in pixels to `w` and `h`.
+**/
 Vx__Expose bool VxWindow_GetSize(const VxWindow window, uint32_t *w, uint32_t *h);
 
-/*
-  `VxWindow_SetSize` - set the window's size.
+/**
+  ## Method `VxWindow_SetSize`
+  Set the window's size.
 
-  Changes the width and height of the window in pixels. Returns `false` on failure.
-*/
+  Changes the width and height of the window in pixels.
+**/
 Vx__Expose bool VxWindow_SetSize(const VxWindow window, const uint32_t w, const uint32_t h);
 
-/*
-  `VxWindow_GetPos` - get the current position of the window.
+/**
+  ## Method `VxWindow_GetPos`
+  Get the current position of the window.
 
-  Writes the X and Y coordinates of the window's top-left corner relative to the
-  screen into `x` and `y`. Returns `false` on failure.
-*/
+  Writes the X and Y coordinates of the top-left corner to `x` and `y`.
+**/
 Vx__Expose bool VxWindow_GetPos(const VxWindow window, int32_t *x, int32_t *y);
 
-/*
-  `VxWindow_SetPos` - set the window's position on the screen.
+/**
+  ## Method `VxWindow_SetPos`
+  Set the window's position on the screen.
 
-  Moves the window to the specified screen coordinates. Returns `false` on failure.
-*/
+  Moves the window to the specified screen coordinates.
+**/
 Vx__Expose bool VxWindow_SetPos(const VxWindow window, const int32_t x, const int32_t y);
 
-/*
-  `VxWindow_GetTitle` - retrieve the window's title.
+/**
+  ## Method `VxWindow_GetTitle`
+  Retrieve the window's title.
 
-  Copies the current window title into `buf`, up to `len` characters. Returns `false` on failure [1].
+  Copies the title into `buf`, up to `len` characters.
 
-  [1] - On `_WIN32`, we use `GetWindowText` to get the title. `GetWindowText`, however, returns 0 both
-        when it fails and also if the window's title length is literally 0. Since, to my knowledge, we
-        cannot distinguish among these two outcomes, this returns `true` regardless of `GetWindowText`.
-*/
+  Note: On `_WIN32`, `GetWindowText` is used, which cannot distinguish between
+  failure and an empty title, so this function always returns true in that case.
+**/
 Vx__Expose bool VxWindow_GetTitle(const VxWindow window, char *buf, const size_t len);
 
-/*
-  `VxWindow_SetTitle` - set the window's title.
+/**
+  ## Method `VxWindow_SetTitle`
+  Set the window's title.
 
-  Changes the text displayed in the title bar of the window. Returns `false` on failure.
-*/
+  Changes the text displayed in the window's title bar.
+**/
 Vx__Expose bool VxWindow_SetTitle(const VxWindow window, const char *const title);
 
-/*
-  `VxWindow_GetOpacity` - retrieve the window's opacity.
+/**
+  ## Method `VxWindow_GetOpacity`
+  Retrieve the window's opacity.
 
-  Writes the current opacity between 0.0 and 1.0 to `o`. Returns `false` on failure.
-*/
+  Writes the opacity value (0.0 to 1.0) to `o`.
+**/
 Vx__Expose bool VxWindow_GetOpacity(const VxWindow window, float *o);
 
-/*
-  `VxWindow_SetOpacity` - set the window's opacity.
+/**
+  ## Method `VxWindow_SetOpacity`
+  Set the window's opacity.
 
-  Sets the window's transparency. `o` should range between 0.0 and 1.0; returns `false`
-  on failure.
-*/
+  Sets transparency level between 0.0 and 1.0.
+**/
 Vx__Expose bool VxWindow_SetOpacity(const VxWindow window, const float o);
 
-/*
-  `VxWindow_Minimize` - minimize the window.
+/**
+  ## Method `VxWindow_Minimize`
+  Minimize the window.
 
-  Sends the window to the taskbar or dock, iconifying it. Returns `false` on failure.
-*/
+  Sends the window to the taskbar or dock.
+**/
 Vx__Expose bool VxWindow_Minimize(const VxWindow window);
 
-/*
-  `VxWindow_Restore` - restore a minimized or maximized window.
+/**
+  ## Method `VxWindow_Restore`
+  Restore a minimized or maximized window.
 
-  Brings the window back to its normal size and position. Returns `true` on success.
-*/
+  Returns the window to normal state.
+**/
 Vx__Expose bool VxWindow_Restore(const VxWindow window);
 
-/*
-  `VxWindow_Maximize` - maximize the window.
+/**
+  ## Method `VxWindow_Maximize`
+  Maximize the window.
 
-  Enlarges the window to fill the screen or desktop area, maintaining borders if
-  supported. Returns `true` on success.
-*/
+  Expands the window to fill the screen or desktop area.
+**/
 Vx__Expose bool VxWindow_Maximize(const VxWindow window);
 
-/*
-  `VxWindow_Show` - show the window.
+/**
+  ## Method `VxWindow_Show`
+  Show the window.
 
-  Makes the window visible if it is hidden. Returns `true` on success.
-*/
+  Makes the window visible if it is hidden.
+**/
 Vx__Expose bool VxWindow_Show(const VxWindow window);
 
-/*
-  `VxWindow_Hide` - hide the window.
+/**
+  ## Method `VxWindow_Hide`
+  Hide the window.
 
-  Makes the window invisible without destroying it. Returns `true` on success.
-*/
+  Makes the window invisible without destroying it.
+**/
 Vx__Expose bool VxWindow_Hide(const VxWindow window);
 
-/*
-  `VxWindow_Focus` - give keyboard focus to the window.
+/**
+  ## Method `VxWindow_Focus`
+  Give keyboard focus to the window.
 
-  Makes this window the active window and directs keyboard input to it. Returns
-  `true` if the operation succeeds.
-*/
+  Makes this window the active input target.
+**/
 Vx__Expose bool VxWindow_Focus(const VxWindow window);
 
-/*
-  `VxWindow_Flash` - flash the window to draw user attention.
+/**
+  ## Method `VxWindow_Flash`
+  Flash the window.
 
-  Causes the window to visually flash, typically in the taskbar, to notify the
-  user. Returns `true` if successful.
-*/
+  Causes the window to visually flash to attract user attention.
+**/
 Vx__Expose bool VxWindow_Flash(const VxWindow window);
 
-/*
-  `VxWindow_GetHandle` - retrieve the underlying platform handle.
+/**
+  ## Method `VxWindow_GetHandle`
+  Retrieve the underlying platform handle.
 
-  Returns the platform-specific window object (e.g., `HWND` on `_WIN32`) to the user.
-  Returns `NULL` on failure. This can be used for low-level platform operations not
-  exposed through the `VxWindow` API.
-*/
+  Returns the native window handle (e.g., `HWND` on `_WIN32`).
+**/
 Vx__Expose void *VxWindow_GetHandle(const VxWindow window);
 
 #endif

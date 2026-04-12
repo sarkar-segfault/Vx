@@ -1,5 +1,6 @@
 /*
-  `_Expose.h` - defines macros to expose public functions from the shared library across different platforms.
+  # Header `_Expose.h`
+  Defines macros to expose public functions from the shared library across different platforms.
 
   Specifically, it defines `Vx__Export`, `Vx__Extern`, and `Vx__Expose`.
   This file is not to be included in user code.
@@ -12,7 +13,8 @@
 #define Vx__ExposeH
 
 /*
-  `Vx__Export` - marks symbols for export if we are building as a shared library.
+  ## Macro `Vx__Export`
+  Marks symbols for export if we are building as a shared library.
 
   When building a shared library with certain compilers or on certain platforms,
   we have to export our symbols explicitly. We use platform or compiler specific
@@ -36,7 +38,8 @@
 #endif
 
 /*
-  `Vx__Extern` - marks symbols as C to make sure C++ compilers don't choke on our code.
+  ## Macro `Vx__Extern`
+  Marks symbols as C to make sure C++ compilers don't choke on our code.
 
   When a C++ compiler tries to compile C code, it cannot recognize the code as such
   and thinks they are C++. This is a problem because C++ mangles all symbol names,
@@ -55,7 +58,8 @@
 #endif
 
 /*
-  `Vx__Expose` - combines `Vx__Extern` and `Vx__Export` together to properly declare our symbols.
+  ## Macro `Vx__Expose`
+  Combines `Vx__Extern` and `Vx__Export` together to properly declare our symbols.
 
   This macro combines `Vx__Extern` and `Vx__Export` together so that it is more convenient when
   defining symbols.

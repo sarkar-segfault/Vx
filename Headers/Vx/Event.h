@@ -1,10 +1,11 @@
-/*
-  `Event.h` - defines types for handling input events triggered by the user.
+/**
+  # Header `Event.h`
+  Defines types for handling input events triggered by the user.
 
   This file defines the tagged union `VxEvent` and other types to complement it.
-  Enum variants are not documented, and I don't plan to document them at all,
-  since there are simply too many of them.
-*/
+  Enum variants are not documented, and I don't plan to document them at all, since
+  there are simply too many of them. Only cross-platform events are to be added here.
+**/
 
 #ifndef Vx__EventH
 #define Vx__EventH
@@ -12,15 +13,16 @@
 #include <stdint.h>
 #include <stdlib.h>  // IWYU pragma: export
 
-/*
-  `Vx_Near` - check whether two values are sufficiently close to warrant response.
-*/
+/**
+  ## Macro `Vx_Near`
+  Check whether two values are sufficiently close to warrant response.
+**/
 #define Vx_Near(a, b) abs(a - b) <= 16
 
-/*
-  `VxEventType` - enum for representing the types of events we can handle.
-  Only cross-platform events are to be added here.
-*/
+/**
+  ## Enum `VxEventType`
+  Enum for representing the types of events we can handle.
+**/
 typedef enum VxEventType {
   VxEventType_Empty,
   VxEventType_Close,
@@ -43,10 +45,10 @@ typedef enum VxEventType {
   VxEventType_MouseWheel
 } VxEventType;
 
-/*
-  `VxEventKey` - represents all keys we can detect.
-  Only cross-platform keys are to be added here.
-*/
+/**
+  ## Enum `VxEventKey`
+  Represents all keys we can detect.
+**/
 typedef enum VxEventKey {
   VxEventKey_Unknown,
 
@@ -149,64 +151,73 @@ typedef enum VxEventKey {
   VxEventKey_Quote,
 } VxEventKey;
 
-/*
-  `VxEventMod` - represents all the bitflag modifiers we can have on our keys.
+/**
+  ## Enum `VxEventMod`
+  Represents all the bitflag modifiers we can have on our keys.
+
   At most, we can have 8 variants, because we use `uint8_t` to store the flags.
-  Only cross-platform mods are to be added here.
-*/
+**/
 typedef enum VxEventMod {
   VxEventMod_Shift = 1 << 0,
   VxEventMod_Control = 1 << 1,
   VxEventMod_Alt = 1 << 2,
 } VxEventMod;
 
-/*
-  `VxEventButton` - represents all the mouse buttons that we can handle.
-  Only cross-platform buttons are to be added here.
-*/
+/**
+  ## Enum `VxEventButton`
+  Represents all the mouse buttons that we can handle.
+**/
 typedef enum VxEventButton {
   VxEventButton_MouseRight,
   VxEventButton_MouseLeft,
   VxEventButton_MouseCenter,
 } VxEventButton;
 
-/*
-  `VxEventInfo` - union for representing extra data for some events.
+/**
+  ## Union `VxEventInfo`
+  Union for representing extra data for some events.
 
   This union contains extra data/structs for different events. All events do not
   have/need an entry here. We try to reuse members as much as we can. For example,
   `pos` is be reused for mouse movements too, besides window movements.
-*/
+**/
 typedef union VxEventInfo {
+  // VxEventType_Resize
   struct {
     uint32_t w, h;
   } size;
 
+  // VxEventType_Move / VxEventType_MouseMove
   struct {
     int32_t x, y;
   } pos;
 
-  struct {
-    int32_t delta;
-  } wheel;
-
+  // VxEventType_KeyPress
   struct {
     VxEventKey key;
     uint8_t mod;
   } press;
-
-  VxEventKey release;
+  
+  // VxEventType_KeyRelease
+  VxEventKey release; 
+  
+  // VxEventType_MousePress / VxEventType_MouseRelease
   VxEventButton button;
+
+  // VxEventType_CharSent
   char sent;
+
+  // VxEventType_MouseWhell
   int32_t delta;
 } VxEventInfo;
 
-/*
-  `VxEvent` - a tagged union containing all the data we need about an event.
+/**
+  ## Struct `VxEvent`
+  A tagged union containing all the data we need about an event.
 
   This struct is comprised of a `VxEventType` tag, and a `VxEventInfo` union. Do
   not try to access fields on the `VxEventInfo` unless assured by the `VxEventType`.
-*/
+**/
 typedef struct VxEvent {
   VxEventType type;
   VxEventInfo info;
