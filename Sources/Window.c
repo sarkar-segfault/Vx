@@ -1,8 +1,6 @@
 #include "Vx/Window.h"  // IWYU pragma: associated
 
 #include <Vx/Event.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 
 #include "Internal.h"
@@ -34,12 +32,6 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
   }
 
   (*window)->open = true;
-
-  VxEventRing ring = calloc(1, sizeof(struct VxEventRing));
-  if (!ring) {
-    Vx__Error("failed to allocate event ring");
-    goto terminate;
-  }
 
   (*window)->hwnd =
       CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
@@ -73,11 +65,9 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
   }
 #endif
 
-  SetWindowLongPtr((*window)->hwnd, GWLP_USERDATA, (LONG_PTR)ring);
   return true;
 
 terminate:
-  free(ring);
   VxWindow_Delete(window);
   return false;
 }
@@ -140,8 +130,8 @@ bool VxWindow_PopEvent(VxWindow window, VxEvent *event) {
     return false;
   }
 
-  VxEventRing ring = (VxEventRing)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
-  return VxEventRing_Pop(ring, event);
+  VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  return VxEventRing_Pop(&data->ring, event);
 }
 
 bool VxWindow_PutEvent(VxWindow window, VxEvent event) {
@@ -150,8 +140,8 @@ bool VxWindow_PutEvent(VxWindow window, VxEvent event) {
     return false;
   }
 
-  VxEventRing ring = (VxEventRing)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
-  return VxEventRing_Put(ring, event);
+  VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  return VxEventRing_Put(&data->ring, event);
 }
 
 bool VxWindow_Delete(VxWindow *window) {

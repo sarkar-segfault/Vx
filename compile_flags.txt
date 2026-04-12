@@ -1,4 +1,5 @@
 -DVxContext_UseAngle
+-pedantic
 -IHeaders
 -luser32
 -std=c99

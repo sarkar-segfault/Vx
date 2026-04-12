@@ -7,7 +7,7 @@ project(
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
-add_library(Vx Sources/Window.c Sources/Context.c Sources/Internal.c)
+add_library(Vx Sources/Window.c Sources/Context.c Sources/Internal.c Sources/Lifecycle.c)
 
 set(VxWindow_DefaultWidth 800 CACHE STRING "The default width for all windows")
 set(VxWindow_DefaultHeight 600 CACHE STRING "The default height for all windows")

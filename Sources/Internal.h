@@ -1,11 +1,15 @@
 #ifndef Vx__InternalH
 #define Vx__InternalH
 
+// IWYU pragma: begin_exports
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>  // IWYU pragma: export
+#include <stdint.h>
+#include <stdio.h>
+// IWYU pragma: end_exports
 
 #include "Vx/Event.h"
+#include "Vx/_Expose.h"
 
 #ifdef VxContext_UseAngle
   // IWYU pragma: begin_exports
@@ -29,8 +33,9 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
-#define Vx__Error(msg) fprintf(stderr, "(%s)                         %s\n", __func__, msg)
+#define Vx__Error(msg) fprintf(stderr, "[%s] - %s\n", __func__, msg)
 
+// (VxWindow_MountGraphics)
 #ifndef VxEventRing_Length
   #define VxEventRing_Length 128
 #endif
@@ -50,10 +55,16 @@ typedef struct VxEventRing {
   VxEvent events[VxEventRing_Length];
   size_t head, tail;
   bool full;
-} *VxEventRing;
+} VxEventRing;
 
-bool VxEventRing_Put(VxEventRing ring, VxEvent event);
+Vx__Extern bool VxEventRing_Put(VxEventRing *ring, VxEvent event);
+Vx__Extern bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
 
-bool VxEventRing_Pop(VxEventRing ring, VxEvent *event);
+typedef struct VxWindowData {
+  VxEventRing ring;
+  bool is_changing;
+  uint32_t w, h;
+  int32_t x, y;
+} *VxWindowData;
 
 #endif

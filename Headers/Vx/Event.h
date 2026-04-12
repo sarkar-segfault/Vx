@@ -10,6 +10,12 @@
 #define Vx__EventH
 
 #include <stdint.h>
+#include <stdlib.h>  // IWYU pragma: export
+
+/*
+  `Vx_Near` - check whether two values are sufficiently close to warrant response.
+*/
+#define Vx_Near(a, b) abs(a - b) <= 16
 
 /*
   `VxEventType` - enum for representing the types of events we can handle.
