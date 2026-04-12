@@ -86,6 +86,10 @@ int main(void) {
           printf("Mouse wheel: %d\n", event.info.wheel.delta);
           break;
 
+        case VxEventType_Empty:
+          printf("Empty");
+          break;
+
         default:
           printf("Unknown event\n");
           break;

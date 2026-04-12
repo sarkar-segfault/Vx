@@ -98,21 +98,17 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
     case WM_KEYDOWN: {
       VxEvent ev = (VxEvent){.type = VxEventType_KeyPress, .info.press.key = Vx__TranslateKey(wparam)};
 
-      if (GetKeyState(VK_CONTROL) & 0x8000)
-        ev.info.press.mod |= VxEventMod_Control;
-      else if (GetKeyState(VK_SHIFT) & 0x8000)
-        ev.info.press.mod |= VxEventMod_Shift;
-      else if (GetKeyState(VK_MENU) & 0x8000)
-        ev.info.press.mod |= VxEventMod_Alt;
+      if (GetKeyState(VK_CONTROL) & 0x8000) ev.info.press.mod |= VxEventMod_Control;
+      if (GetKeyState(VK_SHIFT) & 0x8000) ev.info.press.mod |= VxEventMod_Shift;
+      if (GetKeyState(VK_MENU) & 0x8000) ev.info.press.mod |= VxEventMod_Alt;
 
-      if (ev.info.press.key != VxEventKey_Unknown) VxEventRing_Put(&data->ring, ev);
+      VxEventRing_Put(&data->ring, ev);
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
     case WM_KEYUP: {
       VxEventKey key = Vx__TranslateKey(wparam);
-      if (key != VxEventKey_Unknown)
-        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
