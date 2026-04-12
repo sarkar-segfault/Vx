@@ -31,42 +31,6 @@
 #endif
 
 /*
-  `VxWindow_DefaultWidth` - the default width of all windows.
-
-  This macro contains the `int32_t` which is the default width of all windows when
-  they are created. If this macro is not set, it defaults to 800. You can set
-  this to avoid calling `VxWindow_SetSize` after creation, but since this only
-  takes effect if defined at compile time, you may have to rebuild over and over.
-*/
-#ifndef VxWindow_DefaultWidth
-  #define VxWindow_DefaultWidth 800
-#endif
-
-/*
-  `VxWindow_DefaultHeight` - the default height of all windows.
-
-  This macro contains the `int32_t` which is the default height of all windows when
-  they are created. If this macro is not set, it defaults to 600. You can set
-  this to avoid calling `VxWindow_SetSize` after creation, but since this only
-  takes effect if defined at compile time, you may have to rebuild over and over.
-*/
-#ifndef VxWindow_DefaultHeight
-  #define VxWindow_DefaultHeight 600
-#endif
-
-/*
-  `VxWindow_DefaultTitle` - the default title of all windows.
-
-  This macro contains the `char *` which is the default title of all windows when
-  they are created. If this macro is not set, it defaults to "VxWindow". You can set
-  this to avoid calling `VxWindow_SetTitle` after creation, but since this only takes
-  effect if defined at compile time, you may have to rebuild over and over again.
-*/
-#ifndef VxWindow_DefaultTitle
-  #define VxWindow_DefaultTitle "VxWindow"
-#endif
-
-/*
   `VxWindow` - represents a platform specific window with an opaque pointer.
 
   This struct represents a underlying native window via an opaque pointer. The exact

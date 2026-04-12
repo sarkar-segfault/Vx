@@ -88,11 +88,13 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
         else if (wparam == SIZE_MINIMIZED)
           VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Minimize});
       }
+
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MOVE:
       if (!data->is_changing)
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Move, .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
+
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_KEYDOWN: {
@@ -102,13 +104,19 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       if (GetKeyState(VK_SHIFT) & 0x8000) ev.info.press.mod |= VxEventMod_Shift;
       if (GetKeyState(VK_MENU) & 0x8000) ev.info.press.mod |= VxEventMod_Alt;
 
-      VxEventRing_Put(&data->ring, ev);
+#ifndef VxEvent_SendUnknown
+      if (ev.info.press.key != VxEventKey_Unknown)
+#endif
+        VxEventRing_Put(&data->ring, ev);
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
     case WM_KEYUP: {
       VxEventKey key = Vx__TranslateKey(wparam);
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
+#ifndef VxEvent_SendUnknown
+      if (ev.info.press.key != VxEventKey_Unknown)
+#endif
+        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 

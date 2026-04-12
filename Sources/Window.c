@@ -33,9 +33,8 @@ bool VxWindow_Create(VxWindow *window, VxContext context) {
 
   (*window)->open = true;
 
-  (*window)->hwnd =
-      CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_DefaultTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
-                     CW_USEDEFAULT, VxWindow_DefaultWidth, VxWindow_DefaultHeight, NULL, NULL, GetModuleHandle(NULL), 0);
+  (*window)->hwnd = CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_Class, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 800,
+                                   600, NULL, NULL, GetModuleHandle(NULL), 0);
 
   if (!(*window)->hwnd) {
     Vx__Error("failed to create window");
