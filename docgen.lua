@@ -13,13 +13,13 @@ local function emit(file)
   out:write("---\nlayout: page\n---\n")
 
   for comment in string.gmatch(text, "/%*%*(.-)%*%*/") do
-    out:write(comment)
+    local result, _ = comment:gsub("  ", "");
+    out:write(result)
   end
 
   out:close()
 end
 
-os.execute("mkdir docs")
 emit("Vx")
 emit("Event")
 emit("Window")
