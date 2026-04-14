@@ -33,9 +33,6 @@
   #error "Vx only supports Win32 as of now..."
 #endif
 
-#define Vx__Error(msg) fprintf(stderr, "[%s] - %s\n", __func__, msg)
-
-// (VxWindow_MountGraphics)
 #ifndef VxEventRing_Length
   #define VxEventRing_Length 128
 #endif

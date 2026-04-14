@@ -11,6 +11,7 @@
 
 #include <stdbool.h>
 
+#include "Vx/Status.h"
 #include "_Expose.h"
 
 /**
@@ -23,16 +24,16 @@
 typedef struct VxContext {
   void *display;
   void *config;
-} VxContext;
+} *VxContext;
 
 /**
-  ## Method `VxContext_Initiate`
+  ## Method `VxContext_Create`
   Initiate windowing and graphics.
 
   This function uses platform APIs to allocate the required resources for windowing
   and graphics. It creates a EGL display and a config, writing it into the context.
 **/
-Vx__Expose bool VxContext_Initiate(VxContext **context);
+Vx__Expose VxStatus VxContext_Create(VxContext *context);
 
 /**
   ## Method `VxContext_ClearGraphics`
@@ -41,15 +42,15 @@ Vx__Expose bool VxContext_Initiate(VxContext **context);
   This function clears the current graphics context. Use this to remove the window
   whose graphics context is current right now. This is usually called before cleanup.
 **/
-Vx__Expose bool VxContext_ClearGraphics(VxContext *context);
+Vx__Expose VxStatus VxContext_ClearGraphics(VxContext context);
 
 /**
-  ## Method `VxContext_Terminate`
+  ## Method `VxContext_Delete`
   Terminate windowing and graphics.
 
   This function uses platform APIs to deallocate the resources `VxContext_Initiate`
   allocated for windowing and graphics. It frees all EGL and windowing contexts.
 **/
-Vx__Expose bool VxContext_Terminate(VxContext *context);
+Vx__Expose VxStatus VxContext_Delete(VxContext *context);
 
 #endif

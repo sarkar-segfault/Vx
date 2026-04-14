@@ -5,6 +5,7 @@
 
 #include "Internal.h"
 #include "Vx/Context.h"
+#include "Vx/Status.h"
 
 struct VxWindow {
   HWND hwnd;
@@ -13,277 +14,205 @@ struct VxWindow {
 #ifdef VxContext_UseAngle
   EGLSurface surface;
   EGLContext econtext;
-  VxContext *context;
+  VxContext context;
 #endif
 };
 
-bool VxWindow_Create(VxWindow *window, VxContext *context) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
+  if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
-  if (!*window) {
-    Vx__Error("failed to allocate window");
-    return false;
-  }
+  if (!*window) return VxStatus_AllocFail;
 
   (*window)->open = true;
-
-  (*window)->hwnd = CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_Class, WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 800,
-                                   600, NULL, NULL, GetModuleHandle(NULL), 0);
+  (*window)->hwnd = CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_Class,
+                                   WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 800, 600, NULL, NULL,
+                                   GetModuleHandle(NULL), 0);
 
   if (!(*window)->hwnd) {
-    Vx__Error("failed to create window");
-    goto terminate;
+    VxWindow_Delete(window);
+    return VxStatus_WindowingFail;
   }
 
-  if (!VxWindow_SetOpacity(*window, 1.0f)) {
-    Vx__Error("failed to set opacity");
-    goto terminate;
+  VxStatus s = VxWindow_SetOpacity((*window), 1.0f);
+  if (s != VxStatus_Pass) {
+    VxWindow_Delete(window);
+    return s;
   }
 
 #ifdef VxContext_UseAngle
+  (*window)->surface = EGL_NO_SURFACE;
+  (*window)->econtext = EGL_NO_CONTEXT;
+
   if (context) {
     (*window)->context = context;
 
-    (*window)->surface = eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
-    if (!(*window)->surface) {
-      Vx__Error("failed to create window surface");
-      goto terminate;
+    (*window)->surface =
+        eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
+    if ((*window)->surface == EGL_NO_SURFACE) {
+      VxWindow_Delete(window);
+      return VxStatus_GraphicsFail;
     }
 
-    (*window)->econtext = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
-    if (!(*window)->econtext) {
-      Vx__Error("failed to create window context");
-      goto terminate;
+    (*window)->econtext =
+        eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
+    if ((*window)->econtext == EGL_NO_CONTEXT) {
+      VxWindow_Delete(window);
+      return VxStatus_GraphicsFail;
     }
   }
 #endif
 
-  return true;
-
-terminate:
-  VxWindow_Delete(window);
-  return false;
+  return VxStatus_Pass;
 }
 
 Vx__Expose void *VxWindow_GetSurface(VxWindow window) {
   if (window)
     return window->surface;
-  else {
-    Vx__Error("called with invalid args");
+  else
     return NULL;
-  }
 }
 
-bool VxWindow_MountGraphics(VxWindow window) {
+VxStatus VxWindow_MountGraphics(VxWindow window) {
 #ifdef VxContext_UseAngle
-  if (!window || !window->context) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+  if (!window || !window->context) return VxStatus_BadInput;
 
-  if (!eglMakeCurrent(window->context->display, window->surface, window->surface, window->econtext)) {
-    Vx__Error("failed to mount window context");
-    return false;
-  }
+  if (!eglMakeCurrent(window->context->display, window->surface, window->surface,
+                      window->econtext))
+    return VxStatus_GraphicsFail;
 #endif
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Close(VxWindow window) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_Close(VxWindow window) {
+  if (!window) return VxStatus_BadInput;
 
   window->open = false;
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Open(VxWindow window) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_Open(VxWindow window) {
+  if (!window) return VxStatus_BadInput;
 
   window->open = true;
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_IsOpen(const VxWindow window) { return window && IsWindow(window->hwnd) && window->open; }
+bool VxWindow_IsOpen(const VxWindow window) {
+  return window && IsWindow(window->hwnd) && window->open;
+}
 
-bool VxWindow_PollEvents(VxWindow window) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_PollEvents(VxWindow window) {
+  if (!window) return VxStatus_BadInput;
 
   while (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE) > 0) {
     TranslateMessage(&window->msg);
     DispatchMessage(&window->msg);
   }
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_PopEvent(VxWindow window, VxEvent *event) {
-  if (!window || !event) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_PopEvent(VxWindow window, VxEvent *event) {
+  if (!window || !event) return VxStatus_BadInput;
 
   VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Pop(&data->ring, event);
 }
 
-bool VxWindow_PutEvent(VxWindow window, VxEvent event) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_PutEvent(VxWindow window, VxEvent event) {
+  if (!window) return VxStatus_BadInput;
 
   VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Put(&data->ring, event);
 }
 
-bool VxWindow_Delete(VxWindow *window) {
-  if (!window || !*window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_Delete(VxWindow *window) {
+  if (!window || !*window) return VxStatus_BadInput;
+
+  VxStatus s = VxStatus_Pass;
 
 #ifdef VxContext_UseAngle
   if ((*window)->context) {
-    if (!VxContext_ClearGraphics((*window)->context)) return false;
+    if (!VxContext_ClearGraphics((*window)->context)) s = VxStatus_GraphicsFail;
 
-    if (!eglDestroySurface((*window)->context->display, (*window)->surface)) {
-      Vx__Error("failed to deallocate window surface");
-      return false;
-    }
+    if ((*window)->surface != EGL_NO_SURFACE &&
+        !eglDestroySurface((*window)->context->display, (*window)->surface))
+      s = VxStatus_GraphicsFail;
 
-    if (!eglDestroyContext((*window)->context->display, (*window)->econtext)) {
-      Vx__Error("failed to deallocate window context");
-      return false;
-    }
+    if ((*window)->econtext != EGL_NO_CONTEXT &&
+        !eglDestroyContext((*window)->context->display, (*window)->econtext))
+      s = VxStatus_GraphicsFail;
   }
 #endif
 
-  if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) {
-    Vx__Error("failed to destroy window");
-    return false;
-  }
+  if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) s = VxStatus_WindowingFail;
 
   free(*window);
   *window = NULL;
-  return true;
+  return s;
 }
 
-bool VxWindow_GetSize(const VxWindow window, uint32_t *w, uint32_t *h) {
-  if (!window || !w || !h) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_GetSize(const VxWindow window, uint32_t *w, uint32_t *h) {
+  if (!window || !w || !h) return VxStatus_BadInput;
 
   RECT rect;
-  if (!GetWindowRect(window->hwnd, &rect)) {
-    Vx__Error("failed to get window rect");
-    return false;
-  }
+  if (!GetWindowRect(window->hwnd, &rect)) return VxStatus_WindowingFail;
 
   *w = rect.right - rect.left;
   *h = rect.bottom - rect.top;
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_SetSize(const VxWindow window, const uint32_t w, const uint32_t h) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_SetSize(const VxWindow window, const uint32_t w, const uint32_t h) {
+  if (!window) return VxStatus_BadInput;
 
-  int x, y;
-  if (!VxWindow_GetPos(window, &x, &y)) {
-    Vx__Error("failed to get window pos");
-    return false;
-  }
+  int32_t x, y;
+  if (!VxWindow_GetPos(window, &x, &y) || !MoveWindow(window->hwnd, x, y, w, h, TRUE))
+    return VxStatus_WindowingFail;
 
-  if (!MoveWindow(window->hwnd, x, y, w, h, TRUE)) {
-    Vx__Error("failed to resize window");
-    return false;
-  }
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_GetPos(const VxWindow window, int32_t *x, int32_t *y) {
-  if (!window || !x || !y) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_GetPos(const VxWindow window, int32_t *x, int32_t *y) {
+  if (!window || !x || !y) return VxStatus_BadInput;
 
   RECT rect;
-  if (!GetWindowRect(window->hwnd, &rect)) {
-    Vx__Error("failed to get window rect");
-    return false;
-  }
+  if (!GetWindowRect(window->hwnd, &rect)) return VxStatus_WindowingFail;
 
   *x = rect.left;
   *y = rect.top;
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_SetPos(const VxWindow window, const int32_t x, const int32_t y) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_SetPos(const VxWindow window, const int32_t x, const int32_t y) {
+  if (!window) return VxStatus_BadInput;
 
   uint32_t w, h;
-  if (!VxWindow_GetSize(window, &w, &h)) {
-    Vx__Error("failed to get window size");
-    return false;
-  }
+  if (!VxWindow_GetSize(window, &w, &h) || !MoveWindow(window->hwnd, x, y, w, h, TRUE))
+    return VxStatus_WindowingFail;
 
-  if (!MoveWindow(window->hwnd, x, y, w, h, TRUE)) {
-    Vx__Error("failed to move window");
-    return false;
-  }
-
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_GetTitle(const VxWindow window, char *buf, const size_t len) {
-  if (!window || !buf || len == 0) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_GetTitle(const VxWindow window, char *buf, const size_t len) {
+  if (!window || !buf || len == 0) return VxStatus_BadInput;
 
   GetWindowText(window->hwnd, buf, len);
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_SetTitle(const VxWindow window, const char *const title) {
-  if (!window || !title) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_SetTitle(const VxWindow window, const char *const title) {
+  if (!window || !title) return VxStatus_BadInput;
 
-  if (!SetWindowText(window->hwnd, title)) {
-    Vx__Error("failed to set window title");
-    return false;
-  }
+  if (!SetWindowText(window->hwnd, title)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_GetOpacity(const VxWindow window, float *o) {
-  if (!window || !o) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_GetOpacity(const VxWindow window, float *o) {
+  if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
   DWORD flags = 0;
@@ -291,105 +220,77 @@ bool VxWindow_GetOpacity(const VxWindow window, float *o) {
   GetLayeredWindowAttributes(window->hwnd, NULL, &alpha, &flags);
   if (flags & LWA_ALPHA) {
     *o = alpha / 255.0f;
-    return true;
+    return VxStatus_Pass;
   }
 
-  Vx__Error("failed to extract alpha");
-  return false;
+  return VxStatus_WindowingFail;
 }
 
-bool VxWindow_SetOpacity(const VxWindow window, const float o) {
+VxStatus VxWindow_SetOpacity(const VxWindow window, const float o) {
   if (!window || !SetLayeredWindowAttributes(window->hwnd, 0,
                                              ((o < 0.0f)   ? 0.0f
                                               : (o > 1.0f) ? 1.0f
                                                            : o) *
                                                  255.0f,
                                              LWA_ALPHA)) {
-    Vx__Error("failed to set window opacity");
-    return false;
+    return VxStatus_WindowingFail;
   }
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Minimize(const VxWindow window) {
-  if (!window || !ShowWindow(window->hwnd, SW_MINIMIZE)) {
-    Vx__Error("failed to minimize window");
-    return false;
-  }
+VxStatus VxWindow_Minimize(const VxWindow window) {
+  if (!window || !ShowWindow(window->hwnd, SW_MINIMIZE)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Maximize(const VxWindow window) {
-  if (!window || !ShowWindow(window->hwnd, SW_MAXIMIZE)) {
-    Vx__Error("failed to maximize window");
-    return false;
-  }
+VxStatus VxWindow_Maximize(const VxWindow window) {
+  if (!window || !ShowWindow(window->hwnd, SW_MAXIMIZE)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Restore(const VxWindow window) {
-  if (!window || !ShowWindow(window->hwnd, SW_RESTORE)) {
-    Vx__Error("failed to restore window");
-    return false;
-  }
+VxStatus VxWindow_Restore(const VxWindow window) {
+  if (!window || !ShowWindow(window->hwnd, SW_RESTORE)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Hide(const VxWindow window) {
-  if (!window || !ShowWindow(window->hwnd, SW_HIDE)) {
-    Vx__Error("failed to hide window");
-    return false;
-  }
+VxStatus VxWindow_Hide(const VxWindow window) {
+  if (!window || !ShowWindow(window->hwnd, SW_HIDE)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Show(const VxWindow window) {
-  if (!window || !ShowWindow(window->hwnd, SW_SHOW)) {
-    Vx__Error("failed to show window");
-    return false;
-  }
+VxStatus VxWindow_Show(const VxWindow window) {
+  if (!window || !ShowWindow(window->hwnd, SW_SHOW)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Focus(const VxWindow window) {
-  if (!window || !SetForegroundWindow(window->hwnd)) {
-    Vx__Error("failed to focus window");
-    return false;
-  }
+VxStatus VxWindow_Focus(const VxWindow window) {
+  if (!window || !SetForegroundWindow(window->hwnd)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
-bool VxWindow_Flash(const VxWindow window) {
-  if (!window) {
-    Vx__Error("called with invalid args");
-    return false;
-  }
+VxStatus VxWindow_Flash(const VxWindow window) {
+  if (!window) return VxStatus_WindowingFail;
 
   FLASHWINFO fwi = {0};
   fwi.cbSize = sizeof(FLASHWINFO);
   fwi.hwnd = window->hwnd;
   fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
 
-  if (!FlashWindowEx(&fwi)) {
-    Vx__Error("failed to flash window");
-    return false;
-  }
+  if (!FlashWindowEx(&fwi)) return VxStatus_WindowingFail;
 
-  return true;
+  return VxStatus_Pass;
 }
 
 void *VxWindow_GetHandle(const VxWindow window) {
-  if (window) {
+  if (window)
     return window->hwnd;
-  } else {
-    Vx__Error("called with invalid args");
+  else
     return NULL;
-  }
 }

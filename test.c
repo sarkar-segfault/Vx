@@ -6,19 +6,22 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 
-int main(void) {
-  VxContext *context;
-  if (!VxContext_Initiate(&context)) return 1;
+#define CHECK(s, v) s = v; if (s != VxStatus_Pass) { puts(VxStatus_Strings[s]); return 1; } 
 
+int main(void) {
+  VxStatus s = VxStatus_Pass;
+  VxContext context = NULL;
+
+  CHECK(s, VxContext_Create(&context));
   VxWindow window;
 
-  if (!VxWindow_Create(&window, context)) return 1;
+  CHECK(s, VxWindow_Create(&window, context));
 
-  if (!VxWindow_MountGraphics(window)) return 1;
+  CHECK(s, VxWindow_MountGraphics(window));
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
-    if (!VxWindow_PollEvents(window)) return 1;
+    CHECK(s, VxWindow_PollEvents(window));
     glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -26,7 +29,7 @@ int main(void) {
       switch (event.type) {
         case VxEventType_Close:
           printf("Close\n");
-          if (!VxWindow_Close(window)) return 1;
+          CHECK(s, VxWindow_Close(window));
           goto terminate;
 
         case VxEventType_Resize:
@@ -86,7 +89,7 @@ int main(void) {
           break;
 
         case VxEventType_MouseWheel:
-          printf("Mouse wheel: %d\n", event.info.wheel.delta);
+          printf("Mouse wheel: %d\n", event.info.delta);
           break;
 
         case VxEventType_Empty:
@@ -103,7 +106,7 @@ int main(void) {
   }
 
 terminate:
-  if (!VxWindow_Delete(&window)) return 1;
-  if (!VxContext_Terminate(context)) return 1;
+  CHECK(s, VxWindow_Delete(&window));
+  CHECK(s, VxContext_Delete(&context));
   return 0;
 }

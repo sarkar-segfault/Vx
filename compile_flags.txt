@@ -1,7 +1,5 @@
 -DVxEvent_SendUnknown
 -DVxContext_UseAngle
--Werror=c++11-compat
--Werror=pedantic
 -Wc++11-compat
 -Wpedantic
 -IHeaders
