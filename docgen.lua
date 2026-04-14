@@ -13,7 +13,7 @@ local function emit(file)
   out:write("---\nlayout: default\n---\n")
 
   for comment in string.gmatch(text, "/%*%*(.-)%*%*/") do
-    local _, result = comment:gsub("  ", "")
+    local result, _ = comment:gsub("  ", "")
     out:write(result)
   end
 
