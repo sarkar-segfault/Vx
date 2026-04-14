@@ -1,5 +1,4 @@
 /**
-  # Header `Vx.h`
   Umbrella header for all other public headers in the project.
 
   Instead of having to include all of the other headers individually, you can

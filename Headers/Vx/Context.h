@@ -1,5 +1,4 @@
 /**
-  # Header `Context.h`
   Functions for managing the lifecycle of the library.
 
   This header defines functions for managing the lifecycle of the library via

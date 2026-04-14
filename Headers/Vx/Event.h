@@ -14,7 +14,7 @@
 #include <stdlib.h>  // IWYU pragma: export
 
 /**
-  ## Macro `Vx_Near`
+  ## Functional macro `Vx_Near`
   Check whether two values are sufficiently close to warrant response.
 **/
 #define Vx_Near(a, b) abs(a - b) <= 16

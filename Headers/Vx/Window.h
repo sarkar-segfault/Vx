@@ -1,5 +1,4 @@
 /**
-  # Header `Window.h`
   Defines structs and methods for window creation and control.
 
   This file defines the `VxWindow` struct and its many, many methods. Before

@@ -12,14 +12,13 @@ local function emit(file)
 
   out:write("---\nlayout: page\ntitle: Header `" .. file .. ".h`\n---\n")
 
-  local first = true
-  for comment in string.gmatch(text, "/%*%*(.-)%*%*/") do
-    if first then
-      first = false
-      comment, _ = comment:gsub("# Header `.-`\r?\n", "")
-    end
+  for comment, code in string.gmatch(text, "/%*%*(.-)%*%*/\n([^\n]*)") do
     local result, _ = comment:gsub("  ", "")
     out:write(result)
+
+    if comment:find("## Method") or comment:find("## Function") or comment:find("Functional macro") then
+      out:write("```c\n" .. code .. "```")
+    end
   end
 
   out:close()
