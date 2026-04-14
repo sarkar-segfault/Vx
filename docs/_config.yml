@@ -1,0 +1,26 @@
+title: Vx
+description: A windowing library for simpletons and wizards alike.
+url: https://sarkar-segfault.github.io/Vx
+baseurl:
+favicon: https://sarkar-segfault.github.io/favicon.ico
+
+remote_theme: jekyll/minima@bf9ef98
+plugins:
+  - jekyll-remote-theme
+
+author:
+  name: Adhrit Sarkar
+  email: adhritsarkar@proton.me
+
+markdown: kramdown
+lang: en
+
+minima:
+  skin: auto
+  hide_site_feed_link: true
+  nav_pages:
+    - files.md
+  social_links:
+    - title: My GitHub
+      icon: github
+      url: https://github.com/sarkar-segfault
