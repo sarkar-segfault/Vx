@@ -33,9 +33,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.4
       - name: Generate Docs
-        run: |
-          lua docgen.lua
-          mv README.md docs/index.md
+        run: lua docgen.lua
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
