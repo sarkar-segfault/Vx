@@ -24,9 +24,8 @@ local index = io.open("docs/index.md", "w")
 local readme = io.open("README.md", "r")
 assert(index and readme, "failed to open files")
 
-local result, _ = readme:read("*a"):gsub("^[^\n]*\n", "")
-index:write("---\nlayout: home\n---\n")
-index:write(result)
+index:write("---\nlayout: base\n---\n")
+index:write(readme:read("*a"))
 
 emit("Vx")
 emit("Event")
