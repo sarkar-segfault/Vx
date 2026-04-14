@@ -35,7 +35,7 @@ jobs:
       - name: Generate Docs
         run: |
           lua docgen.lua
-          mv README.md docs
+          mv README.md docs/index.md
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
