@@ -10,14 +10,15 @@ local function emit(file)
   local out = io.open("docs/" .. file .. ".md", "w")
   assert(out, "failed to open out file")
 
-  out:write("---\nlayout: page\ntitle: Header " .. file .. ".h\n---\n")
+  out:write("---\nlayout: page\ntitle: " .. file .. ".h\n---\n")
 
   for comment, code in string.gmatch(text, "/%*%*(.-)%*%*/\n([^\n]*)") do
-    local result, _ = comment:gsub("  ", "")
-    out:write(result)
+    local result1, _ = comment:gsub("  ", "")
+    out:write(result1)
 
-    if comment:find("## Method") or comment:find("## Function") or comment:find("Functional macro") then
-      out:write("\n```" .. code .. "```\n")
+    if comment:find("## Method") or comment:find("## Function") or comment:find("## Functional macro") then
+      local result2, _ = code:gsub("Vx__Expose ", "")
+      out:write("\n```" .. result2 .. "```\n")
     end
   end
 
