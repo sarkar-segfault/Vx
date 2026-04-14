@@ -10,14 +10,14 @@ local function emit(file)
   local out = io.open("docs/" .. file .. ".md", "w")
   assert(out, "failed to open out file")
 
-  out:write("---\nlayout: page\ntitle: Header `" .. file .. ".h`\n---\n")
+  out:write("---\nlayout: page\ntitle: Header " .. file .. ".h\n---\n")
 
   for comment, code in string.gmatch(text, "/%*%*(.-)%*%*/\n([^\n]*)") do
     local result, _ = comment:gsub("  ", "")
     out:write(result)
 
     if comment:find("## Method") or comment:find("## Function") or comment:find("Functional macro") then
-      out:write("```c\n" .. code .. "```")
+      out:write("\n```c\n" .. code .. "```\n")
     end
   end
 
@@ -28,7 +28,7 @@ local index = io.open("docs/index.md", "w")
 local readme = io.open("README.md", "r")
 assert(index and readme, "failed to open files")
 
-index:write("---\nlayout: home\ntitle: Vx\n---\n")
+index:write("---\nlayout: page\ntitle: Vx\n---\n")
 local result, _ = readme:read("*a"):gsub("^[^\n]*\n", "")
 index:write(result)
 
