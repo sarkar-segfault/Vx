@@ -25,6 +25,7 @@ local readme = io.open("README.md", "r")
 assert(index and readme, "failed to open files")
 
 local result, _ = readme:read("*a"):gsub("^[^\n]*\n", "")
+index:write("---\nlayout: home\n---")
 index:write(result)
 
 emit("Vx")

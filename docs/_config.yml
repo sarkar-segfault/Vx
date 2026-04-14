@@ -1,4 +1,4 @@
-title: Vx
+title: sarkar-segfault/Vx
 description: A windowing library for simpletons and wizards alike.
 url: https://sarkar-segfault.github.io/Vx
 baseurl:
@@ -21,6 +21,6 @@ minima:
   nav_pages:
     - files.md
   social_links:
-    - title: My GitHub
+    - title: Repository
       icon: github
-      url: https://github.com/sarkar-segfault
+      url: https://github.com/sarkar-segfault/Vx
