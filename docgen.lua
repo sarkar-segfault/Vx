@@ -17,7 +17,7 @@ local function emit(file)
     out:write(result)
 
     if comment:find("## Method") or comment:find("## Function") or comment:find("Functional macro") then
-      out:write("\n```c\n" .. code .. "```\n")
+      out:write("\n```" .. code .. "```\n")
     end
   end
 
