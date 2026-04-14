@@ -10,11 +10,12 @@ local function emit(file)
   local out = io.open("docs/" .. file .. ".md", "w")
   assert(out, "failed to open out file")
 
-  out:write("---\nlayout: page\ntitle: Header " .. file .. ".h\n---\n")
+  out:write("---\nlayout: page\ntitle: Header `" .. file .. ".h`\n---\n")
 
   local first = true
   for comment in string.gmatch(text, "/%*%*(.-)%*%*/") do
     if first then
+      first = false
       comment, _ = comment:gsub("# Header `.-`\r?\n", "")
     end
     local result, _ = comment:gsub("  ", "")
