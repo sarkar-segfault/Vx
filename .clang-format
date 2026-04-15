@@ -5,4 +5,3 @@ Language: C
 
 IndentPPDirectives: BeforeHash
 PointerAlignment: Right
-ReflowComments: false
