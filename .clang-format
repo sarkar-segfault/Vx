@@ -3,7 +3,6 @@ ColumnLimit: 96
 Standard: Auto
 Language: C
 
-BreakBeforeBinaryOperators: None
 IndentPPDirectives: BeforeHash
 PointerAlignment: Right
 ReflowComments: false
