@@ -6,7 +6,7 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 
-#define CHECK(s, v) s = v; if (s != VxStatus_Pass) { puts(VxStatus_Strings[s]); return 1; } 
+#define CHECK(s, v) s = v; if (s != VxStatus_Pass) { puts(VxStatus_Strings[s]); } 
 
 int main(void) {
   VxStatus s = VxStatus_Pass;
@@ -19,6 +19,9 @@ int main(void) {
 
   CHECK(s, VxWindow_MountGraphics(window));
   VxEvent event;
+  
+  void *surface;
+  CHECK(s, VxWindow_GetSurface(window, &surface));
 
   while (VxWindow_IsOpen(window)) {
     CHECK(s, VxWindow_PollEvents(window));
@@ -102,7 +105,7 @@ int main(void) {
       }
     }
 
-    eglSwapBuffers(context->display, VxWindow_GetSurface(window));
+    eglSwapBuffers(context->display, surface);
   }
 
 terminate:

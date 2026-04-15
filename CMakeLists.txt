@@ -13,9 +13,7 @@ set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/
 option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
 option(VxEvent_SendUnknown "Whether to send VxEventType_KeyPress/VxEventType_KeyRelease events with VxEventKey_Unknown" ON)
 
-if(DEFINED VxEventRing_Length)
-  target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
-endif()
+target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
 
 if(VxContext_UseAngle)
   target_compile_definitions(Vx PUBLIC VxContext_UseAngle)
@@ -44,7 +42,7 @@ target_include_directories(Vx PUBLIC Headers)
 
 target_compile_features(Vx PUBLIC c_std_99)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(VxWindow_Class "VxWindow" CACHE STRING "The name of the Win32 window class")
 
   if(DEFINED VxWindow_Class)
