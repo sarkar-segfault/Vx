@@ -58,7 +58,7 @@ Vx__Expose VxStatus VxWindow_Create(VxWindow *window, VxContext context);
   Initialise the window's graphics context and make it current.
 
   This function enables graphics work on the selected window. No graphics work can run
-  before this. Call this with NULL in order to reset or clear the context.
+  before this. Call this with `NULL` in order to reset or clear the context.
 **/
 Vx__Expose VxStatus VxWindow_MountGraphics(VxWindow window);
 
@@ -66,9 +66,9 @@ Vx__Expose VxStatus VxWindow_MountGraphics(VxWindow window);
   ## Method `VxWindow_GetSurface`
   Return the `EGLSurface` of the window.
 
-  This function returns the `EGLSurface` handle of the window.
+  This function writes the `EGLSurface` handle of the window to the provided `surface`.
 **/
-Vx__Expose void *VxWindow_GetSurface(VxWindow window);
+Vx__Expose VxStatus VxWindow_GetSurface(VxWindow window, void **surface);
 
 /**
   ## Method `VxWindow_Close`
@@ -260,6 +260,6 @@ Vx__Expose VxStatus VxWindow_Flash(const VxWindow window);
 
   Returns the native window handle (e.g., `HWND` on `_WIN32`).
 **/
-Vx__Expose void *VxWindow_GetHandle(const VxWindow window);
+Vx__Expose VxStatus VxWindow_GetHandle(const VxWindow window, void **handle);
 
 #endif

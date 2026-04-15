@@ -66,11 +66,12 @@ VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
   return VxStatus_Pass;
 }
 
-Vx__Expose void *VxWindow_GetSurface(VxWindow window) {
-  if (window)
-    return window->surface;
-  else
-    return NULL;
+Vx__Expose VxStatus VxWindow_GetSurface(VxWindow window, void **surface) {
+  if (!window || !surface)
+    return VxStatus_BadInput;
+
+  *surface = window->surface;
+  return VxStatus_Pass;
 }
 
 VxStatus VxWindow_MountGraphics(VxWindow window) {
@@ -288,9 +289,10 @@ VxStatus VxWindow_Flash(const VxWindow window) {
   return VxStatus_Pass;
 }
 
-void *VxWindow_GetHandle(const VxWindow window) {
-  if (window)
-    return window->hwnd;
-  else
-    return NULL;
+VxStatus VxWindow_GetHandle(const VxWindow window, void **handle) {
+  if (!window || !handle)
+    return VxStatus_BadInput;
+
+  *handle = window->hwnd;
+  return VxStatus_Pass;
 }
