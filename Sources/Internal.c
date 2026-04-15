@@ -6,10 +6,10 @@
 #include "Vx/Status.h"
 
 const char *const VxStatus_Strings[VxStatus_Pass] = {
-  "encountered window-related failure",
-  "encountered graphics-related failure",
-  "failed to allocate object",
-  "called with invalid parameters",
+    "encountered window-related failure",
+    "encountered graphics-related failure",
+    "failed to allocate object",
+    "called with invalid parameters",
 };
 
 #define VxEventRing__Wrap(var) var = (var + 1) % VxEventRing_Length
@@ -19,7 +19,8 @@ bool VxEventRing_Put(VxEventRing *ring, VxEvent event) {
 
   VxEvent *latest = &ring->events[ring->head - 1];
 
-  if (latest->type == event.type && latest->type == VxEventType_MouseMove && Vx_Near(latest->info.pos.x, event.info.pos.x) &&
+  if (latest->type == event.type && latest->type == VxEventType_MouseMove &&
+      Vx_Near(latest->info.pos.x, event.info.pos.x) &&
       Vx_Near(latest->info.pos.y, event.info.pos.y)) {
     latest->info.pos.x = event.info.pos.x;
     latest->info.pos.y = event.info.pos.y;

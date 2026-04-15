@@ -16,9 +16,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "Status.h"
 #include "Context.h"
 #include "Event.h"
+#include "Status.h"
 #include "_Expose.h"
 
 /**

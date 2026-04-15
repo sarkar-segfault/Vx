@@ -67,8 +67,7 @@ VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
 }
 
 Vx__Expose VxStatus VxWindow_GetSurface(VxWindow window, void **surface) {
-  if (!window || !surface)
-    return VxStatus_BadInput;
+  if (!window || !surface) return VxStatus_BadInput;
 
   *surface = window->surface;
   return VxStatus_Pass;
@@ -290,8 +289,7 @@ VxStatus VxWindow_Flash(const VxWindow window) {
 }
 
 VxStatus VxWindow_GetHandle(const VxWindow window, void **handle) {
-  if (!window || !handle)
-    return VxStatus_BadInput;
+  if (!window || !handle) return VxStatus_BadInput;
 
   *handle = window->hwnd;
   return VxStatus_Pass;

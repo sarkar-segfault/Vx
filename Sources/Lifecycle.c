@@ -68,7 +68,8 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Move, .info.pos = {x, y}});
       }
       if (data->w != w || data->h != h) {
-        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Resize, .info.size = {w, h}});
+        VxEventRing_Put(&data->ring,
+                        (VxEvent){.type = VxEventType_Resize, .info.size = {w, h}});
       }
 
       return 0;
@@ -77,7 +78,9 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
     case WM_SIZE:
       if (!data->is_changing) {
         if (wparam == SIZE_RESTORED)
-          VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Resize, .info.size = {LOWORD(lparam), HIWORD(lparam)}});
+          VxEventRing_Put(&data->ring,
+                          (VxEvent){.type = VxEventType_Resize,
+                                    .info.size = {LOWORD(lparam), HIWORD(lparam)}});
         else if (wparam == SIZE_MAXIMIZED)
           VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Maximize});
         else if (wparam == SIZE_MINIMIZED)
@@ -88,12 +91,14 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
     case WM_MOVE:
       if (!data->is_changing)
-        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Move, .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
+        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Move,
+                                               .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
 
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_KEYDOWN: {
-      VxEvent ev = (VxEvent){.type = VxEventType_KeyPress, .info.press.key = Vx__TranslateKey(wparam)};
+      VxEvent ev =
+          (VxEvent){.type = VxEventType_KeyPress, .info.press.key = Vx__TranslateKey(wparam)};
 
       if (GetKeyState(VK_CONTROL) & 0x8000) ev.info.press.mod |= VxEventMod_Control;
       if (GetKeyState(VK_SHIFT) & 0x8000) ev.info.press.mod |= VxEventMod_Shift;
@@ -111,44 +116,54 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 #ifndef VxEvent_SendUnknown
       if (ev.info.press.key != VxEventKey_Unknown)
 #endif
-        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
+        VxEventRing_Put(&data->ring,
+                        (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
     case WM_CHAR:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_CharSent, .info.sent = wparam});
+      VxEventRing_Put(&data->ring,
+                      (VxEvent){.type = VxEventType_CharSent, .info.sent = wparam});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_LBUTTONDOWN:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress, .info.button = VxEventButton_MouseLeft});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress,
+                                             .info.button = VxEventButton_MouseLeft});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_LBUTTONUP:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease, .info.button = VxEventButton_MouseLeft});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease,
+                                             .info.button = VxEventButton_MouseLeft});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_RBUTTONDOWN:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress, .info.button = VxEventButton_MouseRight});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress,
+                                             .info.button = VxEventButton_MouseRight});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_RBUTTONUP:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease, .info.button = VxEventButton_MouseRight});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease,
+                                             .info.button = VxEventButton_MouseRight});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MBUTTONDOWN:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress, .info.button = VxEventButton_MouseCenter});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MousePress,
+                                             .info.button = VxEventButton_MouseCenter});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MBUTTONUP:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease, .info.button = VxEventButton_MouseCenter});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseRelease,
+                                             .info.button = VxEventButton_MouseCenter});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MOUSEMOVE:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseMove, .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseMove,
+                                             .info.pos = {LOWORD(lparam), HIWORD(lparam)}});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_MOUSEWHEEL:
-      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_MouseWheel, .info.delta = HIWORD(wparam)});
+      VxEventRing_Put(&data->ring,
+                      (VxEvent){.type = VxEventType_MouseWheel, .info.delta = HIWORD(wparam)});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     default:

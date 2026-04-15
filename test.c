@@ -1,12 +1,16 @@
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
 #include <stddef.h>
 #include <stdio.h>
 
 #include "Vx/Context.h"
 #include "Vx/Window.h"
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
 
-#define CHECK(s, v) s = v; if (s != VxStatus_Pass) { puts(VxStatus_Strings[s]); } 
+#define CHECK(s, v)            \
+  s = v;                       \
+  if (s != VxStatus_Pass) {    \
+    puts(VxStatus_Strings[s]); \
+  }
 
 int main(void) {
   VxStatus s = VxStatus_Pass;
@@ -19,13 +23,13 @@ int main(void) {
 
   CHECK(s, VxWindow_MountGraphics(window));
   VxEvent event;
-  
+
   void *surface;
   CHECK(s, VxWindow_GetSurface(window, &surface));
 
   while (VxWindow_IsOpen(window)) {
     CHECK(s, VxWindow_PollEvents(window));
-    glClearColor(100.0f/255.0f, 149.0f/255.0f, 237.0f/255.0f, 1.0f);
+    glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     while (VxWindow_PopEvent(window, &event)) {

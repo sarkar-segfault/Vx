@@ -197,10 +197,10 @@ typedef union VxEventInfo {
     VxEventKey key;
     uint8_t mod;
   } press;
-  
+
   // VxEventType_KeyRelease
-  VxEventKey release; 
-  
+  VxEventKey release;
+
   // VxEventType_MousePress / VxEventType_MouseRelease
   VxEventButton button;
 
