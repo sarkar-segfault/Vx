@@ -3,7 +3,6 @@
 #include <stdbool.h>
 
 #include "Internal.h"
-#include "Vx/Window.h"
 
 struct VxContext {
   EGLDisplay display;

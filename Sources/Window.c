@@ -84,10 +84,8 @@ VxStatus VxWindow_MountGraphics(VxWindow *window) {
   if (!window || !window->context) return VxStatus_BadInput;
   void *display;
 
-  if (VxContext_GetDisplay(window->context, &display) != VxStatus_Pass)
-    return VxStatus_GraphicsFail;
-
-  if (!eglMakeCurrent(display, window->surface, window->surface, window->econtext))
+  if (VxContext_GetDisplay(window->context, &display) != VxStatus_Pass ||
+      !eglMakeCurrent(display, window->surface, window->surface, window->econtext))
     return VxStatus_GraphicsFail;
 #endif
 
@@ -115,7 +113,7 @@ bool VxWindow_IsOpen(const VxWindow *window) {
 VxStatus VxWindow_PollEvents(VxWindow *window) {
   if (!window) return VxStatus_BadInput;
 
-  while (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE) > 0) {
+  while (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE)) {
     TranslateMessage(&window->msg);
     DispatchMessage(&window->msg);
   }
@@ -238,12 +236,10 @@ VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
   return VxStatus_WindowingFail;
 }
 
+#define Vx__Clamp(val, min, max) (val < min) ? min : (val > max) ? max : o
+
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0,
-                                             ((o < 0.0f)   ? 0.0f
-                                              : (o > 1.0f) ? 1.0f
-                                                           : o) *
-                                                 255.0f,
+  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f,
                                              LWA_ALPHA)) {
     return VxStatus_WindowingFail;
   }

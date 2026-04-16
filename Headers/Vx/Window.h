@@ -22,17 +22,6 @@
 #include "_Expose.h"
 
 /**
-  ## Macro `VxWindow_Class`
-  String representing the name of the window class (on `_WIN32`).
-
-  This macro contains the `char[]` that names the window class on `_WIN32`. The
-  default window class name is "VxWindow". Do not override this unless you have to.
-**/
-#if defined(_WIN32) && !defined(VxWindow_Class)
-  #define VxWindow_Class "VxWindow"
-#endif
-
-/**
   ## Struct `VxWindow`
   Represents a platform specific window with an opaque pointer.
 

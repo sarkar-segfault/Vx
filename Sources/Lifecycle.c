@@ -13,6 +13,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
     case WM_NCCREATE: {
       data = calloc(1, sizeof(struct VxWindowData));
       if (!data) return FALSE;
+
       SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)data);
       return TRUE;
     }
@@ -108,16 +109,19 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       if (ev.info.press.key != VxEventKey_Unknown)
 #endif
         VxEventRing_Put(&data->ring, ev);
+
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
     case WM_KEYUP: {
       VxEventKey key = Vx__TranslateKey(wparam);
+
 #ifndef VxEvent_SendUnknown
       if (ev.info.press.key != VxEventKey_Unknown)
 #endif
         VxEventRing_Put(&data->ring,
-                        (VxEvent){.type = VxEventType_KeyRelease, .info.press.key = key});
+                        (VxEvent){.type = VxEventType_KeyRelease, .info.release = key});
+
       return DefWindowProc(hwnd, umsg, wparam, lparam);
     }
 
