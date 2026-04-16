@@ -5,10 +5,15 @@
 #include "Internal.h"
 #include "Vx/Window.h"
 
+struct VxContext {
+  EGLDisplay display;
+  EGLConfig config;
+};
+
 Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam,
                                               LPARAM lparam);
 
-VxStatus VxContext_Create(VxContext *context) {
+VxStatus VxContext_Create(VxContext **context) {
   WNDCLASSEX wc = {0};
   wc.lpszClassName = VxWindow_Class;
   wc.lpfnWndProc = VxWindow__Process;
@@ -65,7 +70,7 @@ VxStatus VxContext_Create(VxContext *context) {
   return VxStatus_Pass;
 }
 
-VxStatus VxContext_ClearGraphics(VxContext context) {
+VxStatus VxContext_ClearGraphics(VxContext *context) {
   if (!context) return VxStatus_BadInput;
 
 #ifdef VxContext_UseAngle
@@ -76,7 +81,23 @@ VxStatus VxContext_ClearGraphics(VxContext context) {
   return VxStatus_Pass;
 }
 
-VxStatus VxContext_Delete(VxContext *context) {
+VxStatus VxContext_GetDisplay(VxContext *context, void **display) {
+  if (context && display) {
+    *display = context->display;
+    return VxStatus_Pass;
+  } else
+    return VxStatus_BadInput;
+}
+
+VxStatus VxContext_GetConfig(VxContext *context, void **config) {
+  if (context && config) {
+    *config = context->config;
+    return VxStatus_Pass;
+  } else
+    return VxStatus_BadInput;
+}
+
+VxStatus VxContext_Delete(VxContext **context) {
   VxStatus s = VxStatus_Pass;
 
   if (context && *context) {

@@ -14,11 +14,11 @@ struct VxWindow {
 #ifdef VxContext_UseAngle
   EGLSurface surface;
   EGLContext econtext;
-  VxContext context;
+  VxContext *context;
 #endif
 };
 
-VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
+VxStatus VxWindow_Create(VxWindow **window, VxContext *context) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
@@ -34,10 +34,9 @@ VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
     return VxStatus_WindowingFail;
   }
 
-  VxStatus s = VxWindow_SetOpacity((*window), 1.0f);
-  if (s != VxStatus_Pass) {
+  if (!VxWindow_SetOpacity(*window, 1.0f)) {
     VxWindow_Delete(window);
-    return s;
+    return VxStatus_WindowingFail;
   }
 
 #ifdef VxContext_UseAngle
@@ -46,16 +45,23 @@ VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
 
   if (context) {
     (*window)->context = context;
+    void *display, *config;
 
-    (*window)->surface =
-        eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
+    if (VxContext_GetDisplay(context, &display) != VxStatus_Pass ||
+        VxContext_GetConfig(context, &config) != VxStatus_Pass) {
+      VxWindow_Delete(window);
+      return VxStatus_GraphicsFail;
+    }
+
+    (*window)->surface = eglCreateWindowSurface(display, config, (*window)->hwnd, NULL);
+
     if ((*window)->surface == EGL_NO_SURFACE) {
       VxWindow_Delete(window);
       return VxStatus_GraphicsFail;
     }
 
-    (*window)->econtext =
-        eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
+    (*window)->econtext = eglCreateContext(display, config, EGL_NO_CONTEXT, NULL);
+
     if ((*window)->econtext == EGL_NO_CONTEXT) {
       VxWindow_Delete(window);
       return VxStatus_GraphicsFail;
@@ -66,44 +72,47 @@ VxStatus VxWindow_Create(VxWindow *window, VxContext context) {
   return VxStatus_Pass;
 }
 
-Vx__Expose VxStatus VxWindow_GetSurface(VxWindow window, void **surface) {
+Vx__Expose VxStatus VxWindow_GetSurface(VxWindow *window, void **surface) {
   if (!window || !surface) return VxStatus_BadInput;
 
   *surface = window->surface;
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_MountGraphics(VxWindow window) {
+VxStatus VxWindow_MountGraphics(VxWindow *window) {
 #ifdef VxContext_UseAngle
   if (!window || !window->context) return VxStatus_BadInput;
+  void *display;
 
-  if (!eglMakeCurrent(window->context->display, window->surface, window->surface,
-                      window->econtext))
+  if (VxContext_GetDisplay(window->context, &display) != VxStatus_Pass)
+    return VxStatus_GraphicsFail;
+
+  if (!eglMakeCurrent(display, window->surface, window->surface, window->econtext))
     return VxStatus_GraphicsFail;
 #endif
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Close(VxWindow window) {
+VxStatus VxWindow_Close(VxWindow *window) {
   if (!window) return VxStatus_BadInput;
 
   window->open = false;
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Open(VxWindow window) {
+VxStatus VxWindow_Open(VxWindow *window) {
   if (!window) return VxStatus_BadInput;
 
   window->open = true;
   return VxStatus_Pass;
 }
 
-bool VxWindow_IsOpen(const VxWindow window) {
+bool VxWindow_IsOpen(const VxWindow *window) {
   return window && IsWindow(window->hwnd) && window->open;
 }
 
-VxStatus VxWindow_PollEvents(VxWindow window) {
+VxStatus VxWindow_PollEvents(VxWindow *window) {
   if (!window) return VxStatus_BadInput;
 
   while (PeekMessage(&window->msg, window->hwnd, 0, 0, PM_REMOVE) > 0) {
@@ -114,21 +123,21 @@ VxStatus VxWindow_PollEvents(VxWindow window) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_PopEvent(VxWindow window, VxEvent *event) {
+VxStatus VxWindow_PopEvent(VxWindow *window, VxEvent *event) {
   if (!window || !event) return VxStatus_BadInput;
 
   VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Pop(&data->ring, event);
 }
 
-VxStatus VxWindow_PutEvent(VxWindow window, VxEvent event) {
+VxStatus VxWindow_PutEvent(VxWindow *window, VxEvent event) {
   if (!window) return VxStatus_BadInput;
 
   VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Put(&data->ring, event);
 }
 
-VxStatus VxWindow_Delete(VxWindow *window) {
+VxStatus VxWindow_Delete(VxWindow **window) {
   if (!window || !*window) return VxStatus_BadInput;
 
   VxStatus s = VxStatus_Pass;
@@ -136,13 +145,17 @@ VxStatus VxWindow_Delete(VxWindow *window) {
 #ifdef VxContext_UseAngle
   if ((*window)->context) {
     if (!VxContext_ClearGraphics((*window)->context)) s = VxStatus_GraphicsFail;
+    void *display;
+
+    if (VxContext_GetDisplay((*window)->context, &display) != VxStatus_Pass)
+      s = VxStatus_GraphicsFail;
 
     if ((*window)->surface != EGL_NO_SURFACE &&
-        !eglDestroySurface((*window)->context->display, (*window)->surface))
+        !eglDestroySurface(display, (*window)->surface))
       s = VxStatus_GraphicsFail;
 
     if ((*window)->econtext != EGL_NO_CONTEXT &&
-        !eglDestroyContext((*window)->context->display, (*window)->econtext))
+        !eglDestroyContext(display, (*window)->econtext))
       s = VxStatus_GraphicsFail;
   }
 #endif
@@ -154,7 +167,7 @@ VxStatus VxWindow_Delete(VxWindow *window) {
   return s;
 }
 
-VxStatus VxWindow_GetSize(const VxWindow window, uint32_t *w, uint32_t *h) {
+VxStatus VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32_t *h) {
   if (!window || !w || !h) return VxStatus_BadInput;
 
   RECT rect;
@@ -165,7 +178,7 @@ VxStatus VxWindow_GetSize(const VxWindow window, uint32_t *w, uint32_t *h) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_SetSize(const VxWindow window, const uint32_t w, const uint32_t h) {
+VxStatus VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h) {
   if (!window) return VxStatus_BadInput;
 
   int32_t x, y;
@@ -175,7 +188,7 @@ VxStatus VxWindow_SetSize(const VxWindow window, const uint32_t w, const uint32_
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_GetPos(const VxWindow window, int32_t *x, int32_t *y) {
+VxStatus VxWindow_GetPos(const VxWindow *window, int32_t *x, int32_t *y) {
   if (!window || !x || !y) return VxStatus_BadInput;
 
   RECT rect;
@@ -186,7 +199,7 @@ VxStatus VxWindow_GetPos(const VxWindow window, int32_t *x, int32_t *y) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_SetPos(const VxWindow window, const int32_t x, const int32_t y) {
+VxStatus VxWindow_SetPos(const VxWindow *window, const int32_t x, const int32_t y) {
   if (!window) return VxStatus_BadInput;
 
   uint32_t w, h;
@@ -196,14 +209,14 @@ VxStatus VxWindow_SetPos(const VxWindow window, const int32_t x, const int32_t y
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_GetTitle(const VxWindow window, char *buf, const size_t len) {
+VxStatus VxWindow_GetTitle(const VxWindow *window, char *buf, const size_t len) {
   if (!window || !buf || len == 0) return VxStatus_BadInput;
 
   GetWindowText(window->hwnd, buf, len);
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_SetTitle(const VxWindow window, const char *const title) {
+VxStatus VxWindow_SetTitle(const VxWindow *window, const char *const title) {
   if (!window || !title) return VxStatus_BadInput;
 
   if (!SetWindowText(window->hwnd, title)) return VxStatus_WindowingFail;
@@ -211,7 +224,7 @@ VxStatus VxWindow_SetTitle(const VxWindow window, const char *const title) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_GetOpacity(const VxWindow window, float *o) {
+VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
   if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
@@ -226,7 +239,7 @@ VxStatus VxWindow_GetOpacity(const VxWindow window, float *o) {
   return VxStatus_WindowingFail;
 }
 
-VxStatus VxWindow_SetOpacity(const VxWindow window, const float o) {
+VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
   if (!window || !SetLayeredWindowAttributes(window->hwnd, 0,
                                              ((o < 0.0f)   ? 0.0f
                                               : (o > 1.0f) ? 1.0f
@@ -239,43 +252,43 @@ VxStatus VxWindow_SetOpacity(const VxWindow window, const float o) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Minimize(const VxWindow window) {
+VxStatus VxWindow_Minimize(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_MINIMIZE)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Maximize(const VxWindow window) {
+VxStatus VxWindow_Maximize(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_MAXIMIZE)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Restore(const VxWindow window) {
+VxStatus VxWindow_Restore(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_RESTORE)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Hide(const VxWindow window) {
+VxStatus VxWindow_Hide(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_HIDE)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Show(const VxWindow window) {
+VxStatus VxWindow_Show(const VxWindow *window) {
   if (!window || !ShowWindow(window->hwnd, SW_SHOW)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Focus(const VxWindow window) {
+VxStatus VxWindow_Focus(const VxWindow *window) {
   if (!window || !SetForegroundWindow(window->hwnd)) return VxStatus_WindowingFail;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_Flash(const VxWindow window) {
+VxStatus VxWindow_Flash(const VxWindow *window) {
   if (!window) return VxStatus_WindowingFail;
 
   FLASHWINFO fwi = {0};
@@ -288,7 +301,7 @@ VxStatus VxWindow_Flash(const VxWindow window) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_GetHandle(const VxWindow window, void **handle) {
+VxStatus VxWindow_GetHandle(const VxWindow *window, void **handle) {
   if (!window || !handle) return VxStatus_BadInput;
 
   *handle = window->hwnd;

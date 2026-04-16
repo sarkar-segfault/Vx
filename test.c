@@ -14,10 +14,10 @@
 
 int main(void) {
   VxStatus s = VxStatus_Pass;
-  VxContext context = NULL;
+  VxContext *context = NULL;
 
   CHECK(s, VxContext_Create(&context));
-  VxWindow window;
+  VxWindow *window;
 
   CHECK(s, VxWindow_Create(&window, context));
 
@@ -26,6 +26,9 @@ int main(void) {
 
   void *surface;
   CHECK(s, VxWindow_GetSurface(window, &surface));
+
+  void *display;
+  CHECK(s, VxContext_GetDisplay(context, &display));
 
   while (VxWindow_IsOpen(window)) {
     CHECK(s, VxWindow_PollEvents(window));
@@ -109,7 +112,7 @@ int main(void) {
       }
     }
 
-    eglSwapBuffers(context->display, surface);
+    eglSwapBuffers(display, surface);
   }
 
 terminate:
