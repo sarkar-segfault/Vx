@@ -5,6 +5,10 @@
   "minima/skins/{{ site.minima.skin | default: 'classic' }}",
   "minima/initialize";
 
-h1.highlighter-rouge, h2.highlighter-rouge {
+h1 code.highlighter-rouge, h2 code.highlighter-rouge {
   font-size: 0.85em !important;
+}
+
+code.highlighter-rouge {
+  font-size: 1.1em;
 }
