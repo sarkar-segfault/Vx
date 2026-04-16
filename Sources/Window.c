@@ -150,8 +150,7 @@ VxStatus VxWindow_Delete(VxWindow **window) {
     if (VxContext_GetDisplay((*window)->context, &display) != VxStatus_Pass)
       s = VxStatus_GraphicsFail;
 
-    if ((*window)->surface != EGL_NO_SURFACE &&
-        !eglDestroySurface(display, (*window)->surface))
+    if ((*window)->surface != EGL_NO_SURFACE && !eglDestroySurface(display, (*window)->surface))
       s = VxStatus_GraphicsFail;
 
     if ((*window)->econtext != EGL_NO_CONTEXT &&
