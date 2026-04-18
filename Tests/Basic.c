@@ -1,45 +1,20 @@
-#ifdef VxContext_UseAngle
-  #include <EGL/egl.h>
-  #include <GLES2/gl2.h>
-#endif
-
 #include <stddef.h>
-#include <stdio.h>
 
-#include "Vx/Context.h"
-#include "Vx/Window.h"
-
-#define CHECK(s, v)            \
-  s = v;                       \
-  if (s != VxStatus_Pass) {    \
-    puts(VxStatus_Strings[s]); \
-  }
+#include "Include.h"
 
 int main(void) {
-  VxStatus s = VxStatus_Pass;
+  VxStatus s;
+
   VxContext *context = NULL;
-
   CHECK(s, VxContext_Create(&context));
-  VxWindow *window;
 
+  VxWindow *window = NULL;
   CHECK(s, VxWindow_Create(&window, context, 0));
 
-  CHECK(s, VxWindow_MountGraphics(window));
   VxEvent event;
-
-  void *surface;
-  CHECK(s, VxWindow_GetSurface(window, &surface));
-
-  void *display;
-  CHECK(s, VxContext_GetDisplay(context, &display));
 
   while (VxWindow_IsOpen(window)) {
     CHECK(s, VxWindow_PollEvents(window));
-
-#ifdef VxContext_UseAngle
-    glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-#endif
 
     while (VxWindow_PopEvent(window, &event)) {
       switch (event.type) {
@@ -118,13 +93,9 @@ int main(void) {
       }
     }
 
-#ifdef VxContext_UseAngle
-    eglSwapBuffers(display, surface);
-#endif
+  terminate:
+    CHECK(s, VxWindow_Delete(&window));
+    CHECK(s, VxContext_Delete(&context));
+    return 0;
   }
-
-terminate:
-  CHECK(s, VxWindow_Delete(&window));
-  CHECK(s, VxContext_Delete(&context));
-  return 0;
 }

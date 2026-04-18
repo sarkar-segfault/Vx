@@ -3,7 +3,6 @@
 
 #include "../Internal.h"
 
-
 #ifdef _WIN32
   #ifndef NOMINMAX
     #define NOMINMAX

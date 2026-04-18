@@ -16,6 +16,8 @@
 
 #include "Context.h"
 #include "Event.h"
+#include "Flag.h"
+#include "Status.h"
 #include "Window.h"
 
 // IWYU pragma: end_exports

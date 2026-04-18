@@ -10,6 +10,8 @@ project(
 add_library(Vx Sources/Internal.c)
 
 set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/ring buffer")
+
+option(Vx_Testing "Whether to build tests and enable CTest integration" OFF)
 option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
 option(VxEvent_SendUnknown "Whether to send VxEventType_KeyPress/VxEventType_KeyRelease events with VxEventKey_Unknown" ON)
 
@@ -50,6 +52,15 @@ else()
   message(FATAL_ERROR "Vx only supports Win32 as of now...")
 endif()
 
-add_executable(test test.c)
+if(Vx_Testing)
+  function(Vx_Test name)
+      add_executable(${name} Tests/${name}.c)
+      target_link_libraries(${name} PRIVATE Vx)
+      add_test(NAME ${name} COMMAND ${name})
+  endfunction()
 
-target_link_libraries(test PRIVATE Vx)
+  Vx_Test(Basic)
+  Vx_Test(Clear)
+
+  enable_testing()
+endif()

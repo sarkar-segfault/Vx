@@ -34,8 +34,9 @@ VxStatus VxWindow_Create(VxWindow **window,
   DWORD style = WS_OVERLAPPEDWINDOW;
   if (!(flags & VxFlag_Invisible)) style |= WS_VISIBLE;
 
-  (*window)->hwnd = CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800,
-                                   600, NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
+  (*window)->hwnd =
+      CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800, 600, NULL, NULL,
+                     GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
 
   if (!(*window)->hwnd) {
     VxWindow_Delete(window);
@@ -92,7 +93,7 @@ bool VxWindow_GetFlag(VxWindow *window, VxFlag flag) {
   if (window) {
     VxFlags flags = ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
     return flags & flag;
-  }else
+  } else
     return false;
 }
 
