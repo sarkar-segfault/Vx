@@ -15,7 +15,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       if (!data) return FALSE;
 
       CREATESTRUCT *cs = (CREATESTRUCT *)lparam;
-      data->flags = (uint8_t)(intptr_t)cs->lpCreateParams;
+      data->flags = (VxFlags)(intptr_t)cs->lpCreateParams;
 
       SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)data);
       return TRUE;

@@ -34,6 +34,7 @@ local result, _ = readme:read("*a"):gsub("^[^\n]*\n", "")
 index:write(result)
 
 emit("Vx")
+emit("Flag")
 emit("Event")
 emit("Status")
 emit("Window")
