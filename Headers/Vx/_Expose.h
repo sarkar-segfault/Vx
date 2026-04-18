@@ -1,5 +1,4 @@
 /*
-  # Header `_Expose.h`
   Defines macros to expose public functions from the shared library across different platforms.
 
   Specifically, it defines `Vx__Export`, `Vx__Extern`, and `Vx__Expose`.
