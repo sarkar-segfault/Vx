@@ -16,6 +16,8 @@
 /**
   ## Functional macro `Vx_Near`
   Check whether two values are sufficiently close to warrant response.
+  We rate-limit the values for MouseMove events by 16, so this can be
+  used to detect changes for that.
 **/
 #define Vx_Near(a, b) abs(a - b) <= 16
 
@@ -161,6 +163,8 @@ typedef enum VxEventMod {
   VxEventMod_Shift = 1 << 0,
   VxEventMod_Control = 1 << 1,
   VxEventMod_Alt = 1 << 2,
+  VxEventMod_CapsLock = 1 << 3,
+  VxEventMod_Numlock = 1 << 4
 } VxEventMod;
 
 /**

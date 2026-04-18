@@ -111,9 +111,11 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       VxEvent ev =
           (VxEvent){.type = VxEventType_KeyPress, .info.press.key = Vx__TranslateKey(wparam)};
 
-      if (GetKeyState(VK_CONTROL) & 0x8000) ev.info.press.mod |= VxEventMod_Control;
-      if (GetKeyState(VK_SHIFT) & 0x8000) ev.info.press.mod |= VxEventMod_Shift;
       if (GetKeyState(VK_MENU) & 0x8000) ev.info.press.mod |= VxEventMod_Alt;
+      if (GetKeyState(VK_SHIFT) & 0x8000) ev.info.press.mod |= VxEventMod_Shift;
+      if (GetKeyState(VK_CONTROL) & 0x8000) ev.info.press.mod |= VxEventMod_Control;
+      if (GetKeyState(VK_NUMLOCK) & 0x0001) ev.info.press.mod |= VxEventMod_Numlock;
+      if (GetKeyState(VK_CAPITAL) & 0x0001) ev.info.press.mod |= VxEventMod_CapsLock;
 
 #ifndef VxEvent_SendUnknown
       if (ev.info.press.key != VxEventKey_Unknown)
