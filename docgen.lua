@@ -29,7 +29,7 @@ local index = io.open("docs/index.md", "w")
 local readme = io.open("README.md", "r")
 assert(index and readme, "failed to open files")
 
-index:write("---\nlayout: page\ntitle: Vx\n---\n")
+index:write("---\nlayout: home\ntitle: Vx\n---\n")
 local result, _ = readme:read("*a"):gsub("^[^\n]*\n", "")
 index:write(result)
 
