@@ -7,7 +7,7 @@ project(
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
-add_library(Vx Sources/Window.c Sources/Context.c Sources/Internal.c Sources/Lifecycle.c)
+add_library(Vx Sources/Internal.c)
 
 set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/ring buffer")
 option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
@@ -42,8 +42,12 @@ target_include_directories(Vx PUBLIC Headers)
 
 target_compile_features(Vx PUBLIC c_std_99)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
+  set(SRCW32 Sources/Win32)
+  target_sources(Vx PRIVATE ${SRCW32}/Window.c ${SRCW32}/Context.c ${SRCW32}/Lifecycle.c)
   target_link_libraries(Vx PRIVATE user32)
+else()
+  message(FATAL_ERROR "Vx only supports Win32 as of now...")
 endif()
 
 add_executable(test test.c)

@@ -2,6 +2,7 @@
   #include <EGL/egl.h>
   #include <GLES2/gl2.h>
 #endif
+
 #include <stddef.h>
 #include <stdio.h>
 
@@ -21,7 +22,7 @@ int main(void) {
   CHECK(s, VxContext_Create(&context));
   VxWindow *window;
 
-  CHECK(s, VxWindow_Create(&window, context));
+  CHECK(s, VxWindow_Create(&window, context, 0));
 
   CHECK(s, VxWindow_MountGraphics(window));
   VxEvent event;
