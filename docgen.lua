@@ -35,5 +35,6 @@ index:write(result)
 
 emit("Vx")
 emit("Event")
+emit("Status")
 emit("Window")
 emit("Context")
