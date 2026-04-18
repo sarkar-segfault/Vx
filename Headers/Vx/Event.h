@@ -1,5 +1,4 @@
 /**
-  # Header `Event.h`
   Defines types for handling input events triggered by the user.
 
   This file defines the tagged union `VxEvent` and other types to complement it.
