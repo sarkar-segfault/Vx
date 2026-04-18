@@ -19,24 +19,38 @@ struct VxWindow {
 };
 
 VxStatus VxWindow_Create(VxWindow **window,
-                         VxContext *context  // NOLINT
-) {
+                         VxContext *context,  // NOLINT
+                         VxFlags flags) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
   if (!*window) return VxStatus_AllocFail;
 
   (*window)->open = true;
-  (*window)->hwnd = CreateWindowEx(WS_EX_LAYERED, VxWindow_Class, VxWindow_Class,
-                                   WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0, 800, 600, NULL, NULL,
-                                   GetModuleHandle(NULL), 0);
+
+  DWORD exstyle = 0;
+  if (!(flags & VxFlag_Unlayered)) exstyle |= WS_EX_LAYERED;
+
+  DWORD style = WS_OVERLAPPEDWINDOW;
+  if (!(flags & VxFlag_Invisible)) style |= WS_VISIBLE;
+
+  (*window)->hwnd = CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800,
+                                   600, NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
 
   if (!(*window)->hwnd) {
     VxWindow_Delete(window);
     return VxStatus_WindowingFail;
   }
 
-  if (!VxWindow_SetOpacity(*window, 1.0f)) {
+  if (flags & VxFlag_Maximized && !VxWindow_Maximize(*window)) {
+    VxWindow_Delete(window);
+    return VxStatus_WindowingFail;
+  } else if (flags & VxFlag_Minimized && !VxWindow_Minimize(*window)) {
+    VxWindow_Delete(window);
+    return VxStatus_WindowingFail;
+  }
+
+  if (!(flags & VxFlag_Unlayered) && !VxWindow_SetOpacity(*window, 1.0f)) {
     VxWindow_Delete(window);
     return VxStatus_WindowingFail;
   }
@@ -74,7 +88,15 @@ VxStatus VxWindow_Create(VxWindow **window,
   return VxStatus_Pass;
 }
 
-Vx__Expose VxStatus VxWindow_GetSurface(VxWindow *window, void **surface  // NOLINT
+bool VxWindow_GetFlag(VxWindow *window, VxFlag flag) {
+  if (window) {
+    VxFlags flags = ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
+    return flags & flag;
+  }else
+    return false;
+}
+
+VxStatus VxWindow_GetSurface(VxWindow *window, void **surface  // NOLINT
 ) {
 #ifdef VxContext_UseAngle
   if (!window || !surface) return VxStatus_BadInput;
@@ -134,14 +156,14 @@ VxStatus VxWindow_PollEvents(VxWindow *window) {
 VxStatus VxWindow_PopEvent(VxWindow *window, VxEvent *event) {
   if (!window || !event) return VxStatus_BadInput;
 
-  VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  VxWindowData *data = (VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Pop(&data->ring, event);
 }
 
 VxStatus VxWindow_PutEvent(VxWindow *window, VxEvent event) {
   if (!window) return VxStatus_BadInput;
 
-  VxWindowData data = (VxWindowData)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
+  VxWindowData *data = (VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Put(&data->ring, event);
 }
 

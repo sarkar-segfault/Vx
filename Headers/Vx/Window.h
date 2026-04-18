@@ -19,6 +19,7 @@
 #include "Context.h"
 #include "Event.h"
 #include "Status.h"
+#include "Flag.h"
 #include "_Expose.h"
 
 /**
@@ -40,7 +41,15 @@ typedef struct VxWindow VxWindow;
   Internally, we call platform specific functions to create the window, write to the
   output parameter, and create the window's graphics context and surface.
 **/
-Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context);
+Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, VxFlags flags);
+
+/**
+  ## Method `VxWindow_GetFlag`
+  Return whether the specified flag is currently set.
+
+  This function returns whether the specified `VxFlag` is currently set on the window.
+**/
+Vx__Expose bool VxWindow_GetFlag(VxWindow *window, VxFlag flag);
 
 /**
   ## Method `VxWindow_MountGraphics`

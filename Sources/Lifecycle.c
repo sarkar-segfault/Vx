@@ -7,12 +7,15 @@
 VxEventKey Vx__TranslateKey(WPARAM key);
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
-  VxWindowData data = (VxWindowData)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+  VxWindowData *data = (VxWindowData *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
   switch (umsg) {
     case WM_NCCREATE: {
       data = calloc(1, sizeof(struct VxWindowData));
       if (!data) return FALSE;
+
+      CREATESTRUCT *cs = (CREATESTRUCT *)lparam;
+      data->flags = (uint8_t)(intptr_t)cs->lpCreateParams;
 
       SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)data);
       return TRUE;
@@ -39,10 +42,13 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_SHOWWINDOW:
-      if (wparam)
+      if (wparam) {
+        data->flags &= ~VxFlag_Invisible;
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Show});
-      else
+      } else {
+        data->flags |= VxFlag_Invisible;
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Hide});
+      }
 
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
@@ -78,14 +84,18 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
     case WM_SIZE:
       if (!data->is_changing) {
-        if (wparam == SIZE_RESTORED)
+        data->flags &= ~(VxFlag_Minimized | VxFlag_Maximized);
+        if (wparam == SIZE_RESTORED) {
           VxEventRing_Put(&data->ring,
                           (VxEvent){.type = VxEventType_Resize,
                                     .info.size = {LOWORD(lparam), HIWORD(lparam)}});
-        else if (wparam == SIZE_MAXIMIZED)
+        } else if (wparam == SIZE_MAXIMIZED) {
+          data->flags |= VxFlag_Maximized;
           VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Maximize});
-        else if (wparam == SIZE_MINIMIZED)
+        } else if (wparam == SIZE_MINIMIZED) {
+          data->flags |= VxFlag_Minimized;
           VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Minimize});
+        }
       }
 
       return DefWindowProc(hwnd, umsg, wparam, lparam);

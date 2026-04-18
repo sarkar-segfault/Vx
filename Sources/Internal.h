@@ -10,6 +10,7 @@
 
 #include "Vx/Event.h"
 #include "Vx/_Expose.h"
+#include "Vx/Flag.h"
 
 #ifdef VxContext_UseAngle
   // IWYU pragma: begin_exports
@@ -53,8 +54,9 @@ Vx__Extern bool VxEventRing_Pop(VxEventRing *ring, VxEvent *event);
 typedef struct VxWindowData {
   VxEventRing ring;
   bool is_changing;
+  VxFlags flags;
   uint32_t w, h;
   int32_t x, y;
-} *VxWindowData;
+} VxWindowData;
 
 #endif
