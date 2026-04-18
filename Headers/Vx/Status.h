@@ -11,6 +11,7 @@
   length of the enum.
 **/
 typedef enum VxStatus {
+  VxStatus_NotConfigured,
   VxStatus_WindowingFail,
   VxStatus_GraphicsFail,
   VxStatus_AllocFail,

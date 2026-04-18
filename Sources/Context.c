@@ -5,8 +5,12 @@
 #include "Internal.h"
 
 struct VxContext {
+#ifdef VxContext_UseAngle
   EGLDisplay display;
   EGLConfig config;
+#else
+  char _;
+#endif
 };
 
 Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam,
@@ -69,31 +73,44 @@ VxStatus VxContext_Create(VxContext **context) {
   return VxStatus_Pass;
 }
 
-VxStatus VxContext_ClearGraphics(VxContext *context) {
+VxStatus VxContext_ClearGraphics(VxContext *context  // NOLINT
+) {
+#ifdef VxContext_UseAngle
   if (!context) return VxStatus_BadInput;
 
-#ifdef VxContext_UseAngle
   if (!eglMakeCurrent(context->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
     return VxStatus_GraphicsFail;
-#endif
 
   return VxStatus_Pass;
+#else
+  return VxStatus_NotConfigured;
+#endif
 }
 
-VxStatus VxContext_GetDisplay(VxContext *context, void **display) {
+VxStatus VxContext_GetDisplay(VxContext *context, void **display  // NOLINT
+) {
+#ifdef VxContext_UseAngle
   if (context && display) {
     *display = context->display;
     return VxStatus_Pass;
   } else
     return VxStatus_BadInput;
+#else
+  return VxStatus_NotConfigured;
+#endif
 }
 
-VxStatus VxContext_GetConfig(VxContext *context, void **config) {
+VxStatus VxContext_GetConfig(VxContext *context, void **config  // NOLINT
+) {
+#ifdef VxContext_UseAngle
   if (context && config) {
     *config = context->config;
     return VxStatus_Pass;
   } else
     return VxStatus_BadInput;
+#else
+  return VxStatus_NotConfigured;
+#endif
 }
 
 VxStatus VxContext_Delete(VxContext **context) {

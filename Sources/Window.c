@@ -18,7 +18,9 @@ struct VxWindow {
 #endif
 };
 
-VxStatus VxWindow_Create(VxWindow **window, VxContext *context) {
+VxStatus VxWindow_Create(VxWindow **window,
+                         VxContext *context  // NOLINT
+) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
@@ -72,14 +74,20 @@ VxStatus VxWindow_Create(VxWindow **window, VxContext *context) {
   return VxStatus_Pass;
 }
 
-Vx__Expose VxStatus VxWindow_GetSurface(VxWindow *window, void **surface) {
+Vx__Expose VxStatus VxWindow_GetSurface(VxWindow *window, void **surface  // NOLINT
+) {
+#ifdef VxContext_UseAngle
   if (!window || !surface) return VxStatus_BadInput;
 
   *surface = window->surface;
   return VxStatus_Pass;
+#else
+  return VxStatus_NotConfigured;
+#endif
 }
 
-VxStatus VxWindow_MountGraphics(VxWindow *window) {
+VxStatus VxWindow_MountGraphics(VxWindow *window  // NOLINT
+) {
 #ifdef VxContext_UseAngle
   if (!window || !window->context) return VxStatus_BadInput;
   void *display;
@@ -87,9 +95,11 @@ VxStatus VxWindow_MountGraphics(VxWindow *window) {
   if (VxContext_GetDisplay(window->context, &display) != VxStatus_Pass ||
       !eglMakeCurrent(display, window->surface, window->surface, window->econtext))
     return VxStatus_GraphicsFail;
-#endif
 
   return VxStatus_Pass;
+#else
+  return VxStatus_NotConfigured;
+#endif
 }
 
 VxStatus VxWindow_Close(VxWindow *window) {

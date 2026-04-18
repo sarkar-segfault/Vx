@@ -1,5 +1,7 @@
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#ifdef VxContext_UseAngle
+  #include <EGL/egl.h>
+  #include <GLES2/gl2.h>
+#endif
 #include <stddef.h>
 #include <stdio.h>
 
@@ -32,8 +34,11 @@ int main(void) {
 
   while (VxWindow_IsOpen(window)) {
     CHECK(s, VxWindow_PollEvents(window));
+
+#ifdef VxContext_UseAngle
     glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+#endif
 
     while (VxWindow_PopEvent(window, &event)) {
       switch (event.type) {
@@ -112,7 +117,9 @@ int main(void) {
       }
     }
 
+#ifdef VxContext_UseAngle
     eglSwapBuffers(display, surface);
+#endif
   }
 
 terminate:
