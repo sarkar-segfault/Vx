@@ -18,7 +18,7 @@ local function emit(file)
 
     if comment:find("## Method") or comment:find("## Function") or comment:find("## Functional macro") then
       local result2, _ = code:gsub("Vx__Expose ", "")
-      out:write("\n```" .. result2 .. "```\n")
+      out:write("\n```c\n" .. result2 .. "\n```\n")
     end
   end
 
