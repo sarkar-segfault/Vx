@@ -1,4 +1,6 @@
 compile_commands.json
-docs/index.md
 .cache/
 build/
+
+docs/*.md
+!docs/files.md
