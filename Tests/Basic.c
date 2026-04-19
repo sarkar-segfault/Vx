@@ -92,10 +92,10 @@ int main(void) {
           break;
       }
     }
-
-  terminate:
-    CHECK(s, VxWindow_Delete(&window));
-    CHECK(s, VxContext_Delete(&context));
-    return 0;
   }
+
+terminate:
+  CHECK(s, VxWindow_Delete(&window));
+  CHECK(s, VxContext_Delete(&context));
+  return 0;
 }
