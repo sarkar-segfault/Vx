@@ -13,8 +13,7 @@ struct VxContext {
 #endif
 };
 
-Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam,
-                                              LPARAM lparam);
+Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
 VxStatus VxContext_Create(VxContext **context) {
   WNDCLASSEX wc = {0};
@@ -41,8 +40,7 @@ VxStatus VxContext_Create(VxContext **context) {
   (*context)->display =
       eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, display_spec);
 
-  if ((*context)->display == EGL_NO_DISPLAY ||
-      !eglInitialize((*context)->display, NULL, NULL)) {
+  if ((*context)->display == EGL_NO_DISPLAY || !eglInitialize((*context)->display, NULL, NULL)) {
     VxContext_Delete(context);
     return VxStatus_GraphicsFail;
   }

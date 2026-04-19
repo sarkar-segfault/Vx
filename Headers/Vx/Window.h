@@ -143,8 +143,7 @@ Vx__Expose VxStatus VxWindow_GetSize(const VxWindow *window, uint32_t *w, uint32
 
   Changes the width and height of the window in pixels.
 **/
-Vx__Expose VxStatus VxWindow_SetSize(const VxWindow *window, const uint32_t w,
-                                     const uint32_t h);
+Vx__Expose VxStatus VxWindow_SetSize(const VxWindow *window, const uint32_t w, const uint32_t h);
 
 /**
   ## Method `VxWindow_GetPos`

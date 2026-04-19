@@ -34,9 +34,8 @@ VxStatus VxWindow_Create(VxWindow **window,
   DWORD style = WS_OVERLAPPEDWINDOW;
   if (!(flags & VxFlag_Invisible)) style |= WS_VISIBLE;
 
-  (*window)->hwnd =
-      CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800, 600, NULL, NULL,
-                     GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
+  (*window)->hwnd = CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800, 600,
+                                   NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
 
   if (!(*window)->hwnd) {
     VxWindow_Delete(window);
@@ -184,8 +183,7 @@ VxStatus VxWindow_Delete(VxWindow **window) {
     if ((*window)->surface != EGL_NO_SURFACE && !eglDestroySurface(display, (*window)->surface))
       s = VxStatus_GraphicsFail;
 
-    if ((*window)->econtext != EGL_NO_CONTEXT &&
-        !eglDestroyContext(display, (*window)->econtext))
+    if ((*window)->econtext != EGL_NO_CONTEXT && !eglDestroyContext(display, (*window)->econtext))
       s = VxStatus_GraphicsFail;
   }
 #endif
@@ -272,8 +270,8 @@ VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
 #define Vx__Clamp(val, min, max) (val < min) ? min : (val > max) ? max : o
 
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  if (!window || !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f,
-                                             LWA_ALPHA)) {
+  if (!window ||
+      !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f, LWA_ALPHA)) {
     return VxStatus_WindowingFail;
   }
 

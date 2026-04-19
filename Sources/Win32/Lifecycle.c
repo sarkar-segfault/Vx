@@ -75,8 +75,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Move, .info.pos = {x, y}});
       }
       if (data->w != w || data->h != h) {
-        VxEventRing_Put(&data->ring,
-                        (VxEvent){.type = VxEventType_Resize, .info.size = {w, h}});
+        VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Resize, .info.size = {w, h}});
       }
 
       return 0;
@@ -86,9 +85,8 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
       if (!data->is_changing) {
         data->flags &= ~(VxFlag_Minimized | VxFlag_Maximized);
         if (wparam == SIZE_RESTORED) {
-          VxEventRing_Put(&data->ring,
-                          (VxEvent){.type = VxEventType_Resize,
-                                    .info.size = {LOWORD(lparam), HIWORD(lparam)}});
+          VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Resize,
+                                                 .info.size = {LOWORD(lparam), HIWORD(lparam)}});
         } else if (wparam == SIZE_MAXIMIZED) {
           data->flags |= VxFlag_Maximized;
           VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Maximize});
@@ -138,8 +136,7 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
     }
 
     case WM_CHAR:
-      VxEventRing_Put(&data->ring,
-                      (VxEvent){.type = VxEventType_CharSent, .info.sent = wparam});
+      VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_CharSent, .info.sent = wparam});
       return DefWindowProc(hwnd, umsg, wparam, lparam);
 
     case WM_LBUTTONDOWN:
