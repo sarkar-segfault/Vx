@@ -20,7 +20,7 @@ struct VxWindow {
 
 VxStatus VxWindow_Create(VxWindow **window,
                          VxContext *context,  // NOLINT
-                         VxFlags flags) {
+                         const VxFlags flags) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
@@ -88,7 +88,7 @@ VxStatus VxWindow_Create(VxWindow **window,
   return VxStatus_Pass;
 }
 
-bool VxWindow_GetFlag(VxWindow *window, VxFlag flag) {
+bool VxWindow_GetFlag(const VxWindow *window, VxFlag flag) {
   if (window) {
     VxFlags flags = ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
     return flags & flag;
@@ -96,7 +96,7 @@ bool VxWindow_GetFlag(VxWindow *window, VxFlag flag) {
     return false;
 }
 
-VxStatus VxWindow_GetSurface(VxWindow *window, void **surface  // NOLINT
+VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface  // NOLINT
 ) {
 #ifdef VxContext_UseAngle
   if (!window || !surface) return VxStatus_BadInput;
@@ -153,14 +153,14 @@ VxStatus VxWindow_PollEvents(VxWindow *window) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_PopEvent(VxWindow *window, VxEvent *event) {
+VxStatus VxWindow_PopEvent(const VxWindow *window, VxEvent *event) {
   if (!window || !event) return VxStatus_BadInput;
 
   VxWindowData *data = (VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
   return VxEventRing_Pop(&data->ring, event);
 }
 
-VxStatus VxWindow_PutEvent(VxWindow *window, VxEvent event) {
+VxStatus VxWindow_PutEvent(const VxWindow *window, VxEvent event) {
   if (!window) return VxStatus_BadInput;
 
   VxWindowData *data = (VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA);
@@ -253,6 +253,7 @@ VxStatus VxWindow_SetTitle(const VxWindow *window, const char *const title) {
 }
 
 VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
+  if (VxWindow_GetFlag(window, VxFlag_Unlayered)) return VxStatus_NotConfigured;
   if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
@@ -270,6 +271,8 @@ VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
 #define Vx__Clamp(val, min, max) (val < min) ? min : (val > max) ? max : o
 
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
+  if (VxWindow_GetFlag(window, VxFlag_Unlayered)) return VxStatus_NotConfigured;
+
   if (!window ||
       !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f, LWA_ALPHA)) {
     return VxStatus_WindowingFail;

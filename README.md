@@ -32,7 +32,7 @@ int main(void) {
 }
 ```
 
-Error and event handling is omitted for brevity.
+Error and event handling are omitted for brevity.
 
 ## Build
 This project uses [CMake](https://github.com/Kitware/CMake) to build. You can build it via the following command:

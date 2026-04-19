@@ -4,9 +4,6 @@
   This file defines the `VxWindow` struct and its many, many methods. Before
   you try to use any of these functions, please consult `Context.h` and its
   functions as they need to be called before and after any windowing logic.
-
-  Most things defined in this file only work under `_WIN32`. Unsupported
-  platforms will not be mentioned. Also, all functions here are thread safe.
 **/
 
 #ifndef Vx__WindowH
@@ -26,9 +23,10 @@
   ## Struct `VxWindow`
   Represents a platform specific window with an opaque pointer.
 
-  This struct represents a underlying native window via an opaque pointer. The exact
-  inner fields differ based on the environment, but a rough overview is given below.
-  You can use `VxWindow_GetHandle` to get access to the inner platform context.
+  This struct represents a underlying native window and other properties via
+  an opaque pointer. The exact inner fields differ based on the environment,
+  and are none of your business. You can use `VxWindow_GetHandle` to get
+  access to the inner platform context.
 **/
 typedef struct VxWindow VxWindow;
 
@@ -39,9 +37,9 @@ typedef struct VxWindow VxWindow;
   This function allocates the passed `VxWindow **`. Make sure that it is not already
   allocated, because this function will overwrite it and then inevitably leak memory.
   Internally, we call platform specific functions to create the window, write to the
-  output parameter, and create the window's graphics context and surface.
+  output parameter, and create the window's graphics context and surface if configured.
 **/
-Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, VxFlags flags);
+Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags flags);
 
 /**
   ## Method `VxWindow_GetFlag`
@@ -49,14 +47,14 @@ Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, VxFla
 
   This function returns whether the specified `VxFlag` is currently set on the window.
 **/
-Vx__Expose bool VxWindow_GetFlag(VxWindow *window, VxFlag flag);
+Vx__Expose bool VxWindow_GetFlag(const VxWindow *window, const VxFlag flag);
 
 /**
   ## Method `VxWindow_MountGraphics`
   Initialise the window's graphics context and make it current.
 
   This function enables graphics work on the selected window. No graphics work can run
-  before this. Call this with `NULL` in order to reset or clear the context.
+  before this.
 **/
 Vx__Expose VxStatus VxWindow_MountGraphics(VxWindow *window);
 
@@ -66,7 +64,7 @@ Vx__Expose VxStatus VxWindow_MountGraphics(VxWindow *window);
 
   This function writes the `EGLSurface` handle of the window to the provided `surface`.
 **/
-Vx__Expose VxStatus VxWindow_GetSurface(VxWindow *window, void **surface);
+Vx__Expose VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface);
 
 /**
   ## Method `VxWindow_Close`
@@ -111,7 +109,7 @@ Vx__Expose VxStatus VxWindow_PollEvents(VxWindow *window);
 
   Removes the oldest event from the internal event queue and writes it to `event`.
 **/
-Vx__Expose VxStatus VxWindow_PopEvent(VxWindow *window, VxEvent *event);
+Vx__Expose VxStatus VxWindow_PopEvent(const VxWindow *window, VxEvent *event);
 
 /**
   ## Method `VxWindow_PutEvent`
@@ -119,7 +117,7 @@ Vx__Expose VxStatus VxWindow_PopEvent(VxWindow *window, VxEvent *event);
 
   Inserts an event into the queue, overwriting the oldest if the buffer is full.
 **/
-Vx__Expose VxStatus VxWindow_PutEvent(VxWindow *window, VxEvent event);
+Vx__Expose VxStatus VxWindow_PutEvent(const VxWindow *window, VxEvent event);
 
 /**
   ## Method `VxWindow_IsOpen`

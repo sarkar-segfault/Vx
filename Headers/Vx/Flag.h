@@ -19,9 +19,28 @@
   modified later, but only internally. To you, they are immutable.
 **/
 typedef enum VxFlag {
+  /**
+    ### Member `VxFlag_Invisible`
+    Whether the window is invisible.
+  **/
   VxFlag_Invisible = 1u << 0,
+
+  /**
+    ### Member `VxFlag_Maximized`
+    Whether the window is maximized.
+  **/
   VxFlag_Maximized = 1u << 1,
+
+  /**
+    ### Member `VxFlag_Minimized`
+    Whether the window is minimized.
+  **/
   VxFlag_Minimized = 1u << 2,
+
+  /**
+    ### Member `VxFlag_Unlayered`
+    Whether the window has opacity.
+  **/
   VxFlag_Unlayered = 1u << 3
 } VxFlag;
 

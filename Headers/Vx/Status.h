@@ -21,12 +21,43 @@
   length of the enum.
 **/
 typedef enum VxStatus {
+  /**
+    ### Member `VxStatus_NotConfigured`
+    The specified feature is unconfigured.
+
+    Sent when graphics work is tried and not `VxContext_UseAngle`.
+    Also when opacity configuration is tried and `VxFlag_Unlayered`.
+  **/
   VxStatus_NotConfigured,
+
+  /**
+    ### Member `VxStatus_WindowingFail`
+    Encountered a windowing-related failure.
+  **/
   VxStatus_WindowingFail,
+
+  /**
+    ### Member `VxStatus_GraphicsFail`
+    Encounteed a graphics-related failure.
+  **/
   VxStatus_GraphicsFail,
+
+  /**
+    ### Member `VxStatus_AllocFail`
+    Failed to allocate memory using `calloc`.
+  **/
   VxStatus_AllocFail,
+
+  /**
+    ### Member `VxStatus_BadInput`
+    Bad arguments, like `NULL` or invalid handles, were passed.
+  **/
   VxStatus_BadInput,
 
+  /**
+    ### Member `VxStatus_Pass`
+    The operation completed successfully.
+  **/
   VxStatus_Pass
 } VxStatus;
 
