@@ -28,14 +28,10 @@ VxStatus VxWindow_Create(VxWindow **window,
 
   (*window)->open = true;
 
-  DWORD exstyle = 0;
-  if (!(flags & VxFlag_Unlayered)) exstyle |= WS_EX_LAYERED;
-
-  DWORD style = WS_OVERLAPPEDWINDOW;
-  if (!(flags & VxFlag_Invisible)) style |= WS_VISIBLE;
-
-  (*window)->hwnd = CreateWindowEx(exstyle, VxWindow_Class, VxWindow_Class, style, 0, 0, 800, 600,
-                                   NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
+  (*window)->hwnd =
+      CreateWindowEx((flags & VxFlag_Unlayered) ? 0 : WS_EX_LAYERED, VxWindow_Class, VxWindow_Class,
+                     WS_OVERLAPPEDWINDOW | (flags & VxFlag_Invisible) ? 0 : WS_VISIBLE, 0, 0, 800,
+                     600, NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
 
   if (!(*window)->hwnd) {
     VxWindow_Delete(window);
