@@ -1,5 +1,13 @@
 #!/usr/bin/env lua
 
+local files = io.open("docs/files.md", "w")
+assert(files, "failed to open files")
+
+files:write("---\nlayout: page\ntitle: Files\n---\n")
+files:write("Vx has a relatively short number of header files. The documentation for public ones is listed below:\n")
+
+local i = 0
+
 local function emit(file)
   local hndl = io.open("Headers/Vx/" .. file .. ".h", "r")
   assert(hndl, "failed to read file")
@@ -9,6 +17,9 @@ local function emit(file)
 
   local out = io.open("docs/" .. file .. ".md", "w")
   assert(out, "failed to open out file")
+
+  i = i + 1
+  files:write(tostring(i) .. ". [" .. file .. ".h](/" .. file .. ".md)\n")
 
   out:write("---\nlayout: page\ntitle: " .. file .. ".h\n---\n")
 
