@@ -4,6 +4,7 @@ project(
   Vx
   LANGUAGES C
   VERSION 0.1.0
+  HOMEPAGE_URL "https://github.com/sarkar-segfault/Vx"
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
