@@ -71,8 +71,7 @@ VxStatus VxContext_Create(VxContext **context) {
   return VxStatus_Pass;
 }
 
-VxStatus VxContext_ClearGraphics(VxContext *context  // NOLINT
-) {
+VxStatus VxContext_ClearGraphics(VxContext *context) {
 #ifdef VxContext_UseAngle
   if (!context) return VxStatus_BadInput;
 
@@ -85,8 +84,7 @@ VxStatus VxContext_ClearGraphics(VxContext *context  // NOLINT
 #endif
 }
 
-VxStatus VxContext_GetDisplay(VxContext *context, void **display  // NOLINT
-) {
+VxStatus VxContext_GetDisplay(VxContext *context, void **display) {
 #ifdef VxContext_UseAngle
   if (context && display) {
     *display = context->display;
@@ -98,8 +96,7 @@ VxStatus VxContext_GetDisplay(VxContext *context, void **display  // NOLINT
 #endif
 }
 
-VxStatus VxContext_GetConfig(VxContext *context, void **config  // NOLINT
-) {
+VxStatus VxContext_GetConfig(VxContext *context, void **config) {
 #ifdef VxContext_UseAngle
   if (context && config) {
     *config = context->config;

@@ -18,9 +18,7 @@ struct VxWindow {
 #endif
 };
 
-VxStatus VxWindow_Create(VxWindow **window,
-                         VxContext *context,  // NOLINT
-                         const VxFlags flags) {
+VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags flags) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
@@ -92,8 +90,7 @@ bool VxWindow_GetFlag(const VxWindow *window, VxFlag flag) {
     return false;
 }
 
-VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface  // NOLINT
-) {
+VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface) {
 #ifdef VxContext_UseAngle
   if (!window || !surface) return VxStatus_BadInput;
 
@@ -104,8 +101,7 @@ VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface  // NOLINT
 #endif
 }
 
-VxStatus VxWindow_MountGraphics(VxWindow *window  // NOLINT
-) {
+VxStatus VxWindow_MountGraphics(VxWindow *window) {
 #ifdef VxContext_UseAngle
   if (!window || !window->context) return VxStatus_BadInput;
   void *display;
