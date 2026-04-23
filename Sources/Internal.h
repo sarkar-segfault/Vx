@@ -9,7 +9,6 @@
 // IWYU pragma: end_exports
 
 #include "Vx/Event.h"
-#include "Vx/Flag.h"
 #include "Vx/_Expose.h"
 
 #ifdef VxContext_UseAngle
