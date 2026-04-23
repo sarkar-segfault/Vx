@@ -1,5 +1,5 @@
-#ifndef Vx__InternalH
-#define Vx__InternalH
+#ifndef Vx__EventRingH
+#define Vx__EventRingH
 
 // IWYU pragma: begin_exports
 #include <stdbool.h>

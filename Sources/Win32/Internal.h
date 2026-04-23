@@ -1,7 +1,8 @@
 #ifndef Vx__Win32InternalH
 #define Vx__Win32InternalH
 
-#include "../Internal.h"
+#include "../EventRing.h"
+#include "Vx/Flag.h"
 
 #ifdef _WIN32
   #ifndef NOMINMAX

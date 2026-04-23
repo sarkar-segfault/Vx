@@ -8,7 +8,7 @@ project(
   DESCRIPTION "A windowing library for simpletons and wizards alike"
 )
 
-add_library(Vx Sources/Internal.c)
+add_library(Vx Sources/EventRing.c Sources/Status.c)
 
 set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/ring buffer")
 

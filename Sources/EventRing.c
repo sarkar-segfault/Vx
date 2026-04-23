@@ -1,17 +1,8 @@
-#include "Internal.h"
+#include "EventRing.h"
 
 #include <stdbool.h>
 
 #include "Vx/Event.h"
-#include "Vx/Status.h"
-
-const char *const VxStatus_Strings[VxStatus_Pass] = {
-    "the associated feature was not configured",
-    "encountered window-related failure",
-    "encountered graphics-related failure",
-    "failed to allocate object",
-    "called with invalid parameters",
-};
 
 #define VxEventRing__Wrap(var) var = (var + 1) % VxEventRing_Length
 
