@@ -1,4 +1,10 @@
 #!/usr/bin/env lua
+--[[
+  Documentation generator for this project.
+  This file uses project internals and documentation
+  schemes to extract doc comments and sometimes definitions.
+  Do not modify this unless you know what you're dealing with.
+]]--
 
 local files = io.open("docs/files.md", "w")
 assert(files, "failed to open files")
