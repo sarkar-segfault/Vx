@@ -1,4 +1,4 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+# This action pushes our docs to https://sarkar-segfault.github.io/Vx
 name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
 on:
@@ -25,22 +25,30 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Install Lua 5.4
       - name: Install Lua
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.4
+
+      # Generate docs using docgen.lua
       - name: Generate Docs
         run: lua docgen.lua
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs
           destination: ./_site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
