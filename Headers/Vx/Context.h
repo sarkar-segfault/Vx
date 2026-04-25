@@ -49,14 +49,6 @@ Vx__Expose VxStatus VxContext_ClearGraphics(VxContext *context);
 Vx__Expose VxStatus VxContext_GetDisplay(VxContext *context, void **display);
 
 /**
-  ## Method `VxContext_GetConfig`
-  Return the context's device config.
-
-  This function returns the `EGLConfig` of the provided context.
-**/
-Vx__Expose VxStatus VxContext_GetConfig(VxContext *context, void **config);
-
-/**
   ## Method `VxContext_Delete`
   Terminate windowing and graphics.
 

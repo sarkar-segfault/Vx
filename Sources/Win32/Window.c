@@ -55,22 +55,16 @@ VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags fl
 
   if (context) {
     (*window)->context = context;
-    void *display, *config;
 
-    if (VxContext_GetDisplay(context, &display) != VxStatus_Pass ||
-        VxContext_GetConfig(context, &config) != VxStatus_Pass) {
-      VxWindow_Delete(window);
-      return VxStatus_GraphicsFail;
-    }
-
-    (*window)->surface = eglCreateWindowSurface(display, config, (*window)->hwnd, NULL);
+    (*window)->surface =
+        eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
 
     if ((*window)->surface == EGL_NO_SURFACE) {
       VxWindow_Delete(window);
       return VxStatus_GraphicsFail;
     }
 
-    (*window)->econtext = eglCreateContext(display, config, EGL_NO_CONTEXT, NULL);
+    (*window)->econtext = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
 
     if ((*window)->econtext == EGL_NO_CONTEXT) {
       VxWindow_Delete(window);

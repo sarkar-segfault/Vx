@@ -4,15 +4,6 @@
 
 #include "Internal.h"
 
-struct VxContext {
-#ifdef VxContext_UseAngle
-  EGLDisplay display;
-  EGLConfig config;
-#else
-  char _;
-#endif
-};
-
 Vx__Extern LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
 VxStatus VxContext_Create(VxContext **context) {
@@ -88,18 +79,6 @@ VxStatus VxContext_GetDisplay(VxContext *context, void **display) {
 #ifdef VxContext_UseAngle
   if (context && display) {
     *display = context->display;
-    return VxStatus_Pass;
-  } else
-    return VxStatus_BadInput;
-#else
-  return VxStatus_NotConfigured;
-#endif
-}
-
-VxStatus VxContext_GetConfig(VxContext *context, void **config) {
-#ifdef VxContext_UseAngle
-  if (context && config) {
-    *config = context->config;
     return VxStatus_Pass;
   } else
     return VxStatus_BadInput;
