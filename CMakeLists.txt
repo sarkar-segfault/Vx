@@ -20,7 +20,7 @@ target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
 
 if(VxContext_UseAngle)
   target_compile_definitions(Vx PUBLIC VxContext_UseAngle)
-  target_link_libraries(Vx PRIVATE EGL GLESv2)
+  target_link_libraries(Vx PUBLIC EGL GLESv2)
 endif()
 
 if(VxEvent_SendUnknown)

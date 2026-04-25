@@ -23,9 +23,9 @@
 #ifdef Vx__Shared
   #ifdef _WIN32
     #ifdef Vx__Build
-      #define Vx__Export __declspec(dllimport)
-    #else
       #define Vx__Export __declspec(dllexport)
+    #else
+      #define Vx__Export __declspec(dllimport)
     #endif
   #elif defined(__GNUC__)
     #define Vx__Export __attribute__((visibility("default")))
