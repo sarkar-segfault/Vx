@@ -237,6 +237,6 @@ Vx__Expose VxStatus VxWindow_Flash(const VxWindow *window);
 
   Returns the native window handle (e.g., `HWND` on `_WIN32`).
 **/
-Vx__Expose VxStatus VxWindow_GetHandle(const VxWindow *window, void **handle);
+Vx__Expose VxStatus VxWindow_GetHandle(const VxWindow *window, const void **handle);
 
 #endif

@@ -243,7 +243,7 @@ VxStatus VxWindow_Flash(const VxWindow *window) {
   return VxStatus_Pass;
 }
 
-VxStatus VxWindow_GetHandle(const VxWindow *window, void **handle) {
+VxStatus VxWindow_GetHandle(const VxWindow *window, const void **handle) {
   if (!window || !handle) return VxStatus_BadInput;
 
   *handle = window->hwnd;
