@@ -4,21 +4,15 @@
 #include <stdlib.h>
 
 #include "Internal.h"
-#include "Vx/Context.h"
 #include "Vx/Status.h"
 
 struct VxWindow {
   HWND hwnd;
   MSG msg;
   bool open;
-#ifdef VxContext_UseAngle
-  EGLSurface surface;
-  EGLContext econtext;
-  VxContext *context;
-#endif
 };
 
-VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags flags) {
+VxStatus VxWindow_Create(VxWindow **window, const VxFlags flags) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
@@ -27,8 +21,8 @@ VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags fl
   (*window)->open = true;
 
   (*window)->hwnd =
-      CreateWindowEx(flags & VxFlag_Unlayered ? 0 : WS_EX_LAYERED, VxWindow_Class, VxWindow_Class,
-                     WS_OVERLAPPEDWINDOW | (flags & VxFlag_Invisible ? 0 : WS_VISIBLE), 0, 0, 800,
+      CreateWindowEx(flags & VxFlag_Layered ? WS_EX_LAYERED : 0, VxWindow_Class, VxWindow_Class,
+                     WS_OVERLAPPEDWINDOW | (flags & VxFlag_Visible ? WS_VISIBLE : 0), 0, 0, 800,
                      600, NULL, NULL, GetModuleHandle(NULL), (LPVOID)(intptr_t)flags);
 
   if (!(*window)->hwnd) {
@@ -44,34 +38,10 @@ VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags fl
     return VxStatus_WindowingFail;
   }
 
-  if (!(flags & VxFlag_Unlayered) && !VxWindow_SetOpacity(*window, 1.0f)) {
+  if (flags & VxFlag_Layered && !VxWindow_SetOpacity(*window, 1.0f)) {
     VxWindow_Delete(window);
     return VxStatus_WindowingFail;
   }
-
-#ifdef VxContext_UseAngle
-  (*window)->surface = EGL_NO_SURFACE;
-  (*window)->econtext = EGL_NO_CONTEXT;
-
-  if (context) {
-    (*window)->context = context;
-
-    (*window)->surface =
-        eglCreateWindowSurface(context->display, context->config, (*window)->hwnd, NULL);
-
-    if ((*window)->surface == EGL_NO_SURFACE) {
-      VxWindow_Delete(window);
-      return VxStatus_GraphicsFail;
-    }
-
-    (*window)->econtext = eglCreateContext(context->display, context->config, EGL_NO_CONTEXT, NULL);
-
-    if ((*window)->econtext == EGL_NO_CONTEXT) {
-      VxWindow_Delete(window);
-      return VxStatus_GraphicsFail;
-    }
-  }
-#endif
 
   return VxStatus_Pass;
 }
@@ -82,32 +52,6 @@ bool VxWindow_GetFlag(const VxWindow *window, VxFlag flag) {
     return flags & flag;
   } else
     return false;
-}
-
-VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface) {
-#ifdef VxContext_UseAngle
-  if (!window || !surface) return VxStatus_BadInput;
-
-  *surface = window->surface;
-  return VxStatus_Pass;
-#else
-  return VxStatus_NotConfigured;
-#endif
-}
-
-VxStatus VxWindow_MountGraphics(VxWindow *window) {
-#ifdef VxContext_UseAngle
-  if (!window || !window->context) return VxStatus_BadInput;
-  void *display;
-
-  if (VxContext_GetDisplay(window->context, &display) != VxStatus_Pass ||
-      !eglMakeCurrent(display, window->surface, window->surface, window->econtext))
-    return VxStatus_GraphicsFail;
-
-  return VxStatus_Pass;
-#else
-  return VxStatus_NotConfigured;
-#endif
 }
 
 VxStatus VxWindow_Close(VxWindow *window) {
@@ -157,23 +101,6 @@ VxStatus VxWindow_Delete(VxWindow **window) {
   if (!window || !*window) return VxStatus_BadInput;
 
   VxStatus s = VxStatus_Pass;
-
-#ifdef VxContext_UseAngle
-  if ((*window)->context) {
-    if (!VxContext_ClearGraphics((*window)->context)) s = VxStatus_GraphicsFail;
-    void *display;
-
-    if (VxContext_GetDisplay((*window)->context, &display) != VxStatus_Pass)
-      s = VxStatus_GraphicsFail;
-
-    if ((*window)->surface != EGL_NO_SURFACE && !eglDestroySurface(display, (*window)->surface))
-      s = VxStatus_GraphicsFail;
-
-    if ((*window)->econtext != EGL_NO_CONTEXT && !eglDestroyContext(display, (*window)->econtext))
-      s = VxStatus_GraphicsFail;
-  }
-#endif
-
   if (IsWindow((*window)->hwnd) && !DestroyWindow((*window)->hwnd)) s = VxStatus_WindowingFail;
 
   free(*window);
@@ -239,7 +166,7 @@ VxStatus VxWindow_SetTitle(const VxWindow *window, const char *const title) {
 }
 
 VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
-  if (VxWindow_GetFlag(window, VxFlag_Unlayered)) return VxStatus_NotConfigured;
+  if (!VxWindow_GetFlag(window, VxFlag_Layered)) return VxStatus_NotConfigured;
   if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
@@ -257,7 +184,7 @@ VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
 #define Vx__Clamp(val, min, max) (val < min) ? min : (val > max) ? max : o
 
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  if (VxWindow_GetFlag(window, VxFlag_Unlayered)) return VxStatus_NotConfigured;
+  if (!VxWindow_GetFlag(window, VxFlag_Layered)) return VxStatus_NotConfigured;
 
   if (!window ||
       !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f, LWA_ALPHA)) {

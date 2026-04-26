@@ -22,15 +22,6 @@
   #define VxWindow_Class "VxWindow"
 #endif
 
-struct VxContext {
-#ifdef VxContext_UseAngle
-  EGLDisplay display;
-  EGLConfig config;
-#else
-  char _;
-#endif
-};
-
 typedef struct VxWindowData {
   VxEventRing ring;
   bool is_changing;

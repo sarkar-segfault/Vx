@@ -20,10 +20,10 @@
 **/
 typedef enum VxFlag {
   /**
-    ### Member `VxFlag_Invisible`
-    Whether the window is invisible.
+    ### Member `VxFlag_Visible`
+    Whether the window is visible.
   **/
-  VxFlag_Invisible = 1u << 0,
+  VxFlag_Visible = 1u << 0,
 
   /**
     ### Member `VxFlag_Maximized`
@@ -38,10 +38,10 @@ typedef enum VxFlag {
   VxFlag_Minimized = 1u << 2,
 
   /**
-    ### Member `VxFlag_Unlayered`
-    Whether the window has opacity.
+    ### Member `VxFlag_Layered`
+    Whether the window has opacity configuration.
   **/
-  VxFlag_Unlayered = 1u << 3
+  VxFlag_Layered = 1u << 3
 } VxFlag;
 
 /**

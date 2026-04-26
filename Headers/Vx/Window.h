@@ -13,7 +13,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "Context.h"
 #include "Event.h"
 #include "Flag.h"
 #include "Status.h"
@@ -37,9 +36,9 @@ typedef struct VxWindow VxWindow;
   This function allocates the passed `VxWindow **`. Make sure that it is not already
   allocated, because this function will overwrite it and then inevitably leak memory.
   Internally, we call platform specific functions to create the window, write to the
-  output parameter, and create the window's graphics context and surface if configured.
+  output parameter, and configure using any provided flags.
 **/
-Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const VxFlags flags);
+Vx__Expose VxStatus VxWindow_Create(VxWindow **window, const VxFlags flags);
 
 /**
   ## Method `VxWindow_GetFlag`
@@ -48,23 +47,6 @@ Vx__Expose VxStatus VxWindow_Create(VxWindow **window, VxContext *context, const
   This function returns whether the specified `VxFlag` is currently set on the window.
 **/
 Vx__Expose bool VxWindow_GetFlag(const VxWindow *window, const VxFlag flag);
-
-/**
-  ## Method `VxWindow_MountGraphics`
-  Initialise the window's graphics context and make it current.
-
-  This function enables graphics work on the selected window. No graphics work can run
-  before this.
-**/
-Vx__Expose VxStatus VxWindow_MountGraphics(VxWindow *window);
-
-/**
-  ## Method `VxWindow_GetSurface`
-  Return the `EGLSurface` of the window.
-
-  This function writes the `EGLSurface` handle of the window to the provided `surface`.
-**/
-Vx__Expose VxStatus VxWindow_GetSurface(const VxWindow *window, void **surface);
 
 /**
   ## Method `VxWindow_Close`
@@ -89,8 +71,7 @@ Vx__Expose VxStatus VxWindow_Open(VxWindow *window);
   Delete a `VxWindow` object.
 
   This function deallocates the passed `VxWindow *` and sets it to `NULL`.
-  If the inner platform context is valid, it is destroyed as well, including
-  any associated graphics surfaces or contexts.
+  If the inner platform context is valid, it is destroyed as well.
 **/
 Vx__Expose VxStatus VxWindow_Delete(VxWindow **window);
 

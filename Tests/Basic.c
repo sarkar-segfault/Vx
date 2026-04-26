@@ -5,12 +5,10 @@
 int main(void) {
   VxStatus s;
 
-  VxContext *context = NULL;
-  CHECK(s, VxContext_Create(&context));
+  CHECK(s, Vx_Initiate());
+  VxWindow *window;
 
-  VxWindow *window = NULL;
-  CHECK(s, VxWindow_Create(&window, context, 0));
-
+  CHECK(s, VxWindow_Create(&window, VxFlag_Visible));
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
@@ -96,6 +94,6 @@ int main(void) {
 
 terminate:
   CHECK(s, VxWindow_Delete(&window));
-  CHECK(s, VxContext_Delete(&context));
+  CHECK(s, Vx_Terminate());
   return 0;
 }

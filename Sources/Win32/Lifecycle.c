@@ -1,8 +1,30 @@
+#include "Vx/Lifecycle.h"  // IWYU pragma: associated
+
 #include <stdint.h>
-#include <windows.h>
 
 #include "Internal.h"
 #include "Vx/Event.h"
+#include "Vx/Status.h"
+
+LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
+
+VxStatus Vx_Initiate(void) {
+  WNDCLASSEX wcx = {0};
+  wcx.cbSize = sizeof(WNDCLASSEX);
+  wcx.lpfnWndProc = VxWindow__Process;
+  wcx.hInstance = GetModuleHandle(NULL);
+  wcx.lpszClassName = VxWindow_Class;
+  wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
+
+  if (!RegisterClassEx(&wcx)) return VxStatus_WindowingFail;
+
+  return VxStatus_Pass;
+}
+
+VxStatus Vx_Terminate(void) {
+  if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) return VxStatus_WindowingFail;
+  return VxStatus_Pass;
+}
 
 VxEventKey Vx__TranslateKey(WPARAM key);
 
@@ -43,10 +65,10 @@ LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM l
 
     case WM_SHOWWINDOW:
       if (wparam) {
-        data->flags &= ~VxFlag_Invisible;
+        data->flags |= VxFlag_Visible;
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Show});
       } else {
-        data->flags |= VxFlag_Invisible;
+        data->flags &= ~VxFlag_Visible;
         VxEventRing_Put(&data->ring, (VxEvent){.type = VxEventType_Hide});
       }
 

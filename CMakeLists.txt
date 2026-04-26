@@ -13,15 +13,9 @@ add_library(Vx Sources/EventRing.c Sources/Status.c)
 set(VxEventRing_Length 128 CACHE STRING "The length of the event circular queue/ring buffer")
 
 option(Vx_Testing "Whether to build tests and enable CTest integration" OFF)
-option(VxContext_UseAngle "Whether to use the ANGLE OpenGL ES implementation to create graphics contexts" ON)
 option(VxEvent_SendUnknown "Whether to send VxEventType_KeyPress/VxEventType_KeyRelease events with VxEventKey_Unknown" ON)
 
 target_compile_definitions(Vx PUBLIC VxEventRing_Length=${VxEventRing_Length})
-
-if(VxContext_UseAngle)
-  target_compile_definitions(Vx PUBLIC VxContext_UseAngle)
-  target_link_libraries(Vx PRIVATE EGL GLESv2)
-endif()
 
 if(VxEvent_SendUnknown)
   target_compile_definitions(Vx PUBLIC VxEvent_SendUnknown)
@@ -47,7 +41,7 @@ target_compile_features(Vx PUBLIC c_std_99)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
   set(SRCW32 Sources/Win32)
-  target_sources(Vx PRIVATE ${SRCW32}/Window.c ${SRCW32}/Context.c ${SRCW32}/Lifecycle.c)
+  target_sources(Vx PRIVATE ${SRCW32}/Window.c ${SRCW32}/Lifecycle.c)
   target_link_libraries(Vx PRIVATE user32)
 else()
   message(FATAL_ERROR "Vx only supports Win32 as of now...")
@@ -61,8 +55,5 @@ if(Vx_Testing)
   endfunction()
 
   Vx_Test(Basic)
-  Vx_Test(Clear)
-
-  target_link_libraries(Clear PRIVATE EGL GLESv2)
   enable_testing()
 endif()

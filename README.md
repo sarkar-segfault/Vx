@@ -7,8 +7,7 @@ This project was originally made to compete with the 8-hour OpenGL tutorial stan
 1. Uses pure C99, and utilizes features like structured literals and enums.
 2. Uses an actually structured naming convention - `VxEventKey_0` instead of `GLFW_KEY_0` or `RGFW_key0`.
 3. Uses a circular queue/ring buffer event system, so you don't have to be a slave to callbacks.
-4. Uses ANGLE OpenGL ES with the native graphics layer for context management.
-5. Uses thread-safe design with no exposed globals.
+4. Uses thread-safe design with no exposed globals.
 
 ## Example
 Here is some example code to get you familiar with the API (you can consult the headers in `Headers/Vx` and the `Tests` directory for more usage examples):
@@ -17,8 +16,7 @@ Here is some example code to get you familiar with the API (you can consult the 
 #include "Vx/Vx.h"
 
 int main(void) {
-  VxContext *context = NULL;
-  VxContext_Create(&context);
+  Vx_Initiate();
 
   VxWindow *window = NULL;
   VxWindow_Create(&window, context, 0);
@@ -28,11 +26,13 @@ int main(void) {
   }
 
   VxWindow_Delete(&window);
-  VxContext_Delete(&context);
+
+  Vx_Terminate();
+  return 0;
 }
 ```
 
-Error, event, and graphics context handling are omitted for brevity.
+Error and event handling are omitted for brevity.
 
 ## Build
 This project uses [CMake](https://github.com/Kitware/CMake) to build. You can build it via the following command:

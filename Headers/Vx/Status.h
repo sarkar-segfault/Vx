@@ -24,9 +24,6 @@ typedef enum VxStatus {
   /**
     ### Member `VxStatus_NotConfigured`
     The specified feature is unconfigured.
-
-    Sent when graphics work is tried and not `VxContext_UseAngle`.
-    Also when opacity configuration is tried and `VxFlag_Unlayered`.
   **/
   VxStatus_NotConfigured,
 
@@ -35,12 +32,6 @@ typedef enum VxStatus {
     Encountered a windowing-related failure.
   **/
   VxStatus_WindowingFail,
-
-  /**
-    ### Member `VxStatus_GraphicsFail`
-    Encounteed a graphics-related failure.
-  **/
-  VxStatus_GraphicsFail,
 
   /**
     ### Member `VxStatus_AllocFail`

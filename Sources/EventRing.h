@@ -1,23 +1,11 @@
 #ifndef Vx__EventRingH
 #define Vx__EventRingH
 
-// IWYU pragma: begin_exports
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-// IWYU pragma: end_exports
 
 #include "Vx/Event.h"
 #include "Vx/_Expose.h"
-
-#ifdef VxContext_UseAngle
-  // IWYU pragma: begin_exports
-  #include <EGL/egl.h>
-  #include <EGL/eglext.h>
-  #include <EGL/eglext_angle.h>
-  // IWYU pragma: end_exports
-#endif
 
 #ifndef VxEventRing_Length
   #define VxEventRing_Length 128
