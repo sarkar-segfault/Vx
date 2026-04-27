@@ -1,24 +1,23 @@
 #include <stddef.h>
-
-#include "Include.h"
+#include "Vx/Vx.h"
 
 int main(void) {
   VxStatus s;
 
-  CHECK(s, Vx_Initiate());
+  Vx_DebugCheck(s, Vx_Initiate());
   VxWindow *window;
 
-  CHECK(s, VxWindow_Create(&window, VxFlag_Visible));
+  Vx_DebugCheck(s, VxWindow_Create(&window, VxFlag_Visible));
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
-    CHECK(s, VxWindow_PollEvents(window));
+    Vx_DebugCheck(s, VxWindow_PollEvents(window));
 
     while (VxWindow_PopEvent(window, &event)) {
       switch (event.type) {
         case VxEventType_Close:
           printf("Close\n");
-          CHECK(s, VxWindow_Close(window));
+          Vx_DebugCheck(s, VxWindow_Close(window));
           goto terminate;
 
         case VxEventType_Resize:
@@ -93,7 +92,7 @@ int main(void) {
   }
 
 terminate:
-  CHECK(s, VxWindow_Delete(&window));
-  CHECK(s, Vx_Terminate());
+  Vx_DebugCheck(s, VxWindow_Delete(&window));
+  Vx_DebugCheck(s, Vx_Terminate());
   return 0;
 }

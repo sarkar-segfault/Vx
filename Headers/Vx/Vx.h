@@ -22,4 +22,16 @@
 
 // IWYU pragma: end_exports
 
+#ifdef NDEBUG
+  #define Vx_DebugCheck(s, v)
+#else
+  #include <stdio.h>  // IWYU pragma: export
+
+  #define Vx_DebugCheck(s, v)    \
+    s = v;                       \
+    if (s != VxStatus_Pass) {    \
+      puts(VxStatus_Strings[s]); \
+    }
+#endif
+
 #endif
