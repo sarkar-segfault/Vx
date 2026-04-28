@@ -42,12 +42,12 @@ typedef struct VxWindow VxWindow;
 Vx__Expose VxStatus VxWindow_Create(VxWindow **window, const VxHandle *handle, const VxFlags flags);
 
 /**
-  ## Method `VxWindow_GetFlag`
-  Return whether the specified flag is currently set.
+  ## Method `VxWindow_GetFlags`
+  Return the window's current attribute flags.
 
-  This function returns whether the specified `VxFlag` is currently set on the window.
+  This function returns the window's current attribute flags.
 **/
-Vx__Expose bool VxWindow_GetFlag(const VxWindow *window, const VxFlag flag);
+Vx__Expose VxStatus VxWindow_GetFlags(const VxWindow *window, VxFlags *flags);
 
 /**
   ## Method `VxWindow_Close`

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "Internal.h"
+#include "Vx/Flag.h"
 #include "Vx/Status.h"
 
 struct VxWindow {
@@ -46,11 +47,10 @@ VxStatus VxWindow_Create(VxWindow **window, const VxHandle *handle, const VxFlag
   return VxStatus_Pass;
 }
 
-bool VxWindow_GetFlag(const VxWindow *window, VxFlag flag) {
-  if (window) {
-    VxFlags flags = ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
-    return flags & flag;
-  } else
+VxStatus VxWindow_GetFlags(const VxWindow *window, VxFlags *flags) {
+  if (window && flags)
+    return ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
+  else
     return false;
 }
 
@@ -166,25 +166,24 @@ VxStatus VxWindow_SetTitle(const VxWindow *window, const char *const title) {
 }
 
 VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
-  if (!VxWindow_GetFlag(window, VxFlag_Layered)) return VxStatus_NotConfigured;
+  VxFlags flags = 0;
+
+  if (!(VxWindow_GetFlags(window, &flags) & VxFlag_Layered)) return VxStatus_NotConfigured;
   if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
-  DWORD flags = 0;
 
-  GetLayeredWindowAttributes(window->hwnd, NULL, &alpha, &flags);
-  if (flags & LWA_ALPHA) {
-    *o = alpha / 255.0f;
-    return VxStatus_Pass;
-  }
+  GetLayeredWindowAttributes(window->hwnd, NULL, &alpha, NULL);
+  *o = alpha / 255.0f;
 
-  return VxStatus_WindowingFail;
+  return VxStatus_Pass;
 }
 
 #define Vx__Clamp(val, min, max) (val < min) ? min : (val > max) ? max : o
 
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
-  if (!VxWindow_GetFlag(window, VxFlag_Layered)) return VxStatus_NotConfigured;
+  VxFlags flags = 0;
+  if (!(VxWindow_GetFlags(window, &flags) & VxFlag_Layered)) return VxStatus_NotConfigured;
 
   if (!window ||
       !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f, LWA_ALPHA)) {
