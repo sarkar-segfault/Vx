@@ -1,13 +1,15 @@
 #include <stddef.h>
+
 #include "Vx/Vx.h"
 
 int main(void) {
   VxStatus s;
+  VxContext context;
 
-  Vx_DebugCheck(s, Vx_Initiate());
+  Vx_DebugCheck(s, VxContext_Create(&context));
   VxWindow *window;
 
-  Vx_DebugCheck(s, VxWindow_Create(&window, VxFlag_Visible));
+  Vx_DebugCheck(s, VxWindow_Create(&window, context, VxFlag_Visible));
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
@@ -93,6 +95,6 @@ int main(void) {
 
 terminate:
   Vx_DebugCheck(s, VxWindow_Delete(&window));
-  Vx_DebugCheck(s, Vx_Terminate());
+  Vx_DebugCheck(s, VxContext_Delete(&context));
   return 0;
 }

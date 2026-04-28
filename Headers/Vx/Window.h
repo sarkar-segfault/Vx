@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "Context.h"
 #include "Event.h"
 #include "Flag.h"
 #include "Status.h"
@@ -38,7 +39,8 @@ typedef struct VxWindow VxWindow;
   Internally, we call platform specific functions to create the window, write to the
   output parameter, and configure using any provided flags.
 **/
-Vx__Expose VxStatus VxWindow_Create(VxWindow **window, const VxFlags flags);
+Vx__Expose VxStatus VxWindow_Create(VxWindow **window, const VxContext context,
+                                    const VxFlags flags);
 
 /**
   ## Method `VxWindow_GetFlag`

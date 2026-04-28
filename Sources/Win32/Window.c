@@ -12,7 +12,7 @@ struct VxWindow {
   bool open;
 };
 
-VxStatus VxWindow_Create(VxWindow **window, const VxFlags flags) {
+VxStatus VxWindow_Create(VxWindow **window, const VxContext _, const VxFlags flags) {
   if (!window) return VxStatus_BadInput;
 
   *window = calloc(1, sizeof(struct VxWindow));
