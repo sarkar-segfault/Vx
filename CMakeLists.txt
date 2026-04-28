@@ -40,7 +40,7 @@ target_include_directories(Vx PUBLIC Headers)
 target_compile_features(Vx PUBLIC c_std_99)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
-  target_sources(Vx PRIVATE Sources/Win32/Window.c Sources/Win32/Context.c)
+  target_sources(Vx PRIVATE Sources/Win32/Window.c Sources/Win32/Handle.c)
   target_link_libraries(Vx PRIVATE user32)
 else()
   message(FATAL_ERROR "Vx only supports Win32 as of now...")

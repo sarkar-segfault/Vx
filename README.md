@@ -5,7 +5,7 @@ Vx is _a windowing library for simpletons and wizards alike_. For beginners, it 
 This project was originally made to compete with the 8-hour OpenGL tutorial standard: [GLFW](https://github.com/glfw/glfw). The design was also inspired by [RGFW](https://github.com/ColleagueRiley/RGFW). Here are some improvements I made from the inspirations:
 
 1. Uses pure C99, and utilizes features like structured literals and enums.
-2. Uses an actually structured naming convention - `VxEventKey_0` instead of `GLFW_KEY_0` or `RGFW_key0`.
+2. Uses an actually structured naming convention - like `VxEventKey_0` instead of `GLFW_KEY_0` or `RGFW_key0`.
 3. Uses a circular queue/ring buffer event system, so you don't have to be a slave to callbacks.
 4. Uses thread-safe design with no exposed globals.
 
@@ -16,18 +16,18 @@ Here is some example code to get you familiar with the API (you can consult the 
 #include "Vx/Vx.h"
 
 int main(void) {
-  Vx_Initiate();
+  VxHandle *handle = NULL;
+  VxHandle_Create(&handle);
 
   VxWindow *window = NULL;
-  VxWindow_Create(&window, context, 0);
+  VxWindow_Create(&window, handle, VxFlag_Visible);
 
   while (VxWindow_IsOpen(window)) {
     VxWindow_PollEvents(window);
   }
 
   VxWindow_Delete(&window);
-
-  Vx_Terminate();
+  VxHandle_Delete(&handle);
   return 0;
 }
 ```

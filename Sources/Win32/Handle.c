@@ -1,4 +1,4 @@
-#include "Vx/Context.h"  // IWYU pragma: associated
+#include "Vx/Handle.h"  // IWYU pragma: associated
 
 #include <stdint.h>
 
@@ -8,7 +8,7 @@
 
 LRESULT CALLBACK VxWindow__Process(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
-VxStatus VxContext_Create(VxContext *context) {
+VxStatus VxHandle_Create(VxHandle *handle) {
   WNDCLASSEX wcx = {0};
   wcx.cbSize = sizeof(WNDCLASSEX);
   wcx.lpfnWndProc = VxWindow__Process;
@@ -17,14 +17,14 @@ VxStatus VxContext_Create(VxContext *context) {
   wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
 
   if (!RegisterClassEx(&wcx)) return VxStatus_WindowingFail;
-  *context = VxWindow_Class;
+  *handle = VxWindow_Class;
 
   return VxStatus_Pass;
 }
 
-VxStatus VxContext_Delete(VxContext *context) {
+VxStatus VxHandle_Delete(VxHandle *handle) {
   if (!UnregisterClass(VxWindow_Class, GetModuleHandle(NULL))) return VxStatus_WindowingFail;
-  *context = NULL;
+  *handle = NULL;
 
   return VxStatus_Pass;
 }

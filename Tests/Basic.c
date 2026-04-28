@@ -4,12 +4,13 @@
 
 int main(void) {
   VxStatus s;
-  VxContext context;
 
-  Vx_DebugCheck(s, VxContext_Create(&context));
+  VxHandle handle;
+  Vx_DebugCheck(s, VxHandle_Create(&handle));
+
   VxWindow *window;
+  Vx_DebugCheck(s, VxWindow_Create(&window, handle, VxFlag_Visible));
 
-  Vx_DebugCheck(s, VxWindow_Create(&window, context, VxFlag_Visible));
   VxEvent event;
 
   while (VxWindow_IsOpen(window)) {
@@ -95,6 +96,6 @@ int main(void) {
 
 terminate:
   Vx_DebugCheck(s, VxWindow_Delete(&window));
-  Vx_DebugCheck(s, VxContext_Delete(&context));
+  Vx_DebugCheck(s, VxHandle_Delete(&handle));
   return 0;
 }
