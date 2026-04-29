@@ -48,8 +48,10 @@ VxStatus VxWindow_Create(VxWindow **window, const VxHandle *handle, const VxFlag
 }
 
 VxStatus VxWindow_GetFlags(const VxWindow *window, VxFlags *flags) {
-  if (window && flags)
-    return ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
+  if (window && flags) {
+    *flags = ((VxWindowData *)GetWindowLongPtr(window->hwnd, GWLP_USERDATA))->flags;
+    return VxStatus_Pass;
+    }
   else
     return false;
 }
@@ -168,7 +170,7 @@ VxStatus VxWindow_SetTitle(const VxWindow *window, const char *const title) {
 VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
   VxFlags flags = 0;
 
-  if (!(VxWindow_GetFlags(window, &flags) & VxFlag_Layered)) return VxStatus_NotConfigured;
+  if (VxWindow_GetFlags(window, &flags) != VxStatus_Pass || !(flags & VxFlag_Layered)) return VxStatus_NotConfigured;
   if (!window || !o) return VxStatus_BadInput;
 
   BYTE alpha = 0;
@@ -183,7 +185,7 @@ VxStatus VxWindow_GetOpacity(const VxWindow *window, float *o) {
 
 VxStatus VxWindow_SetOpacity(const VxWindow *window, const float o) {
   VxFlags flags = 0;
-  if (!(VxWindow_GetFlags(window, &flags) & VxFlag_Layered)) return VxStatus_NotConfigured;
+  if (VxWindow_GetFlags(window, &flags) != VxStatus_Pass || !(flags & VxFlag_Layered)) return VxStatus_NotConfigured;
 
   if (!window ||
       !SetLayeredWindowAttributes(window->hwnd, 0, Vx__Clamp(o, 0.0f, 1.0f) * 255.0f, LWA_ALPHA)) {

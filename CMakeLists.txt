@@ -39,7 +39,7 @@ target_include_directories(Vx PUBLIC Headers)
 
 target_compile_features(Vx PUBLIC c_std_99)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "MSYS")
+if(WIN32)
   target_sources(Vx PRIVATE Sources/Win32/Window.c Sources/Win32/Handle.c)
   target_link_libraries(Vx PRIVATE user32)
 else()
