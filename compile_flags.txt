@@ -1,8 +1,0 @@
--DVxEvent_SendUnknown
--Wc++11-compat
--Wpedantic
--IHeaders
--luser32
--std=c99
--Wextra
--Wall
